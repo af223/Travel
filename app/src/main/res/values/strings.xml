@@ -4,4 +4,7 @@
     <string name="login_password">Password</string>
     <string name="login">Login</string>
     <string name="signup">Singup</string>
+    <string name="map_view">Map</string>
+    <string name="destinations">Destinations</string>
+    <string name="costs">Costs</string>
 </resources>
