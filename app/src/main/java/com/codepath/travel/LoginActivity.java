@@ -2,14 +2,21 @@ package com.codepath.travel;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+
 public class LoginActivity extends AppCompatActivity {
     
+    private static final String TAG = "LoginActivity";
     private EditText etName;
     private EditText etPassword;
     private Button btnLogin;
@@ -19,6 +26,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        if(ParseUser.getCurrentUser() != null) {
+            startMainActivity();
+        }
         
         etName = findViewById(R.id.etName);
         etPassword = findViewById(R.id.etPassword);
@@ -42,5 +53,23 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(String username, String password) {
+        ParseUser.logInInBackground(username, password, new LogInCallback() {
+            @Override
+            public void done(ParseUser user, ParseException e) {
+                if (e != null) {
+                    Toast.makeText(LoginActivity.this, "Unable to login!", Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Issue with login: ", e);
+                    return;
+                }
+                startMainActivity();
+                Toast.makeText(LoginActivity.this, "Login success!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void startMainActivity() {
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+        finish();
     }
 }
