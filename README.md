@@ -3,6 +3,8 @@ Original App Design Project
 
 # Travel
 
+Trello board: https://trello.com/b/hGXlKhIV/codepath
+
 ## Table of Contents
 1. [Overview](#Overview)
 1. [Product Spec](#Product-Spec)
