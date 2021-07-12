@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.codepath.travel.fragments.CostsFragment;
+import com.codepath.travel.fragments.LocationsFragment;
 import com.codepath.travel.fragments.MapFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseUser;
@@ -35,11 +37,11 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new MapFragment();
                         break;
                     case R.id.action_locations:
-                        fragment = new MapFragment();
+                        fragment = new LocationsFragment();
                         break;
                     case R.id.action_costs:
                     default:
-                        fragment = new MapFragment();
+                        fragment = new CostsFragment();
                         break;
                 }
                 fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
