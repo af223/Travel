@@ -50,6 +50,14 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
+        btnSignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(LoginActivity.this, SignupActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     private void login(String username, String password) {
