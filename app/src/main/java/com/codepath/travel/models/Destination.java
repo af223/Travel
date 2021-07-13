@@ -1,5 +1,6 @@
 package com.codepath.travel.models;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -78,5 +79,26 @@ public class Destination extends ParseObject {
 
     public void setCountry(String country) {
         put(KEY_COUNTRY, country);
+    }
+
+    public LatLng getCoords() {
+        return new LatLng(Double.parseDouble(getLatitude()), Double.parseDouble(getLongitude()));
+    }
+
+    public String getFormattedLocationName() {
+        String result = "";
+        String local = getLocality();
+        String area1 = getAdminArea1();
+        String country = getCountry();
+        if (local != null) {
+            result += local + ", ";
+        }
+        if (area1 != null) {
+            result += area1 + ", ";
+        }
+        if (country != null) {
+            result += country;
+        }
+        return result;
     }
 }

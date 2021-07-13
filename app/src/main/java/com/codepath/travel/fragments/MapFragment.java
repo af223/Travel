@@ -93,17 +93,14 @@ public class MapFragment extends Fragment {
         }
         autocompleteFragment =
                 (AutocompleteSupportFragment) getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.LAT_LNG));
         autocompleteFragment.setTypeFilter(TypeFilter.CITIES);
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-                Log.i(TAG, place.getLatLng().toString());
                 map.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
                 reverseGeocode(place.getLatLng());
             }
-
 
             @Override
             public void onError(@NonNull Status status) {
@@ -191,16 +188,16 @@ public class MapFragment extends Fragment {
                 for(int j = 0; j < types.length(); j++) {
                     switch (types.getString(j)) {
                         case "administrative_area_level_1":
-                            dest.setAdminArea1(place.getString("short_name"));
+                            dest.setAdminArea1(place.getString("long_name"));
                             break;
                         case "administrative_area_level_2":
-                            dest.setAdminArea2(place.getString("short_name"));
+                            dest.setAdminArea2(place.getString("long_name"));
                             break;
                         case "sublocality":
-                            dest.setSublocality(place.getString("short_name"));
+                            dest.setSublocality(place.getString("long_name"));
                             break;
                         case "locality":
-                            dest.setLocality(place.getString("short_name"));
+                            dest.setLocality(place.getString("long_name"));
                             break;
                         case "country":
                             dest.setCountry(place.getString("short_name"));
