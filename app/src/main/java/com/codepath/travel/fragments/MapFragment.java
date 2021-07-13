@@ -1,10 +1,5 @@
 package com.codepath.travel.fragments;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestParams;
@@ -72,9 +72,39 @@ public class MapFragment extends Fragment {
         }
     };
 
+    private void reverseGeocode(LatLng coords) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put("latlng", formatLatlng(coords));
+        params.put("key", getResources().getString(R.string.maps_api_key));
+        params.put("location_type", "APPROXIMATE");
+        params.put("language", "en");
+        client.get(revGeocodeURL, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                JSONObject jsonObject = json.jsonObject;
+                try {
+                    JSONArray results = jsonObject.getJSONArray("results");
+                    chosenLocation = results.getJSONObject(0);
+                    String address = chosenLocation.getString("formatted_address");
+                    showDestinationAlertDialog(coords, address);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e(TAG, "Geocode API call failed", throwable);
+                Log.e(TAG, "status code: " + statusCode);
+                Log.e(TAG, response);
+            }
+        });
+    }
+
     private void showDestinationAlertDialog(final LatLng latLng, String address) {
         Toast.makeText(getContext(), latLng.toString(), Toast.LENGTH_SHORT).show();
-        View  messageView = LayoutInflater.from(getContext()).inflate(R.layout.map_message_item, null);
+        View messageView = LayoutInflater.from(getContext()).inflate(R.layout.map_message_item, null);
         tvLocation = messageView.findViewById(R.id.tvLocation);
         tvLocation.setText(address);
 
@@ -113,16 +143,23 @@ public class MapFragment extends Fragment {
                 JSONObject place = components.getJSONObject(i);
                 JSONArray types = place.getJSONArray("types");
                 for(int j = 0; j < types.length(); j++) {
-                    if (types.getString(j).equals("administrative_area_level_1"))
-                        dest.setAdminArea1(place.getString("short_name"));
-                    else if (types.getString(j).equals("administrative_area_levle_2"))
-                        dest.setAdminArea2(place.getString("short_name"));
-                    else if (types.getString(j).equals("sublocality"))
-                        dest.setSublocality(place.getString("short_name"));
-                    else if (types.getString(j).equals("locality"))
-                        dest.setLocality(place.getString("short_name"));
-                    else if (types.getString(j).equals("country"))
-                        dest.setCountry(place.getString("short_name"));
+                    switch (types.getString(j)) {
+                        case "administrative_area_level_1":
+                            dest.setAdminArea1(place.getString("short_name"));
+                            break;
+                        case "administrative_area_level_2":
+                            dest.setAdminArea2(place.getString("short_name"));
+                            break;
+                        case "sublocality":
+                            dest.setSublocality(place.getString("short_name"));
+                            break;
+                        case "locality":
+                            dest.setLocality(place.getString("short_name"));
+                            break;
+                        case "country":
+                            dest.setCountry(place.getString("short_name"));
+                            break;
+                    }
                 }
             }
         } catch (JSONException e) {
@@ -137,7 +174,6 @@ public class MapFragment extends Fragment {
                     Toast.makeText(getContext(), "Unable to select location", Toast.LENGTH_SHORT).show();
                 }
                 Toast.makeText(getContext(), "Location chosen!", Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "Location chosen!");
             }
         });
     }
@@ -163,35 +199,5 @@ public class MapFragment extends Fragment {
 
     private String formatLatlng(LatLng coords) {
         return String.valueOf(coords.latitude) + "," + String.valueOf(coords.longitude);
-    }
-
-    private void reverseGeocode(LatLng coords) {
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-        params.put("latlng", formatLatlng(coords));
-        params.put("key", getResources().getString(R.string.maps_api_key));
-        params.put("location_type", "APPROXIMATE");
-        params.put("language", "en");
-        client.get(revGeocodeURL, params, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Headers headers, JSON json) {
-                JSONObject jsonObject = json.jsonObject;
-                try {
-                    JSONArray results = jsonObject.getJSONArray("results");
-                    chosenLocation = results.getJSONObject(0);
-                    String address =chosenLocation.getString("formatted_address");
-                    showDestinationAlertDialog(coords, address);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.e(TAG, "Geocode API call failed", throwable);
-                Log.e(TAG, "statusCode");
-                Log.e(TAG, "response");
-            }
-        });
     }
 }
