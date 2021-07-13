@@ -19,6 +19,7 @@ import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.R;
 import com.codepath.travel.models.Destination;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,6 +28,11 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -34,6 +40,8 @@ import com.parse.SaveCallback;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Arrays;
 
 import okhttp3.Headers;
 
@@ -44,18 +52,9 @@ public class MapFragment extends Fragment {
     private static final String TAG = "MapsFragment";
     private TextView tvLocation;
     private JSONObject chosenLocation;
+    private AutocompleteSupportFragment autocompleteFragment;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
-
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
         @Override
         public void onMapReady(GoogleMap googleMap) {
             map = googleMap;
@@ -71,6 +70,52 @@ public class MapFragment extends Fragment {
             });
         }
     };
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_map, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(callback);
+        }
+
+        if (!Places.isInitialized()) {
+            Places.initialize(getContext(), getResources().getString(R.string.maps_api_key));
+        }
+        autocompleteFragment =
+                (AutocompleteSupportFragment) getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+        autocompleteFragment.setTypeFilter(TypeFilter.CITIES);
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                Log.i(TAG, place.getLatLng().toString());
+                map.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
+                reverseGeocode(place.getLatLng());
+            }
+
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Log.e(TAG, "An error occurred: " + status);
+                if (status.isCanceled()) {
+                    Toast.makeText(getContext(), "No location typed", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Unable to choose location", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 
     private void reverseGeocode(LatLng coords) {
         AsyncHttpClient client = new AsyncHttpClient();
@@ -122,6 +167,7 @@ public class MapFragment extends Fragment {
                                 .position(latLng)
                                 .title(latLng.toString())
                                 .icon(defaultMarker));
+                        map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                         saveDestination(chosenLocation, latLng);
                     }
                 });
@@ -176,25 +222,6 @@ public class MapFragment extends Fragment {
                 Toast.makeText(getContext(), "Location chosen!", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_map, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(callback);
-        }
     }
 
     private String formatLatlng(LatLng coords) {
