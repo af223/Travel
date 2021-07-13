@@ -43,7 +43,6 @@ public class LocationsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_locations, container, false);
     }
 
@@ -68,7 +67,7 @@ public class LocationsFragment extends Fragment {
             @Override
             public void done(List<Destination> destinations, ParseException e) {
                 if (e != null) {
-                    Log.e(TAG, "Unable to load locaionts", e);
+                    Log.e(TAG, "Unable to load locations", e);
                     Toast.makeText(getContext(), "Unable to load locations", Toast.LENGTH_SHORT).show();
                     return;
                 }
