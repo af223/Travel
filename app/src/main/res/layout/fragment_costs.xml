@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.CostsFragment">
 
+    <Button
+        android:id="@+id/btnFlights"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        android:text="Get Flights" />
+
     <TextView
+        android:id="@+id/tvText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:text="Costs summary of trip planned by user" />
 
-</FrameLayout>
+</RelativeLayout>
