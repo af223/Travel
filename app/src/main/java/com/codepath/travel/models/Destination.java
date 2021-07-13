@@ -16,6 +16,10 @@ public class Destination extends ParseObject {
     public static final String KEY_SUBLOCAL = "sublocality";
     public static final String KEY_LOCAL = "locality";
     public static final String KEY_COUNTRY = "country";
+    public static final String KEY_DEPART_CODE = "departAirportCode";
+    public static final String KEY_DEPART_NAME = "departAirportName";
+    public static final String KEY_ARRIVE_CODE = "arriveAirportCode";
+    public static final String KEY_ARRIVE_NAME = "arriveAirportName";
 
     public String getUser() {
         return getString(KEY_USER);
@@ -79,6 +83,38 @@ public class Destination extends ParseObject {
 
     public void setCountry(String country) {
         put(KEY_COUNTRY, country);
+    }
+
+    public String getDepartAirportCode() {
+        return getString(KEY_DEPART_CODE);
+    }
+
+    public void setDepartAirportCode(String code) {
+        put(KEY_DEPART_CODE, code);
+    }
+
+    public String getDepartAirportName() {
+        return getString(KEY_DEPART_NAME);
+    }
+
+    public void setDepartAirportName(String name) {
+        put(KEY_DEPART_NAME, name);
+    }
+
+    public String getArriveAirportCode() {
+        return getString(KEY_ARRIVE_CODE);
+    }
+
+    public void setArriveAirportCode(String code) {
+        put(KEY_ARRIVE_CODE, code);
+    }
+
+    public String getArriveAirportName() {
+        return getString(KEY_ARRIVE_NAME);
+    }
+
+    public void setArriveAirportName(String name) {
+        put(KEY_ARRIVE_NAME, name);
     }
 
     public LatLng getCoords() {

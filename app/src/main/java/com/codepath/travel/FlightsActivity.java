@@ -4,20 +4,57 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.codepath.travel.models.Destination;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 
 import okhttp3.Headers;
 
 public class FlightsActivity extends AppCompatActivity {
 
+    private static final String TAG = "FlightsActivity";
+    private TextView tvDepartureAirport;
+    private TextView tvArrivalAirport;
+    private Button btnDepart;
+    private Button btnArrive;
+    private Button btnToFlights;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flights);
+
+        tvDepartureAirport = findViewById(R.id.tvDepartureAirport);
+        tvArrivalAirport = findViewById(R.id.tvArrivalAirport);
+        btnDepart = findViewById(R.id.btnDepart);
+        btnArrive = findViewById(R.id.btnArrive);
+        btnToFlights = findViewById(R.id.btnFlights);
+
+        getChosenDestination();
+    }
+
+    private void getChosenDestination() {
+        ParseQuery<Destination> query = ParseQuery.getQuery(Destination.class);
+        query.getInBackground(getIntent().getStringExtra(Destination.KEY_OBJECT_ID), new GetCallback<Destination>() {
+            @Override
+            public void done(Destination destination, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Unable to load destination", e);
+                    Toast.makeText(FlightsActivity.this, "Unable to load destination", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+            }
+        });
     }
 
     private void getFlights() {
