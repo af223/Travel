@@ -18,6 +18,7 @@ import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.R;
+import com.codepath.travel.models.Destination;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -26,6 +27,9 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +43,7 @@ public class MapFragment extends Fragment {
     private static final String revGeocodeURL = "https://maps.googleapis.com/maps/api/geocode/json";
     private static final String TAG = "MapsFragment";
     private TextView tvLocation;
+    private JSONObject chosenLocation;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -87,6 +92,7 @@ public class MapFragment extends Fragment {
                                 .position(latLng)
                                 .title(latLng.toString())
                                 .icon(defaultMarker));
+                        saveDestination(chosenLocation, latLng);
                     }
                 });
         alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "NO",
@@ -94,6 +100,46 @@ public class MapFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int id) { dialog.cancel(); }
                 });
         alertDialog.show();
+    }
+
+    private void saveDestination(JSONObject chosenLocation, LatLng coords) {
+        Destination dest = new Destination();
+        dest.setUser(ParseUser.getCurrentUser());
+        dest.setLatitude(String.valueOf(coords.latitude));
+        dest.setLongitude(String.valueOf(coords.longitude));
+        try {
+            JSONArray components = chosenLocation.getJSONArray("address_components");
+            for (int i = 0; i < components.length(); i++) {
+                JSONObject place = components.getJSONObject(i);
+                JSONArray types = place.getJSONArray("types");
+                for(int j = 0; j < types.length(); j++) {
+                    if (types.getString(j).equals("administrative_area_level_1"))
+                        dest.setAdminArea1(place.getString("short_name"));
+                    else if (types.getString(j).equals("administrative_area_levle_2"))
+                        dest.setAdminArea2(place.getString("short_name"));
+                    else if (types.getString(j).equals("sublocality"))
+                        dest.setSublocality(place.getString("short_name"));
+                    else if (types.getString(j).equals("locality"))
+                        dest.setLocality(place.getString("short_name"));
+                    else if (types.getString(j).equals("country"))
+                        dest.setCountry(place.getString("short_name"));
+                }
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Unable to parse JSON file");
+            e.printStackTrace();
+        }
+        dest.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Error while saving location", e);
+                    Toast.makeText(getContext(), "Unable to select location", Toast.LENGTH_SHORT).show();
+                }
+                Toast.makeText(getContext(), "Location chosen!", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "Location chosen!");
+            }
+        });
     }
 
 
@@ -125,26 +171,24 @@ public class MapFragment extends Fragment {
         params.put("latlng", formatLatlng(coords));
         params.put("key", getResources().getString(R.string.maps_api_key));
         params.put("location_type", "APPROXIMATE");
-        //params.put("language", "en");
+        params.put("language", "en");
         client.get(revGeocodeURL, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i(TAG,"Success!");
                 JSONObject jsonObject = json.jsonObject;
                 try {
                     JSONArray results = jsonObject.getJSONArray("results");
-                    String address = results.getJSONObject(0).getString("formatted_address");
-                    Log.i(TAG, address);
+                    chosenLocation = results.getJSONObject(0);
+                    String address =chosenLocation.getString("formatted_address");
                     showDestinationAlertDialog(coords, address);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.e(TAG, "SAD:(", throwable);
+                Log.e(TAG, "Geocode API call failed", throwable);
                 Log.e(TAG, "statusCode");
                 Log.e(TAG, "response");
             }
