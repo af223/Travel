@@ -201,7 +201,7 @@ public class MapFragment extends Fragment {
                             dest.setLocality(place.getString("long_name"));
                             break;
                         case "country":
-                            dest.setCountry(place.getString("short_name"));
+                            dest.setCountry(place.getString("long_name"));
                             break;
                     }
                 }

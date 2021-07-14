@@ -18,6 +18,7 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.adapters.ChosenAirportsAdapter;
 import com.codepath.travel.adapters.FindAirportsAdapter;
 import com.codepath.travel.models.Airport;
+import com.codepath.travel.models.Destination;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +39,7 @@ public class AirportSearchActivity extends AppCompatActivity {
     private RecyclerView rvChosenAirports;
     private RecyclerView rvFindAirport;
     private Button btnClearChosen;
+    private Boolean loadingSuggested;
     private ArrayList<Airport> chosenAirportsList;
     private ArrayList<Airport> foundAirports;
 
@@ -67,7 +69,6 @@ public class AirportSearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 foundAirports.clear();
-                foundAdapter.notifyDataSetChanged();
                 String findAirport = etSearch.getText().toString();
                 etSearch.setText("");
                 if (findAirport.length() < 2) {
@@ -99,6 +100,10 @@ public class AirportSearchActivity extends AppCompatActivity {
         rvChosenAirports = findViewById(R.id.rvChosenAirports);
         rvChosenAirports.setLayoutManager(new LinearLayoutManager(this));
         rvChosenAirports.setAdapter(chosenAdapter);
+
+        if (!getIntent().getBooleanExtra(getResources().getString(R.string.from_departure), true)) {
+            loadSuggestedAirports();
+        }
     }
 
     private void findMatchingAirports(String queryName) {
@@ -112,6 +117,7 @@ public class AirportSearchActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 displayAirports(json.jsonObject);
+                foundAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -137,15 +143,22 @@ public class AirportSearchActivity extends AppCompatActivity {
                     }
                 }
                 if (!added) {
-                    Airport airport = new Airport(place.getString("PlaceName") + " Airport",
-                            place.getString("PlaceId"), place.getString("CountryName"));
-                    foundAirports.add(airport);
+                    if (!loadingSuggested || place.getString("CountryName").equals(getIntent().getStringExtra(Destination.KEY_COUNTRY))) {
+                        Airport airport = new Airport(place.getString("PlaceName") + " Airport",
+                                place.getString("PlaceId"), place.getString("CountryName"));
+                        foundAirports.add(airport);
+                    }
                 }
             }
             if (matchingPlaces.length() == 0) {
-                Toast.makeText(AirportSearchActivity.this, "No airports found, try broader search", Toast.LENGTH_LONG).show();
+                if (loadingSuggested) {
+                    findMatchingAirports(getIntent().getStringExtra(Destination.KEY_COUNTRY));
+                    loadingSuggested = false;
+                } else {
+                    Toast.makeText(AirportSearchActivity.this, "No airports found, try broader search", Toast.LENGTH_LONG).show();
+                }
+
             }
-            foundAdapter.notifyDataSetChanged();
         } catch (JSONException e) {
             Toast.makeText(AirportSearchActivity.this, "Unable to process airports", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Error parsing airports JSON: ", e);
@@ -153,4 +166,8 @@ public class AirportSearchActivity extends AppCompatActivity {
         }
     }
 
+    private void loadSuggestedAirports() {
+        findMatchingAirports(getIntent().getStringExtra(Destination.KEY_ADMIN1));
+        loadingSuggested = true;
+    }
 }
