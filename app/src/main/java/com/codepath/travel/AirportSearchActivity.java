@@ -68,8 +68,12 @@ public class AirportSearchActivity extends AppCompatActivity {
         btnClearChosen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                for (Airport airport : FlightsActivity.departureAirports) {
+                    airport.flipChosen();
+                }
                 FlightsActivity.departureAirports.clear();
                 refreshChosenAirports();
+                refreshFoundAirports();
             }
         });
 
@@ -114,7 +118,6 @@ public class AirportSearchActivity extends AppCompatActivity {
             for (int i = 0; i < matchingPlaces.length(); i++) {
                 added = false;
                 JSONObject place = matchingPlaces.getJSONObject(i);
-                // TODO: fix when search, add, different search, og search gets reset
                 for (int j = 0; j < FlightsActivity.departureAirports.size(); j++) {
                     if (FlightsActivity.departureAirports.get(j).getIATACode().equals(place.getString("PlaceId"))) {
                         foundAirports.add(FlightsActivity.departureAirports.get(j));
