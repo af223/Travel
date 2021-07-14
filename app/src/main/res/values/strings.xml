@@ -8,7 +8,7 @@
     <string name="destinations">Destinations</string>
     <string name="costs">Costs</string>
     <string name="map_view_confirm">Would you like to travel to the following location?</string>
-    <string name="no_airport">No airport chosen</string>
+    <string name="no_airport">No flight chosen</string>
     <string name="change_depart_airport">Change departure airport</string>
     <string name="change_arrive_airport">Change arrival airport</string>
     <string name="from_departure">from departure?</string>

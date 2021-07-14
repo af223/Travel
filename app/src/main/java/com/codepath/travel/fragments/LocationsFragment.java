@@ -1,19 +1,16 @@
 package com.codepath.travel.fragments;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.travel.R;
 import com.codepath.travel.adapters.LocationsAdapter;
@@ -31,8 +28,8 @@ import java.util.List;
 public class LocationsFragment extends Fragment {
 
     private static final String TAG = "LocationsFragment";
-    private RecyclerView rvLocations;
     public static FragmentManager locationsFragManager;
+    private RecyclerView rvLocations;
     private List<Destination> locations;
     private LocationsAdapter adapter;
 

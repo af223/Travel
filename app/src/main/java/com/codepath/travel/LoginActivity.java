@@ -1,7 +1,5 @@
 package com.codepath.travel;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,32 +8,34 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
 public class LoginActivity extends AppCompatActivity {
-    
+
     private static final String TAG = "LoginActivity";
     private EditText etName;
     private EditText etPassword;
     private Button btnLogin;
     private Button btnSignup;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        if(ParseUser.getCurrentUser() != null) {
+        if (ParseUser.getCurrentUser() != null) {
             startMainActivity();
         }
-        
+
         etName = findViewById(R.id.etName);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnSignup = findViewById(R.id.btnSignup);
-        
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

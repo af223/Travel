@@ -1,8 +1,5 @@
 package com.codepath.travel;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +7,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
@@ -22,8 +22,6 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import okhttp3.Headers;
 
@@ -32,13 +30,13 @@ public class FlightsActivity extends AppCompatActivity {
     private static final String TAG = "FlightsActivity";
     private static final int DEPARTURE_AIRPORT_REQUEST_CODE = 24;
     private static final int ARRIVAL_AIRPORT_REQUEST_CODE = 88;
+    public static ArrayList<Airport> departureAirports = new ArrayList<>();
+    public static ArrayList<Airport> arrivalAirports = new ArrayList<>();
     private TextView tvDepartureAirport;
     private TextView tvArrivalAirport;
     private Button btnDepart;
     private Button btnArrive;
     private Button btnToFlights;
-    public static ArrayList<Airport> departureAirports = new ArrayList<>();
-    public static ArrayList<Airport> arrivalAirports = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

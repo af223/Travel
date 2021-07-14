@@ -23,7 +23,7 @@ public class FindAirportsAdapter extends RecyclerView.Adapter<FindAirportsAdapte
 
     private final Context context;
     private final List<Airport> airports;
-    private ArrayList<Airport> chosenAirports;
+    private final ArrayList<Airport> chosenAirports;
 
     public FindAirportsAdapter(Context context, List<Airport> airports, ArrayList<Airport> chosenAirports) {
         this.context = context;
@@ -35,7 +35,7 @@ public class FindAirportsAdapter extends RecyclerView.Adapter<FindAirportsAdapte
     @NotNull
     @Override
     public FindAirportsAdapter.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_airport_unselected, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_airport, parent, false);
         return new ViewHolder(view);
     }
 
@@ -50,7 +50,7 @@ public class FindAirportsAdapter extends RecyclerView.Adapter<FindAirportsAdapte
         return airports.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView tvAirportName;
         private final TextView tvAirportCountry;

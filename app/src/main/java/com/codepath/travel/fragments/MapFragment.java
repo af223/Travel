@@ -47,11 +47,11 @@ import okhttp3.Headers;
 
 public class MapFragment extends Fragment {
 
-    GoogleMap map;
     private static final String revGeocodeURL = "https://maps.googleapis.com/maps/api/geocode/json";
     private static final String TAG = "MapsFragment";
     private TextView tvLocation;
     private JSONObject chosenLocation;
+    private static GoogleMap map;
     private AutocompleteSupportFragment autocompleteFragment;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -106,7 +106,7 @@ public class MapFragment extends Fragment {
             public void onError(@NonNull Status status) {
                 Log.e(TAG, "An error occurred: " + status);
                 if (status.isCanceled()) {
-                    Toast.makeText(getContext(), "No location typed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "No location entered", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), "Unable to choose location", Toast.LENGTH_SHORT).show();
                 }
@@ -131,12 +131,14 @@ public class MapFragment extends Fragment {
                     String address = chosenLocation.getString("formatted_address");
                     showDestinationAlertDialog(coords, address);
                 } catch (JSONException e) {
+                    Toast.makeText(getContext(), "Unable to find location", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Toast.makeText(getContext(), "Unable to find a location", Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Geocode API call failed", throwable);
                 Log.e(TAG, "status code: " + statusCode);
                 Log.e(TAG, response);
@@ -145,7 +147,6 @@ public class MapFragment extends Fragment {
     }
 
     private void showDestinationAlertDialog(final LatLng latLng, String address) {
-        Toast.makeText(getContext(), latLng.toString(), Toast.LENGTH_SHORT).show();
         View messageView = LayoutInflater.from(getContext()).inflate(R.layout.map_message_item, null);
         tvLocation = messageView.findViewById(R.id.tvLocation);
         tvLocation.setText(address);
