@@ -110,11 +110,23 @@ public class AirportSearchActivity extends AppCompatActivity {
     private void processAirports(JSONObject jsonObject) {
         try {
             JSONArray matchingPlaces = jsonObject.getJSONArray("Places");
+            Boolean added;
             for (int i = 0; i < matchingPlaces.length(); i++) {
+                added = false;
                 JSONObject place = matchingPlaces.getJSONObject(i);
-                Airport airport = new Airport(place.getString("PlaceName") + " Airport",
-                        place.getString("PlaceId"), place.getString("CountryName"));
-                foundAirports.add(airport);
+                // TODO: fix when search, add, different search, og search gets reset
+                for (int j = 0; j < FlightsActivity.departureAirports.size(); j++) {
+                    if (FlightsActivity.departureAirports.get(j).getIATACode().equals(place.getString("PlaceId"))) {
+                        foundAirports.add(FlightsActivity.departureAirports.get(j));
+                        added = true;
+                        break;
+                    }
+                }
+                if (!added) {
+                    Airport airport = new Airport(place.getString("PlaceName") + " Airport",
+                            place.getString("PlaceId"), place.getString("CountryName"));
+                    foundAirports.add(airport);
+                }
             }
             if (matchingPlaces.length() == 0) {
                 Toast.makeText(AirportSearchActivity.this, "No airports found, try broader search", Toast.LENGTH_LONG).show();
