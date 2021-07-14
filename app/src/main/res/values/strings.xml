@@ -8,6 +8,10 @@
     <string name="destinations">Destinations</string>
     <string name="costs">Costs</string>
     <string name="map_view_confirm">Would you like to travel to the following location?</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_airport">No airport chosen</string>
+    <string name="change_depart_airport">Change departure airport</string>
+    <string name="change_arrive_airport">Change arrival airport</string>
+    <string name="from_departure">from departure?</string>
+    <string name="add">Add</string>
+    <string name="airport">Airport</string>
 </resources>

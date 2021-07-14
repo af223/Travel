@@ -1,9 +1,12 @@
 package com.codepath.travel;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,21 +15,30 @@ import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.codepath.travel.models.Airport;
 import com.codepath.travel.models.Destination;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import okhttp3.Headers;
 
 public class FlightsActivity extends AppCompatActivity {
 
     private static final String TAG = "FlightsActivity";
+    private static final int DEPARTURE_AIRPORT_REQUEST_CODE = 24;
+    private static final int ARRIVAL_AIRPORT_REQUEST_CODE = 88;
     private TextView tvDepartureAirport;
     private TextView tvArrivalAirport;
     private Button btnDepart;
     private Button btnArrive;
     private Button btnToFlights;
+    public static ArrayList<Airport> departureAirports = new ArrayList<>();
+    public static ArrayList<Airport> arrivalAirports = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +64,47 @@ public class FlightsActivity extends AppCompatActivity {
                     Toast.makeText(FlightsActivity.this, "Unable to load destination", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                if (destination.getDepartAirportName() != null) {
+                    tvDepartureAirport.setText(destination.getDepartAirportName());
+                    btnDepart.setText(getResources().getString(R.string.change_depart_airport));
+                }
+                if (destination.getArriveAirportName() != null) {
+                    tvArrivalAirport.setText(destination.getArriveAirportName());
+                    btnArrive.setText(getResources().getString(R.string.change_arrive_airport));
+                }
+                btnDepart.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(FlightsActivity.this, AirportSearchActivity.class);
+                        i.putExtra(getResources().getString(R.string.from_departure), true);
+                        startActivityForResult(i, DEPARTURE_AIRPORT_REQUEST_CODE);
+                    }
+                });
+                btnArrive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(FlightsActivity.this, AirportSearchActivity.class);
+                        i.putExtra(getResources().getString(R.string.from_departure), false);
+                        i.putExtra(Destination.KEY_LOCAL, destination.getLocality());
+                        i.putExtra(Destination.KEY_ADMIN1, destination.getAdminArea1());
+                        i.putExtra(Destination.KEY_COUNTRY, destination.getCountry());
+                        startActivityForResult(i, ARRIVAL_AIRPORT_REQUEST_CODE);
+                    }
+                });
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == DEPARTURE_AIRPORT_REQUEST_CODE) {
+                Toast.makeText(FlightsActivity.this, "from departure!", Toast.LENGTH_SHORT).show();
+            } else if (requestCode == ARRIVAL_AIRPORT_REQUEST_CODE) {
+                Toast.makeText(FlightsActivity.this, "From arrival!", Toast.LENGTH_SHORT).show();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void getFlights() {
