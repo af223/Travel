@@ -37,6 +37,7 @@ public class AirportSearchActivity extends AppCompatActivity {
     private Button btnSearch;
     private RecyclerView rvChosenAirports;
     private RecyclerView rvFindAirport;
+    private Button btnClearChosen;
     private ArrayList<Airport> foundAirports;
     private static FindAirportsAdapter foundAdapter;
     private static ChosenAirportsAdapter chosenAdapter;
@@ -49,6 +50,7 @@ public class AirportSearchActivity extends AppCompatActivity {
 
         etSearch = findViewById(R.id.etSearch);
         btnSearch = findViewById(R.id.btnSearch);
+        btnClearChosen = findViewById(R.id.btnClearChosen);
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,6 +63,13 @@ public class AirportSearchActivity extends AppCompatActivity {
                     return;
                 }
                 findMatchingAirports(findAirport);
+            }
+        });
+        btnClearChosen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FlightsActivity.departureAirports.clear();
+                refreshChosenAirports();
             }
         });
 

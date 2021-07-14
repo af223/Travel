@@ -79,6 +79,7 @@ public class FindAirportsAdapter extends RecyclerView.Adapter<FindAirportsAdapte
                         btnAddAirport.setBackgroundColor(context.getResources().getColor(R.color.quantum_grey));
                         airport.flipChosen();
                         AirportSearchActivity.refreshChosenAirports();
+                        btnAddAirport.setClickable(false);
                     }
                 });
             }
