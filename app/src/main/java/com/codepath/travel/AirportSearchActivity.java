@@ -103,6 +103,7 @@ public class AirportSearchActivity extends AppCompatActivity {
 
         if (!getIntent().getBooleanExtra(getResources().getString(R.string.from_departure), true)) {
             loadSuggestedAirports();
+            loadingSuggested = true;
         }
     }
 
@@ -143,21 +144,13 @@ public class AirportSearchActivity extends AppCompatActivity {
                     }
                 }
                 if (!added) {
-                    if (!loadingSuggested || place.getString("CountryName").equals(getIntent().getStringExtra(Destination.KEY_COUNTRY))) {
-                        Airport airport = new Airport(place.getString("PlaceName") + " Airport",
-                                place.getString("PlaceId"), place.getString("CountryName"));
-                        foundAirports.add(airport);
-                    }
+                    Airport airport = new Airport(place.getString("PlaceName") + " Airport",
+                            place.getString("PlaceId"), place.getString("CountryName"));
+                    foundAirports.add(airport);
                 }
             }
             if (matchingPlaces.length() == 0) {
-                if (loadingSuggested) {
-                    findMatchingAirports(getIntent().getStringExtra(Destination.KEY_COUNTRY));
-                    loadingSuggested = false;
-                } else {
-                    Toast.makeText(AirportSearchActivity.this, "No airports found, try broader search", Toast.LENGTH_LONG).show();
-                }
-
+                Toast.makeText(AirportSearchActivity.this, "No airports found, try broader search", Toast.LENGTH_LONG).show();
             }
         } catch (JSONException e) {
             Toast.makeText(AirportSearchActivity.this, "Unable to process airports", Toast.LENGTH_SHORT).show();
@@ -167,7 +160,54 @@ public class AirportSearchActivity extends AppCompatActivity {
     }
 
     private void loadSuggestedAirports() {
-        findMatchingAirports(getIntent().getStringExtra(Destination.KEY_ADMIN1));
-        loadingSuggested = true;
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestHeaders headers = new RequestHeaders();
+        RequestParams params = new RequestParams();
+        headers.put("x-rapidapi-key", getResources().getString(R.string.rapid_api_key));
+        headers.put("x-rapidapi-host", "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com");
+        String URL = String.format(findQueryURL, "US", "USD", "en", getIntent().getStringExtra(Destination.KEY_ADMIN1));
+        client.get(URL, headers, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                displaySuggestedAirports(json.jsonObject);
+                foundAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e(TAG, "failed to get airports: ", throwable);
+                Toast.makeText(AirportSearchActivity.this, "Unable to find airports", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void displaySuggestedAirports(JSONObject jsonObject) {
+        try {
+            JSONArray matchingPlaces = jsonObject.getJSONArray("Places");
+            Boolean added;
+            for (int i = 0; i < matchingPlaces.length(); i++) {
+                added = false;
+                JSONObject place = matchingPlaces.getJSONObject(i);
+                for (int j = 0; j < chosenAirportsList.size(); j++) {
+                    if (chosenAirportsList.get(j).getIATACode().equals(place.getString("PlaceId"))) {
+                        foundAirports.add(chosenAirportsList.get(j));
+                        added = true;
+                        break;
+                    }
+                }
+                if (!added && place.getString("CountryName").equals(getIntent().getStringExtra(Destination.KEY_COUNTRY))) {
+                    Airport airport = new Airport(place.getString("PlaceName") + " Airport",
+                            place.getString("PlaceId"), place.getString("CountryName"));
+                    foundAirports.add(airport);
+                }
+            }
+            if (matchingPlaces.length() == 0) {
+                findMatchingAirports(getIntent().getStringExtra(Destination.KEY_COUNTRY));
+            }
+        } catch (JSONException e) {
+            Toast.makeText(AirportSearchActivity.this, "Unable to process airports", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error parsing airports JSON: ", e);
+            e.printStackTrace();
+        }
     }
 }
