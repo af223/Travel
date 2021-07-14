@@ -11,22 +11,24 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.travel.AirportSearchActivity;
-import com.codepath.travel.FlightsActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.models.Airport;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FindAirportsAdapter extends RecyclerView.Adapter<FindAirportsAdapter.ViewHolder> {
 
     private final Context context;
     private final List<Airport> airports;
+    private ArrayList<Airport> chosenAirports;
 
-    public FindAirportsAdapter(Context context, List<Airport> airports) {
+    public FindAirportsAdapter(Context context, List<Airport> airports, ArrayList<Airport> chosenAirports) {
         this.context = context;
         this.airports = airports;
+        this.chosenAirports = chosenAirports;
     }
 
     @NonNull
@@ -76,7 +78,7 @@ public class FindAirportsAdapter extends RecyclerView.Adapter<FindAirportsAdapte
                 btnAddAirport.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        FlightsActivity.departureAirports.add(airport);
+                        chosenAirports.add(airport);
                         btnAddAirport.setText("Added");
                         btnAddAirport.setBackgroundColor(context.getResources().getColor(R.color.quantum_grey));
                         airport.flipChosen();

@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.travel.AirportSearchActivity;
-import com.codepath.travel.FlightsActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.models.Airport;
 
@@ -70,7 +69,7 @@ public class ChosenAirportsAdapter extends RecyclerView.Adapter<ChosenAirportsAd
             btnAddAirport.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FlightsActivity.departureAirports.remove(airport);
+                    airports.remove(airport);
                     airport.flipChosen();
                     AirportSearchActivity.refreshChosenAirports();
                     AirportSearchActivity.refreshFoundAirports();

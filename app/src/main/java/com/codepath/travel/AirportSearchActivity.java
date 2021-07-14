@@ -38,6 +38,7 @@ public class AirportSearchActivity extends AppCompatActivity {
     private RecyclerView rvChosenAirports;
     private RecyclerView rvFindAirport;
     private Button btnClearChosen;
+    private ArrayList<Airport> chosenAirportsList;
     private ArrayList<Airport> foundAirports;
     private static FindAirportsAdapter foundAdapter;
     private static ChosenAirportsAdapter chosenAdapter;
@@ -47,6 +48,12 @@ public class AirportSearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_airport_search);
+
+        if(getIntent().getBooleanExtra(getResources().getString(R.string.from_departure), true)) {
+            chosenAirportsList = FlightsActivity.departureAirports;
+        } else {
+            chosenAirportsList = FlightsActivity.arrivalAirports;
+        }
 
         etSearch = findViewById(R.id.etSearch);
         btnSearch = findViewById(R.id.btnSearch);
@@ -68,24 +75,25 @@ public class AirportSearchActivity extends AppCompatActivity {
         btnClearChosen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (Airport airport : FlightsActivity.departureAirports) {
+                for (Airport airport : chosenAirportsList) {
                     airport.flipChosen();
                 }
-                FlightsActivity.departureAirports.clear();
+                chosenAirportsList.clear();
                 refreshChosenAirports();
                 refreshFoundAirports();
             }
         });
 
+        foundAirports = new ArrayList<>();
+        foundAdapter = new FindAirportsAdapter(this, foundAirports, chosenAirportsList);
+        chosenAdapter = new ChosenAirportsAdapter(this, chosenAirportsList);
+
         rvChosenAirports = findViewById(R.id.rvChosenAirports);
         rvFindAirport = findViewById(R.id.rvFindAirport);
 
-        foundAirports = new ArrayList<>();
-        foundAdapter = new FindAirportsAdapter(this, foundAirports);
         rvFindAirport.setLayoutManager(new LinearLayoutManager(this));
         rvFindAirport.setAdapter(foundAdapter);
 
-        chosenAdapter = new ChosenAirportsAdapter(this, FlightsActivity.departureAirports);
         rvChosenAirports.setLayoutManager(new LinearLayoutManager(this));
         rvChosenAirports.setAdapter(chosenAdapter);
     }
@@ -118,9 +126,9 @@ public class AirportSearchActivity extends AppCompatActivity {
             for (int i = 0; i < matchingPlaces.length(); i++) {
                 added = false;
                 JSONObject place = matchingPlaces.getJSONObject(i);
-                for (int j = 0; j < FlightsActivity.departureAirports.size(); j++) {
-                    if (FlightsActivity.departureAirports.get(j).getIATACode().equals(place.getString("PlaceId"))) {
-                        foundAirports.add(FlightsActivity.departureAirports.get(j));
+                for (int j = 0; j < chosenAirportsList.size(); j++) {
+                    if (chosenAirportsList.get(j).getIATACode().equals(place.getString("PlaceId"))) {
+                        foundAirports.add(chosenAirportsList.get(j));
                         added = true;
                         break;
                     }
