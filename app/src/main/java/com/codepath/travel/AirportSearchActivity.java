@@ -15,6 +15,7 @@ import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.codepath.travel.adapters.ChosenAirportsAdapter;
 import com.codepath.travel.adapters.FindAirportsAdapter;
 import com.codepath.travel.models.Airport;
 import com.google.gson.JsonArray;
@@ -37,7 +38,8 @@ public class AirportSearchActivity extends AppCompatActivity {
     private RecyclerView rvChosenAirports;
     private RecyclerView rvFindAirport;
     private ArrayList<Airport> foundAirports;
-    private FindAirportsAdapter foundAdapter;
+    private static FindAirportsAdapter foundAdapter;
+    private static ChosenAirportsAdapter chosenAdapter;
     private static String findQueryURL = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/autosuggest/v1.0/%1$s/%2$s/%3$s/?query=%4$s";
 
     @Override
@@ -69,6 +71,10 @@ public class AirportSearchActivity extends AppCompatActivity {
         foundAdapter = new FindAirportsAdapter(this, foundAirports);
         rvFindAirport.setLayoutManager(new LinearLayoutManager(this));
         rvFindAirport.setAdapter(foundAdapter);
+
+        chosenAdapter = new ChosenAirportsAdapter(this, FlightsActivity.departureAirports);
+        rvChosenAirports.setLayoutManager(new LinearLayoutManager(this));
+        rvChosenAirports.setAdapter(chosenAdapter);
     }
 
     private void findMatchingAirports(String queryName) {
@@ -108,6 +114,13 @@ public class AirportSearchActivity extends AppCompatActivity {
             Toast.makeText(AirportSearchActivity.this, "Unable to process airports", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
+    }
+
+    public static void refreshChosenAirports() {
+        chosenAdapter.notifyDataSetChanged();
+    }
+    public static void refreshFoundAirports() {
+        foundAdapter.notifyDataSetChanged();
     }
 
 }

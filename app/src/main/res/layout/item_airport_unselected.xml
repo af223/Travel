@@ -14,7 +14,7 @@
 
         <TextView
             android:id="@+id/tvAirportName"
-            android:layout_width="250dp"
+            android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:text="@string/airport"
             android:textAlignment="textStart"
@@ -24,7 +24,7 @@
 
         <Button
             android:id="@+id/btnAddAirport"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_toEndOf="@+id/tvAirportName"

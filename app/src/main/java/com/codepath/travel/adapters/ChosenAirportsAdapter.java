@@ -1,6 +1,7 @@
 package com.codepath.travel.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class FindAirportsAdapter extends RecyclerView.Adapter<FindAirportsAdapter.ViewHolder> {
+public class ChosenAirportsAdapter extends RecyclerView.Adapter<ChosenAirportsAdapter.ViewHolder> {
 
     private final Context context;
     private final List<Airport> airports;
 
-    public FindAirportsAdapter(Context context, List<Airport> airports) {
+    public ChosenAirportsAdapter(Context context, List<Airport> airports) {
         this.context = context;
         this.airports = airports;
     }
@@ -32,13 +33,13 @@ public class FindAirportsAdapter extends RecyclerView.Adapter<FindAirportsAdapte
     @NonNull
     @NotNull
     @Override
-    public FindAirportsAdapter.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+    public ChosenAirportsAdapter.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_airport_unselected, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull @NotNull FindAirportsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull @NotNull ChosenAirportsAdapter.ViewHolder holder, int position) {
         Airport airport = airports.get(position);
         holder.bind(airport);
     }
@@ -48,7 +49,7 @@ public class FindAirportsAdapter extends RecyclerView.Adapter<FindAirportsAdapte
         return airports.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView tvAirportName;
         private final TextView tvAirportCountry;
@@ -65,23 +66,16 @@ public class FindAirportsAdapter extends RecyclerView.Adapter<FindAirportsAdapte
         public void bind(Airport airport) {
             tvAirportName.setText(airport.getName());
             tvAirportCountry.setText(airport.getCountry());
-            if (airport.isChosen()) {
-                btnAddAirport.setText("Added");
-                btnAddAirport.setBackgroundColor(context.getResources().getColor(R.color.quantum_grey));
-            } else {
-                btnAddAirport.setText("Add");
-                btnAddAirport.setBackgroundColor(context.getResources().getColor(R.color.purple_500));
-                btnAddAirport.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        FlightsActivity.departureAirports.add(airport);
-                        btnAddAirport.setText("Added");
-                        btnAddAirport.setBackgroundColor(context.getResources().getColor(R.color.quantum_grey));
-                        airport.flipChosen();
-                        AirportSearchActivity.refreshChosenAirports();
-                    }
-                });
-            }
+            btnAddAirport.setText("Remove");
+            btnAddAirport.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FlightsActivity.departureAirports.remove(airport);
+                    airport.flipChosen();
+                    AirportSearchActivity.refreshChosenAirports();
+                    AirportSearchActivity.refreshFoundAirports();
+                }
+            });
         }
     }
 }
