@@ -19,6 +19,7 @@ import com.codepath.travel.adapters.ChosenAirportsAdapter;
 import com.codepath.travel.adapters.FindAirportsAdapter;
 import com.codepath.travel.models.Airport;
 import com.codepath.travel.models.Destination;
+import com.google.android.libraries.places.api.model.Place;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -144,8 +145,15 @@ public class AirportSearchActivity extends AppCompatActivity {
                     }
                 }
                 if (!added) {
-                    Airport airport = new Airport(place.getString("PlaceName") + " Airport",
-                            place.getString("PlaceId"), place.getString("CountryName"));
+                    Airport airport;
+                    if(place.getString("CountryId").equals(place.getString("PlaceId"))
+                            || place.getString("CityId").equals(place.getString("PlaceId"))) {
+                        airport = new Airport(place.getString("PlaceName") + " Airport (General)",
+                                place.getString("PlaceId"), place.getString("CountryName"));
+                    } else {
+                        airport = new Airport(place.getString("PlaceName") + " Airport",
+                                place.getString("PlaceId"), place.getString("CountryName"));
+                    }
                     foundAirports.add(airport);
                 }
             }
@@ -196,8 +204,15 @@ public class AirportSearchActivity extends AppCompatActivity {
                     }
                 }
                 if (!added && place.getString("CountryName").equals(getIntent().getStringExtra(Destination.KEY_COUNTRY))) {
-                    Airport airport = new Airport(place.getString("PlaceName") + " Airport",
-                            place.getString("PlaceId"), place.getString("CountryName"));
+                    Airport airport;
+                    if(place.getString("CountryId").equals(place.getString("PlaceId"))
+                            || place.getString("CityId").equals(place.getString("PlaceId"))) {
+                        airport = new Airport(place.getString("PlaceName") + " Airport (General)",
+                                place.getString("PlaceId"), place.getString("CountryName"));
+                    } else {
+                        airport = new Airport(place.getString("PlaceName") + " Airport",
+                                place.getString("PlaceId"), place.getString("CountryName"));
+                    }
                     foundAirports.add(airport);
                 }
             }
