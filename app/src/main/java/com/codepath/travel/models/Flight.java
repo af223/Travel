@@ -1,5 +1,8 @@
 package com.codepath.travel.models;
 
+import org.parceler.Parcel;
+
+@Parcel
 public class Flight {
 
     private String departAirportCode;
@@ -10,6 +13,8 @@ public class Flight {
     private String carrier;
     private String date;
     private Boolean isDirect;
+
+    public Flight() {}
 
     public Flight(String departAirportCode, String departAirportName, String arriveAirportCode,
                   String arriveAirportName, String flightCost, String carrier, String date, Boolean isDirect) {

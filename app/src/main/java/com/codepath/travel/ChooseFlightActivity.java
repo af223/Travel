@@ -1,11 +1,18 @@
 package com.codepath.travel;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
@@ -20,6 +27,7 @@ import com.google.gson.JsonObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -27,21 +35,67 @@ import java.util.Hashtable;
 
 import okhttp3.Headers;
 
+import static com.codepath.travel.FlightsActivity.CHOOSE_FLIGHT_REQUEST_CODE;
+
 public class ChooseFlightActivity extends AppCompatActivity {
 
     private static final String TAG = "ChooseFlightActivity";
     private RecyclerView rvFlights;
     private static String getRoutesURLBase = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/US/USD/en-US/%1$s/%2$s/anytime?inboundpartialdate=anytime";
+    private static CardView cvFlight;
+    private static Button btnConfirm;
+    private static TextView tvDepartAirport;
+    private static TextView tvArriveAirport;
+    private static TextView tvCost;
+    private static TextView tvAirline;
+    private static TextView tvDate;
+    private static Context context;
+    private static Flight chosenFlight;
     private ArrayList<Flight> flights;
     private FlightsAdapter adapter;
     private Dictionary<Integer, String> placesCode;
     private Dictionary<Integer, String> placesName;
     private Dictionary<Integer, String> carriers;
-    
+
+    public static void choose(Flight flight) {
+        chosenFlight = flight;
+        tvDepartAirport.setText(flight.getDepartAirportName());
+        tvArriveAirport.setText(flight.getArriveAirportName());
+        String formattedCost = "$" + flight.getFlightCost();
+        tvCost.setText(formattedCost);
+        tvAirline.setText(flight.getCarrier());
+        tvDate.setText(flight.getDate());
+        cvFlight.setVisibility(View.VISIBLE);
+        btnConfirm.setClickable(true);
+        btnConfirm.setBackgroundColor(getContext().getResources().getColor(R.color.purple_500));
+    }
+
+    private static Context getContext() {
+        return context;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_flight);
+
+        context = this;
+        cvFlight = findViewById(R.id.card_view);
+        btnConfirm = findViewById(R.id.btnConfirm);
+        tvDepartAirport = findViewById(R.id.tvDepartAirport);
+        tvArriveAirport = findViewById(R.id.tvArriveAirport);
+        tvCost = findViewById(R.id.tvCost);
+        tvAirline = findViewById(R.id.tvAirline);
+        tvDate = findViewById(R.id.tvDate);
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                setResult(RESULT_OK, intent);
+                intent.putExtra(Flight.class.getSimpleName(), Parcels.wrap(chosenFlight));
+                finish();
+            }
+        });
 
         placesCode = new Hashtable<>();
         placesName = new Hashtable<>();
@@ -102,7 +156,7 @@ public class ChooseFlightActivity extends AppCompatActivity {
                 String departAirportCode = placesCode.get(originId);
                 Integer destinationId = flightObject.getJSONObject("OutboundLeg").getInt("DestinationId");
                 String arriveAirportName = placesName.get(destinationId);
-                String arriveAirportCode = placesCode.get(originId);
+                String arriveAirportCode = placesCode.get(destinationId);
                 String date = flightObject.getJSONObject("OutboundLeg").getString("DepartureDate").substring(0, 10);
                 Flight flight = new Flight(departAirportCode, departAirportName, arriveAirportCode,
                         arriveAirportName, cost, carrier, date, isDirect);

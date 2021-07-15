@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.codepath.travel.ChooseFlightActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.models.Flight;
 
@@ -45,7 +46,7 @@ public class FlightsAdapter extends RecyclerView.Adapter<FlightsAdapter.ViewHold
         return flights.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final TextView tvDepartAirport;
         private final TextView tvArriveAirport;
@@ -61,6 +62,7 @@ public class FlightsAdapter extends RecyclerView.Adapter<FlightsAdapter.ViewHold
             tvCost = itemView.findViewById(R.id.tvCost);
             tvAirline = itemView.findViewById(R.id.tvAirline);
             tvDate = itemView.findViewById(R.id.tvDate);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Flight flight) {
@@ -70,6 +72,14 @@ public class FlightsAdapter extends RecyclerView.Adapter<FlightsAdapter.ViewHold
             tvCost.setText(formattedCost);
             tvAirline.setText(flight.getCarrier());
             tvDate.setText(flight.getDate());
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                ChooseFlightActivity.choose(flights.get(position));
+            }
         }
     }
 }

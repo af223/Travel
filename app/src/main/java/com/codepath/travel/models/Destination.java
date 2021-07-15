@@ -20,6 +20,9 @@ public class Destination extends ParseObject {
     public static final String KEY_DEPART_NAME = "departAirportName";
     public static final String KEY_ARRIVE_CODE = "arriveAirportCode";
     public static final String KEY_ARRIVE_NAME = "arriveAirportName";
+    public static final String KEY_COST = "flightCost";
+    public static final String KEY_CARRIER = "carrier";
+    public static final String KEY_DATE = "date";
 
     public String getUser() {
         return getString(KEY_USER);
@@ -115,6 +118,30 @@ public class Destination extends ParseObject {
 
     public void setArriveAirportName(String name) {
         put(KEY_ARRIVE_NAME, name);
+    }
+
+    public String getCost() {
+        return getString(KEY_COST);
+    }
+
+    public void setCost(String cost) {
+        put(KEY_COST, cost);
+    }
+
+    public String getCarrier() {
+        return getString(KEY_CARRIER);
+    }
+
+    public void setCarrier(String carrier) {
+        put(KEY_CARRIER, carrier);
+    }
+
+    public String getDate() {
+        return getString(KEY_DATE);
+    }
+
+    public void setDate(String date) {
+        put(KEY_DATE, date);
     }
 
     public LatLng getCoords() {

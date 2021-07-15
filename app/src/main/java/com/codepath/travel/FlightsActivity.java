@@ -21,6 +21,9 @@ import com.codepath.travel.models.Flight;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -29,7 +32,7 @@ import okhttp3.Headers;
 public class FlightsActivity extends AppCompatActivity {
 
     private static final String TAG = "FlightsActivity";
-    private static final int CHOOSE_FLIGHT_REQUEST_CODE = 24;
+    public static final int CHOOSE_FLIGHT_REQUEST_CODE = 24;
     public static ArrayList<Airport> departureAirports = new ArrayList<>();
     public static ArrayList<Airport> arrivalAirports = new ArrayList<>();
     private TextView tvDepartureAirport;
@@ -37,6 +40,7 @@ public class FlightsActivity extends AppCompatActivity {
     private Button btnDepart;
     private Button btnArrive;
     private Button btnToFlights;
+    private Destination thisDestination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +84,7 @@ public class FlightsActivity extends AppCompatActivity {
                     Toast.makeText(FlightsActivity.this, "Unable to load destination", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                thisDestination = destination;
                 if (destination.getDepartAirportName() != null) {
                     tvDepartureAirport.setText(destination.getDepartAirportName());
                     btnDepart.setText(getResources().getString(R.string.change_depart_airport));
@@ -115,9 +120,33 @@ public class FlightsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == CHOOSE_FLIGHT_REQUEST_CODE) {
-                Toast.makeText(FlightsActivity.this, "from departure!", Toast.LENGTH_SHORT).show();
+                Flight chosenFlight = Parcels.unwrap(data.getParcelableExtra(Flight.class.getSimpleName()));
+                saveFlightData(chosenFlight);
+                tvDepartureAirport.setText(chosenFlight.getDepartAirportName());
+                tvArrivalAirport.setText(chosenFlight.getArriveAirportName());
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void saveFlightData(Flight chosenFlight) {
+        thisDestination.setDepartAirportCode(chosenFlight.getDepartAirportCode());
+        thisDestination.setDepartAirportName(chosenFlight.getDepartAirportName());
+        thisDestination.setArriveAirportCode(chosenFlight.getArriveAirportCode());
+        thisDestination.setArriveAirportName(chosenFlight.getArriveAirportName());
+        thisDestination.setCost(chosenFlight.getFlightCost());
+        thisDestination.setCarrier(chosenFlight.getCarrier());
+        thisDestination.setDate(chosenFlight.getDate());
+        thisDestination.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Error while saving flight: ", e);
+                    Toast.makeText(FlightsActivity.this, "Error while saving flight", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(FlightsActivity.this, "flight chosen!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }
