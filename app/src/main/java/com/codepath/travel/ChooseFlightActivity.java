@@ -125,6 +125,7 @@ public class ChooseFlightActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
                         try {
+                            // TODO: put into async task with progress spinner
                             processPlaces(json.jsonObject.getJSONArray("Places"));
                             processCarriers(json.jsonObject.getJSONArray("Carriers"));
                             processFlights(json.jsonObject.getJSONArray("Quotes"));

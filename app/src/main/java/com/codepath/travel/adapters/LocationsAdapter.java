@@ -77,7 +77,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
 
             FrameLayout view = (FrameLayout) mFrameLayout;
             FrameLayout frame = new FrameLayout(context);
-            frame.setId(uniqueId); //have to set unique id, TODO: fix collision problem
+            frame.setId(uniqueId);
             uniqueId++;
 
             int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 160, context.getResources().getDisplayMetrics());

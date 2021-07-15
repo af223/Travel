@@ -144,6 +144,7 @@ public class AirportSearchActivity extends AppCompatActivity {
                 }
                 if (!added) {
                     Airport airport;
+                    // TODO: combine w other method using boolean
                     if(place.getString("CountryId").equals(place.getString("PlaceId"))
                             || place.getString("CityId").equals(place.getString("PlaceId"))) {
                         airport = new Airport(place.getString("PlaceName") + " Airport (General)",
@@ -165,6 +166,7 @@ public class AirportSearchActivity extends AppCompatActivity {
         }
     }
 
+    // TODO: method overloading
     private void loadSuggestedAirports() {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestHeaders headers = new RequestHeaders();
