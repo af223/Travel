@@ -171,7 +171,11 @@ public class ChooseFlightActivity extends AppCompatActivity {
     private void processPlaces(JSONArray jsonArray) {
         try {
             for (int i = 0; i < jsonArray.length(); i++) {
-                placesCode.put(jsonArray.getJSONObject(i).getInt("PlaceId"), jsonArray.getJSONObject(i).getString("SkyscannerCode"));
+                if (jsonArray.getJSONObject(i).has("IataCode")) {
+                    placesCode.put(jsonArray.getJSONObject(i).getInt("PlaceId"), jsonArray.getJSONObject(i).getString("IataCode"));
+                } else {
+                    placesCode.put(jsonArray.getJSONObject(i).getInt("PlaceId"), jsonArray.getJSONObject(i).getString("SkyscannerCode"));
+                }
                 placesName.put(jsonArray.getJSONObject(i).getInt("PlaceId"), jsonArray.getJSONObject(i).getString("Name"));
             }
         } catch (JSONException e) {

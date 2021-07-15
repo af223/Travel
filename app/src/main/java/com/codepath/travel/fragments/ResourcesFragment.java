@@ -12,6 +12,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.codepath.travel.FlightsActivity;
+import com.codepath.travel.HotelsActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.models.Destination;
 
@@ -23,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 public class ResourcesFragment extends Fragment {
 
     private CardView toFlights;
+    private CardView toHotels;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +41,16 @@ public class ResourcesFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getContext(), FlightsActivity.class);
+                i.putExtra(Destination.KEY_OBJECT_ID, bundle.getString(Destination.KEY_OBJECT_ID));
+                getContext().startActivity(i);
+            }
+        });
+
+        toHotels = view.findViewById(R.id.card_view_hotels);
+        toHotels.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getContext(), HotelsActivity.class);
                 i.putExtra(Destination.KEY_OBJECT_ID, bundle.getString(Destination.KEY_OBJECT_ID));
                 getContext().startActivity(i);
             }
