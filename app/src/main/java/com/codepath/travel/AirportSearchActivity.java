@@ -40,7 +40,6 @@ public class AirportSearchActivity extends AppCompatActivity {
     private RecyclerView rvChosenAirports;
     private RecyclerView rvFindAirport;
     private Button btnClearChosen;
-    private Boolean loadingSuggested;
     private ArrayList<Airport> chosenAirportsList;
     private ArrayList<Airport> foundAirports;
 
@@ -104,7 +103,6 @@ public class AirportSearchActivity extends AppCompatActivity {
 
         if (!getIntent().getBooleanExtra(getResources().getString(R.string.from_departure), true)) {
             loadSuggestedAirports();
-            loadingSuggested = true;
         }
     }
 

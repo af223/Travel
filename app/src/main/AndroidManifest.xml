@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Travel">
-        <activity android:name=".AirportSearchActivity"></activity>
+        <activity android:name=".ChooseFlightActivity"></activity>
+        <activity android:name=".AirportSearchActivity" />
         <activity android:name=".FlightsActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

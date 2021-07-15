@@ -17,6 +17,7 @@ import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.models.Airport;
 import com.codepath.travel.models.Destination;
+import com.codepath.travel.models.Flight;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -28,8 +29,7 @@ import okhttp3.Headers;
 public class FlightsActivity extends AppCompatActivity {
 
     private static final String TAG = "FlightsActivity";
-    private static final int DEPARTURE_AIRPORT_REQUEST_CODE = 24;
-    private static final int ARRIVAL_AIRPORT_REQUEST_CODE = 88;
+    private static final int CHOOSE_FLIGHT_REQUEST_CODE = 24;
     public static ArrayList<Airport> departureAirports = new ArrayList<>();
     public static ArrayList<Airport> arrivalAirports = new ArrayList<>();
     private TextView tvDepartureAirport;
@@ -47,9 +47,27 @@ public class FlightsActivity extends AppCompatActivity {
         tvArrivalAirport = findViewById(R.id.tvArrivalAirport);
         btnDepart = findViewById(R.id.btnDepart);
         btnArrive = findViewById(R.id.btnArrive);
-        btnToFlights = findViewById(R.id.btnFlights);
+        btnToFlights = findViewById(R.id.btnToFlights);
 
+        departureAirports.clear();
+        arrivalAirports.clear();
         getChosenDestination();
+
+        btnToFlights.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (departureAirports.isEmpty()) {
+                    Toast.makeText(FlightsActivity.this, "Need to select at least one departure airport", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (arrivalAirports.isEmpty()) {
+                    Toast.makeText(FlightsActivity.this, "Need to select at least one destination airport", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent i = new Intent(FlightsActivity.this, ChooseFlightActivity.class);
+                startActivityForResult(i, CHOOSE_FLIGHT_REQUEST_CODE);
+            }
+        });
     }
 
     private void getChosenDestination() {
@@ -75,7 +93,7 @@ public class FlightsActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         Intent i = new Intent(FlightsActivity.this, AirportSearchActivity.class);
                         i.putExtra(getResources().getString(R.string.from_departure), true);
-                        startActivityForResult(i, DEPARTURE_AIRPORT_REQUEST_CODE);
+                        startActivity(i);
                     }
                 });
                 btnArrive.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +104,7 @@ public class FlightsActivity extends AppCompatActivity {
                         i.putExtra(Destination.KEY_LOCAL, destination.getLocality());
                         i.putExtra(Destination.KEY_ADMIN1, destination.getAdminArea1());
                         i.putExtra(Destination.KEY_COUNTRY, destination.getCountry());
-                        startActivityForResult(i, ARRIVAL_AIRPORT_REQUEST_CODE);
+                        startActivity(i);
                     }
                 });
             }
@@ -96,33 +114,10 @@ public class FlightsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == DEPARTURE_AIRPORT_REQUEST_CODE) {
+            if (requestCode == CHOOSE_FLIGHT_REQUEST_CODE) {
                 Toast.makeText(FlightsActivity.this, "from departure!", Toast.LENGTH_SHORT).show();
-            } else if (requestCode == ARRIVAL_AIRPORT_REQUEST_CODE) {
-                Toast.makeText(FlightsActivity.this, "From arrival!", Toast.LENGTH_SHORT).show();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void getFlights() {
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestHeaders headers = new RequestHeaders();
-        RequestParams params = new RequestParams();
-        headers.put("x-rapidapi-key", getResources().getString(R.string.rapid_api_key));
-        headers.put("x-rapidapi-host", "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com");
-        //client.get("https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/US/USD/en-US/SFO-sky/ORD-sky/anytime?inboundpartialdate=anytime", //query routes
-        client.get("https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/autosuggest/v1.0/UK/GBP/en-GB/?query=Czechia", //query places
-                headers, params, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Headers headers, JSON json) {
-                        Log.i("Costs", "worked");
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                        Log.e("Costs", "failed");
-                    }
-                });
     }
 }
