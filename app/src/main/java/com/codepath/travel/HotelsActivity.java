@@ -9,7 +9,11 @@ import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.codepath.travel.models.Destination;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 
 import java.util.Map;
 
@@ -23,13 +27,17 @@ import okio.ByteString;
 public class HotelsActivity extends AppCompatActivity {
 
     private static final String AMADEUS_ACCESS_URL = "https://test.api.amadeus.com/v1/security/oauth2/token";
+    private static final String AMADEUS_HOTEL_URL = "https://test.api.amadeus.com/v2/shopping/hotel-offers";
     private static final String TAG = "HotelsActivity";
+    private Destination currDestination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hotels);
-        
+
+        getChosenDestination();
+
         //requestAccessToken(); last : 4:13 PM
     }
 
@@ -61,5 +69,40 @@ public class HotelsActivity extends AppCompatActivity {
             }
         };
         okHttpClient.newCall(request).enqueue(callback);
+    }
+
+    private void getChosenDestination() {
+        ParseQuery<Destination> query = ParseQuery.getQuery(Destination.class);
+        query.getInBackground(getIntent().getStringExtra(Destination.KEY_OBJECT_ID), new GetCallback<Destination>() {
+            @Override
+            public void done(Destination destination, ParseException e) {
+                currDestination = destination;
+                findHotels(destination);
+            }
+        });
+    }
+
+    private void findHotels(Destination destination) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestHeaders headers = new RequestHeaders();
+        RequestParams params = new RequestParams();
+        String authorization = "Bearer " + getResources().getString(R.string.amadeus_token);
+        headers.put("authorization", authorization);
+        params.put("latitude", destination.getLatitude());
+        params.put("longitude", destination.getLongitude());
+        params.put("radius", "50");
+        params.put("radiusUnit", "MILE");
+        client.get(AMADEUS_HOTEL_URL, headers, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Log.i(TAG, "success");
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e(TAG, "ERROR: ", throwable);
+                Log.e(TAG, response);
+            }
+        });
     }
 }
