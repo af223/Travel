@@ -39,7 +39,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
 
     private final Context context;
     private final List<Destination> locations;
-    private static int uniqueId = 1010101;
+    private static int uniqueId = 1300100;
 
     public LocationsAdapter(Context context, List<Destination> locations) {
         this.context = context;
@@ -125,27 +125,6 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
                 safeAddToBundle(destination, Destination.KEY_ADMIN1, bundle);
                 safeAddToBundle(destination, Destination.KEY_ADMIN2, bundle);
                 safeAddToBundle(destination, Destination.KEY_COUNTRY, bundle);
-
-//                if (destination.getLocality() != null) {
-//                    bundle.putString(Destination.KEY_LOCAL, destination.getLocality());
-//                } else {
-//                    bundle.putString(Destination.KEY_LOCAL, "");
-//                }
-//                if (destination.getAdminArea1() != null) {
-//                    bundle.putString(Destination.KEY_ADMIN1, destination.getAdminArea1());
-//                } else {
-//                    bundle.putString(Destination.KEY_ADMIN1, "");
-//                }
-//                if (destination.getAdminArea2() != null) {
-//                    bundle.putString(Destination.KEY_ADMIN2, destination.getAdminArea2());
-//                } else {
-//                    bundle.putString(Destination.KEY_ADMIN2, "");
-//                }
-//                if (destination.getCountry() != null) {
-//                    bundle.putString(Destination.KEY_COUNTRY, destination.getCountry());
-//                } else {
-//                    bundle.putString(Destination.KEY_COUNTRY, "");
-//                }
                 bundle.putString(Destination.KEY_OBJECT_ID, destination.getObjectId());
                 fragment.setArguments(bundle);
                 MainActivity.fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
