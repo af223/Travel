@@ -6,21 +6,79 @@
     android:layout_height="match_parent"
     tools:context=".fragments.CostsFragment">
 
-    <Button
-        android:id="@+id/btnFlights"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/etExpense"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="150dp"
-        android:text="Get Flights" />
+        android:layout_above="@+id/etMoney"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="5dp"
+        android:ems="10"
+        android:hint="Souvenirs"
+        android:inputType="textPersonName" />
 
-    <TextView
-        android:id="@+id/tvText"
+    <EditText
+        android:id="@+id/etMoney"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginBottom="16dp"
+        android:layout_toStartOf="@+id/btnAddCost"
+        android:ems="10"
+        android:hint="$0.00"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/btnAddCost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Add expense" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvExpenses"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/tvTotal"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:text="Costs summary of trip planned by user" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="5dp" />
+
+    <TextView
+        android:id="@+id/tvTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/etExpense"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="10dp"
+        android:text="Total"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvTotalCost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/etExpense"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="10dp"
+        android:text="$0.00"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>
