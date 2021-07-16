@@ -1,9 +1,232 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:foregroundTint="#000000"
     tools:context=".HotelsActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tvHotelName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="3dp"
+                android:text="Select a hotel"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <RatingBar
+                android:id="@+id/rbRating"
+                style="@style/Widget.AppCompat.RatingBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvHotelName"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="3dp"
+                android:indeterminateTint="#736767"
+                android:progressBackgroundTint="#4A4343"
+                android:progressTint="#FFC107" />
+
+            <TextView
+                android:id="@+id/tvPhone"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rbRating"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@+id/ivPhone"
+                android:text="N/A" />
+
+            <ImageView
+                android:id="@+id/ivPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rbRating"
+                android:layout_alignParentEnd="false"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:srcCompat="@drawable/ic_baseline_phone_24"
+                app:tint="#000000" />
+
+            <ImageView
+                android:id="@+id/ivMail"
+                android:layout_width="23dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ivPhone"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:padding="0dp"
+                app:srcCompat="@android:drawable/ic_dialog_email"
+                app:tint="#000000" />
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvPhone"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="13dp"
+                android:layout_toEndOf="@+id/ivPhone"
+                android:text="N/A" />
+
+            <Button
+                android:id="@+id/btnSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="8dp"
+                android:text="Select" />
+
+            <ImageView
+                android:id="@+id/ivAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvEmail"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="false"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="13dp"
+                app:srcCompat="@drawable/ic_baseline_location_on_24"
+                app:tint="#000000" />
+
+            <TextView
+                android:id="@+id/tvAddress"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvEmail"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="13dp"
+                android:layout_toEndOf="@+id/ivPhone"
+                android:text="N/A" />
+
+            <TextView
+                android:id="@+id/tvIn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvHotelName"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@+id/tvPhone"
+                android:text="Checkin:"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCheckInDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvHotelName"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@+id/tvOut"
+                android:text="N/A" />
+
+            <TextView
+                android:id="@+id/tvOut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvIn"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@+id/tvPhone"
+                android:text="Checkout:"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCheckOutDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvIn"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@+id/tvOut"
+                android:text="N/A" />
+
+            <TextView
+                android:id="@+id/tvBeds"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvOut"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@+id/tvPhone"
+                android:text="Beds:"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvNumBeds"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvOut"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@+id/tvBeds"
+                android:text="N/A" />
+
+            <TextView
+                android:id="@+id/tvCostText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvBeds"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@+id/tvPhone"
+                android:text="Cost:"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvBeds"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@+id/tvCostText"
+                android:text="N/A" />
+
+            <TextView
+                android:id="@+id/tvDescription"
+                android:layout_width="275dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvAddress"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="false"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="N/A" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_below="@+id/card_view" />
+
+</RelativeLayout>

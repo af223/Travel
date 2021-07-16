@@ -23,6 +23,13 @@ public class Destination extends ParseObject {
     public static final String KEY_COST = "flightCost";
     public static final String KEY_CARRIER = "carrier";
     public static final String KEY_DATE = "date";
+    public static final String KEY_HOTEL_NAME = "hotelName";
+    public static final String KEY_HOTEL_LAT = "hotelLatitude";
+    public static final String KEY_HOTEL_LONG = "hotelLongitude";
+    public static final String KEY_HOTEL_COST = "hotelCost";
+    public static final String KEY_HOTEL_ADDRESS = "hotelAddress";
+    public static final String KEY_HOTEL_PHONE = "hotelPhone";
+    public static final String KEY_HOTEL_DESCRIPTION = "hotelDescription";
 
     public String getUser() {
         return getString(KEY_USER);
@@ -142,6 +149,62 @@ public class Destination extends ParseObject {
 
     public void setDate(String date) {
         put(KEY_DATE, date);
+    }
+
+    public String getHotelName() {
+        return getString(KEY_HOTEL_NAME);
+    }
+
+    public void setHotelName(String name) {
+        put(KEY_HOTEL_NAME, name);
+    }
+
+    public String getHotelLat() {
+        return getString(KEY_HOTEL_LAT);
+    }
+
+    public void setHotelLat(String latitude) {
+        put(KEY_HOTEL_LAT, latitude);
+    }
+
+    public String getHotelLong() {
+        return getString(KEY_HOTEL_LONG);
+    }
+
+    public void setHotelLong(String longitude) {
+        put(KEY_HOTEL_LONG, longitude);
+    }
+
+    public String getHotelCost() {
+        return getString(KEY_HOTEL_COST);
+    }
+
+    public void setHotelCost(String cost) {
+        put(KEY_HOTEL_COST, cost);
+    }
+
+    public String getHotelAddress() {
+        return getString(KEY_HOTEL_ADDRESS);
+    }
+
+    public void setHotelAddress(String address) {
+        put(KEY_HOTEL_ADDRESS, address);
+    }
+
+    public String getHotelPhone() {
+        return getString(KEY_HOTEL_PHONE);
+    }
+
+    public void setHotelPhone(String phone) {
+        put(KEY_HOTEL_PHONE, phone);
+    }
+
+    public String getHotelDescription() {
+        return getString(KEY_HOTEL_DESCRIPTION);
+    }
+
+    public void setHotelDescription(String description) {
+        put(KEY_HOTEL_DESCRIPTION, description);
     }
 
     public LatLng getCoords() {
