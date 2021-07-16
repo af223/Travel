@@ -158,7 +158,7 @@ public class MapFragment extends Fragment {
 
     private void showDestinationAlertDialog(final LatLng latLng, String address) {
         View messageView = LayoutInflater.from(getContext()).inflate(R.layout.map_message_item, null);
-        tvLocation = messageView.findViewById(R.id.tvLocation);
+        tvLocation = messageView.findViewById(R.id.etEditCost);
         tvLocation.setText(address);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
