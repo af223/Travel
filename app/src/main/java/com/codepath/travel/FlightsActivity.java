@@ -11,10 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.codepath.asynchttpclient.AsyncHttpClient;
-import com.codepath.asynchttpclient.RequestHeaders;
-import com.codepath.asynchttpclient.RequestParams;
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.models.Airport;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Flight;
@@ -27,12 +23,17 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
-import okhttp3.Headers;
+/**
+ * This activity allows the user navigate to find and select departure and arrival airports and to see
+ * and select the flight.
+ * <p>
+ * This activity is started when the user chooses "Flights" in ResourcesFragment.java.
+ */
 
 public class FlightsActivity extends AppCompatActivity {
 
+    private static final int CHOOSE_FLIGHT_REQUEST_CODE = 24;
     private static final String TAG = "FlightsActivity";
-    public static final int CHOOSE_FLIGHT_REQUEST_CODE = 24;
     public static ArrayList<Airport> departureAirports = new ArrayList<>();
     public static ArrayList<Airport> arrivalAirports = new ArrayList<>();
     private TextView tvDepartureAirport;

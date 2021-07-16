@@ -24,6 +24,9 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
+ * This fragment displays the list of locations that the user plans to visit. The user navigates to this
+ * fragment by clicking on the pin/marker icon in the bottom navigation. Clicking on a location here
+ * takes the user to the ResourcesFragment for that location.
  */
 public class LocationsFragment extends Fragment {
 

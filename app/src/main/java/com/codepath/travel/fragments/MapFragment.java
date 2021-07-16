@@ -45,19 +45,27 @@ import java.util.Arrays;
 
 import okhttp3.Headers;
 
+/**
+ * A simple {@link Fragment} subclass.
+ * This fragment displays a map and search bar. This is the fragment the user first sees when opening the app.
+ * The user can select a location by long clicking on the map, or by searching for a location and choosing
+ * one of the autocomplete results.
+ */
+
 public class MapFragment extends Fragment {
 
     private static final String revGeocodeURL = "https://maps.googleapis.com/maps/api/geocode/json";
     private static final String TAG = "MapsFragment";
+    private static GoogleMap map;
     private TextView tvLocation;
     private JSONObject chosenLocation;
-    private static GoogleMap map;
     private AutocompleteSupportFragment autocompleteFragment;
 
-    private OnMapReadyCallback callback = new OnMapReadyCallback() {
+    private final OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             map = googleMap;
+            // TODO: start map at user's location
             LatLng sydney = new LatLng(-34, 151);
             googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
@@ -88,6 +96,7 @@ public class MapFragment extends Fragment {
             mapFragment.getMapAsync(callback);
         }
 
+        // Google Places API (Place Autocomplete)
         if (!Places.isInitialized()) {
             Places.initialize(getContext(), getResources().getString(R.string.maps_api_key));
         }
@@ -114,12 +123,13 @@ public class MapFragment extends Fragment {
         });
     }
 
+    // Retrieve city name based on selected coordinates using Google Geocode API
     private void reverseGeocode(LatLng coords) {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("latlng", formatLatlng(coords));
         params.put("key", getResources().getString(R.string.maps_api_key));
-        params.put("location_type", "APPROXIMATE");
+        params.put("location_type", "APPROXIMATE"); // Retrieve an area rather than street address
         params.put("language", "en");
         client.get(revGeocodeURL, params, new JsonHttpResponseHandler() {
             @Override
@@ -127,6 +137,7 @@ public class MapFragment extends Fragment {
                 JSONObject jsonObject = json.jsonObject;
                 try {
                     JSONArray results = jsonObject.getJSONArray("results");
+                    // Choosing first of returned addresses gives most specific address available
                     chosenLocation = results.getJSONObject(0);
                     String address = chosenLocation.getString("formatted_address");
                     showDestinationAlertDialog(coords, address);
@@ -141,7 +152,6 @@ public class MapFragment extends Fragment {
                 Toast.makeText(getContext(), "Unable to find a location", Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Geocode API call failed", throwable);
                 Log.e(TAG, "status code: " + statusCode);
-                Log.e(TAG, response);
             }
         });
     }
@@ -171,7 +181,9 @@ public class MapFragment extends Fragment {
                 });
         alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "NO",
                 new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) { dialog.cancel(); }
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
                 });
         alertDialog.show();
     }
@@ -186,7 +198,7 @@ public class MapFragment extends Fragment {
             for (int i = 0; i < components.length(); i++) {
                 JSONObject place = components.getJSONObject(i);
                 JSONArray types = place.getJSONArray("types");
-                for(int j = 0; j < types.length(); j++) {
+                for (int j = 0; j < types.length(); j++) {
                     switch (types.getString(j)) {
                         case "administrative_area_level_1":
                             dest.setAdminArea1(place.getString("long_name"));
@@ -223,6 +235,6 @@ public class MapFragment extends Fragment {
     }
 
     private String formatLatlng(LatLng coords) {
-        return String.valueOf(coords.latitude) + "," + String.valueOf(coords.longitude);
+        return coords.latitude + "," + coords.longitude;
     }
 }

@@ -1,19 +1,19 @@
 package com.codepath.travel;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Parcel;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
@@ -22,7 +22,6 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.adapters.FlightsAdapter;
 import com.codepath.travel.models.Airport;
 import com.codepath.travel.models.Flight;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +34,13 @@ import java.util.Hashtable;
 
 import okhttp3.Headers;
 
-import static com.codepath.travel.FlightsActivity.CHOOSE_FLIGHT_REQUEST_CODE;
+/**
+ * This activity allows the user to see all flights from their chosen departure airports landing in
+ * their chosen arrival airports. The user can choose a ticket by clicking on it, then clicking the confirm
+ * button, at which point they're directed back to FlightsActivity.java and the data is stored on Parse.
+ * <p>
+ * This activity appears when the user clicks the "see flights" buttons from FlightsActivity.java.
+ */
 
 public class ChooseFlightActivity extends AppCompatActivity {
 
@@ -50,6 +55,7 @@ public class ChooseFlightActivity extends AppCompatActivity {
     private static TextView tvAirline;
     private static TextView tvDate;
     private static Context context;
+    private ProgressBar pbFlights;
     private static Flight chosenFlight;
     private ArrayList<Flight> flights;
     private FlightsAdapter adapter;
@@ -57,6 +63,7 @@ public class ChooseFlightActivity extends AppCompatActivity {
     private Dictionary<Integer, String> placesName;
     private Dictionary<Integer, String> carriers;
 
+    // User has selected a ticket, but not clicked confirm yet
     public static void choose(Flight flight) {
         chosenFlight = flight;
         tvDepartAirport.setText(flight.getDepartAirportName());
@@ -87,6 +94,7 @@ public class ChooseFlightActivity extends AppCompatActivity {
         tvCost = findViewById(R.id.tvCost);
         tvAirline = findViewById(R.id.tvAirline);
         tvDate = findViewById(R.id.tvDate);
+        pbFlights = findViewById(R.id.pbFlights);
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,6 +115,7 @@ public class ChooseFlightActivity extends AppCompatActivity {
         rvFlights.setLayoutManager(new LinearLayoutManager(this));
         rvFlights.setAdapter(adapter);
 
+        pbFlights.setVisibility(View.VISIBLE);
         for (Airport originAirport : FlightsActivity.departureAirports) {
             for (Airport destinationAirport : FlightsActivity.arrivalAirports) {
                 getFlights(originAirport.getIATACode(), destinationAirport.getIATACode());
@@ -125,11 +134,12 @@ public class ChooseFlightActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
                         try {
-                            // TODO: put into async task with progress spinner
                             processPlaces(json.jsonObject.getJSONArray("Places"));
                             processCarriers(json.jsonObject.getJSONArray("Carriers"));
                             processFlights(json.jsonObject.getJSONArray("Quotes"));
+                            pbFlights.setVisibility(View.GONE);
                             adapter.notifyDataSetChanged();
+
                         } catch (JSONException e) {
                             Log.e(TAG, "unable to parse response", e);
                             e.printStackTrace();
@@ -142,31 +152,6 @@ public class ChooseFlightActivity extends AppCompatActivity {
                         Toast.makeText(ChooseFlightActivity.this, "Unable to get flights", Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-
-    private void processFlights(JSONArray jsonArray) {
-        try {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject flightObject = jsonArray.getJSONObject(i);
-                Boolean isDirect = flightObject.getBoolean("Direct");
-                String cost = String.valueOf(flightObject.getInt("MinPrice"));
-                JSONArray carrierIds = flightObject.getJSONObject("OutboundLeg").getJSONArray("CarrierIds");
-                String carrier = carriers.get(carrierIds.get(0));
-                Integer originId = flightObject.getJSONObject("OutboundLeg").getInt("OriginId");
-                String departAirportName = placesName.get(originId);
-                String departAirportCode = placesCode.get(originId);
-                Integer destinationId = flightObject.getJSONObject("OutboundLeg").getInt("DestinationId");
-                String arriveAirportName = placesName.get(destinationId);
-                String arriveAirportCode = placesCode.get(destinationId);
-                String date = flightObject.getJSONObject("OutboundLeg").getString("DepartureDate").substring(0, 10);
-                Flight flight = new Flight(departAirportCode, departAirportName, arriveAirportCode,
-                        arriveAirportName, cost, carrier, date, isDirect);
-                flights.add(flight);
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "Unable to processFlights", e);
-            e.printStackTrace();
-        }
     }
 
     private void processPlaces(JSONArray jsonArray) {
@@ -192,6 +177,31 @@ public class ChooseFlightActivity extends AppCompatActivity {
             }
         } catch (JSONException e) {
             Log.e(TAG, "Unable to process carriers", e);
+            e.printStackTrace();
+        }
+    }
+
+    private void processFlights(JSONArray jsonArray) {
+        try {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject flightObject = jsonArray.getJSONObject(i);
+                Boolean isDirect = flightObject.getBoolean("Direct");
+                String cost = String.valueOf(flightObject.getInt("MinPrice"));
+                JSONArray carrierIds = flightObject.getJSONObject("OutboundLeg").getJSONArray("CarrierIds");
+                String carrier = carriers.get(carrierIds.get(0));
+                Integer originId = flightObject.getJSONObject("OutboundLeg").getInt("OriginId");
+                String departAirportName = placesName.get(originId);
+                String departAirportCode = placesCode.get(originId);
+                Integer destinationId = flightObject.getJSONObject("OutboundLeg").getInt("DestinationId");
+                String arriveAirportName = placesName.get(destinationId);
+                String arriveAirportCode = placesCode.get(destinationId);
+                String date = flightObject.getJSONObject("OutboundLeg").getString("DepartureDate").substring(0, 10);
+                Flight flight = new Flight(departAirportCode, departAirportName, arriveAirportCode,
+                        arriveAirportName, cost, carrier, date, isDirect);
+                flights.add(flight);
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Unable to processFlights", e);
             e.printStackTrace();
         }
     }

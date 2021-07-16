@@ -30,6 +30,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * This adapter is for the RecylerView in LocationsFragment that displays the list of destinations that
+ * the user wants to plan to visit. Clicking on an item (one of the locations) takes them to ResourcesFragment.
+ */
+
 public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.ViewHolder> {
 
     private final Context context;
@@ -75,8 +80,15 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
         public void bind(Destination destination) {
             tvName.setText(destination.getFormattedLocationName());
 
+            // Add a FrameLayout in item_location to hold a different Google Maps fragment in each item
+            // in order to display the pinned/marked location of the destination for each destination
             FrameLayout view = (FrameLayout) mFrameLayout;
             FrameLayout frame = new FrameLayout(context);
+            // To use the newly created frame, first must assign it a unique Resource ID.
+            // Resource IDs are assigned at build time, with layouts in the 10_____ [7 digits] range,
+            // in ascending/consecutive order. 1010101 is an arbitrary safe number, as the Resource IDs
+            // of the layouts assigned at build time are around 1000___
+            // Source: https://stackoverflow.com/questions/6517151/how-does-the-mapping-between-android-resources-and-resources-id-work
             frame.setId(uniqueId);
             uniqueId++;
 
@@ -87,13 +99,13 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
             view.addView(frame);
 
             GoogleMapOptions options = new GoogleMapOptions();
-            options.liteMode(true);
+            options.liteMode(true); // for faster loading, static maps suffice here
             SupportMapFragment mapFrag = SupportMapFragment.newInstance(options);
 
             mapFrag.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(@NonNull @NotNull GoogleMap googleMap) {
-                    googleMap.addMarker(new MarkerOptions().position(destination.getCoords()).title("Marker in Sydney"));
+                    googleMap.addMarker(new MarkerOptions().position(destination.getCoords()));
                     googleMap.moveCamera(CameraUpdateFactory.newLatLng(destination.getCoords()));
                     googleMap.moveCamera(CameraUpdateFactory.zoomBy(3));
                 }
@@ -109,29 +121,42 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
                 Fragment fragment = new ResourcesFragment();
                 Bundle bundle = new Bundle();
                 Destination destination = locations.get(position);
-                if (destination.getLocality() != null) {
-                    bundle.putString(Destination.KEY_LOCAL, destination.getLocality());
-                } else {
-                    bundle.putString(Destination.KEY_LOCAL, "");
-                }
-                if (destination.getAdminArea1() != null) {
-                    bundle.putString(Destination.KEY_ADMIN1, destination.getAdminArea1());
-                } else {
-                    bundle.putString(Destination.KEY_ADMIN1, "");
-                }
-                if (destination.getLocality() != null) {
-                    bundle.putString(Destination.KEY_ADMIN2, destination.getAdminArea2());
-                } else {
-                    bundle.putString(Destination.KEY_ADMIN2, "");
-                }
-                if (destination.getLocality() != null) {
-                    bundle.putString(Destination.KEY_COUNTRY, destination.getCountry());
-                } else {
-                    bundle.putString(Destination.KEY_COUNTRY, "");
-                }
+                safeAddToBundle(destination, Destination.KEY_LOCAL, bundle);
+                safeAddToBundle(destination, Destination.KEY_ADMIN1, bundle);
+                safeAddToBundle(destination, Destination.KEY_ADMIN2, bundle);
+                safeAddToBundle(destination, Destination.KEY_COUNTRY, bundle);
+
+//                if (destination.getLocality() != null) {
+//                    bundle.putString(Destination.KEY_LOCAL, destination.getLocality());
+//                } else {
+//                    bundle.putString(Destination.KEY_LOCAL, "");
+//                }
+//                if (destination.getAdminArea1() != null) {
+//                    bundle.putString(Destination.KEY_ADMIN1, destination.getAdminArea1());
+//                } else {
+//                    bundle.putString(Destination.KEY_ADMIN1, "");
+//                }
+//                if (destination.getAdminArea2() != null) {
+//                    bundle.putString(Destination.KEY_ADMIN2, destination.getAdminArea2());
+//                } else {
+//                    bundle.putString(Destination.KEY_ADMIN2, "");
+//                }
+//                if (destination.getCountry() != null) {
+//                    bundle.putString(Destination.KEY_COUNTRY, destination.getCountry());
+//                } else {
+//                    bundle.putString(Destination.KEY_COUNTRY, "");
+//                }
                 bundle.putString(Destination.KEY_OBJECT_ID, destination.getObjectId());
                 fragment.setArguments(bundle);
                 MainActivity.fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+            }
+        }
+
+        private void safeAddToBundle(Destination destination, String key, Bundle bundle) {
+            if (destination.getString(key) != null) {
+                bundle.putString(key, destination.getString(key));
+            } else {
+                bundle.putString(key, "");
             }
         }
     }

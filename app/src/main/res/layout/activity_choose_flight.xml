@@ -126,4 +126,19 @@
         android:backgroundTint="@color/quantum_grey"
         android:text="Confirm"
         android:textSize="10sp" />
+
+    <ProgressBar
+        android:id="@+id/pbFlights"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/rvFlights"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="235dp"
+        android:layout_marginEnd="160dp"
+        android:layout_marginBottom="235dp"
+        android:visibility="gone" />
 </RelativeLayout>

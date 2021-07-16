@@ -20,6 +20,9 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A simple {@link Fragment} subclass.
+ * This fragment contains a list of options that the user can choose to plan for, like the flight and hotel.
+ * This fragment is reached when the user selects a destination from the LocationsFragment, and clicking
+ * on a resource in this fragment starts [resource]Activity (like FlightsActivity.java).
  */
 public class ResourcesFragment extends Fragment {
 

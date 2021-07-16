@@ -18,6 +18,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * This adapter is for the RecylerView in AirportSearchActivity that displays the airports the user has chosen
+ * from the search results list. If a user clicks the "remove" button next to an airport, the airport is
+ * removed from the list, and immediately appears as addable in the search results list.
+ */
+
 public class ChosenAirportsAdapter extends RecyclerView.Adapter<ChosenAirportsAdapter.ViewHolder> {
 
     private final Context context;

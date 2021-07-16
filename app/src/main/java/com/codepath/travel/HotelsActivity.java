@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -251,14 +250,16 @@ public class HotelsActivity extends AppCompatActivity {
                     }
                 }
                 String phoneNumber = "N/A";
-                String email= "N/A";
+                String email = "N/A";
                 if (hotelJson.has("contact")) {
                     phoneNumber = safeAccessJson("phone", hotelJson.getJSONObject("contact"));
                     email = safeAccessJson("email", hotelJson.getJSONObject("contact"));
                 }
-                String description = "N/A";
-                if (hotelJson.has("description")) {
-                    description = safeAccessJson("text", hotelJson.getJSONObject("description"));
+                String description;
+                try {
+                    description = hotelJson.getJSONObject("description").getString("text");
+                } catch (JSONException e) {
+                    description = "N/A";
                 }
                 Hotel newHotel = new Hotel(name, address, latitude, longitude, phoneNumber, rating, email, description, offers);
                 hotels.add(newHotel);
@@ -277,17 +278,22 @@ public class HotelsActivity extends AppCompatActivity {
                 JSONObject offerJson = hotelOffersList.getJSONObject(i);
                 String checkInDate = safeAccessJson("checkInDate", offerJson);
                 String checkOutDate = safeAccessJson("checkOutDate", offerJson);
-                String roomType = "N/A";
-                Integer numBeds = 0;
-                String description = "N/A";
-                if (offerJson.has("room")) {
-                    if (offerJson.getJSONObject("room").has("typeEstimated")) {
-                        roomType = offerJson.getJSONObject("room").getJSONObject("typeEstimated").getString("category");
-                        numBeds = offerJson.getJSONObject("room").getJSONObject("typeEstimated").getInt("beds");
-                    }
-                    if (offerJson.getJSONObject("room").has("description")) {
-                        description = safeAccessJson("text", offerJson.getJSONObject("room").getJSONObject("description"));
-                    }
+                String roomType, description;
+                Integer numBeds;
+                try {
+                    roomType = offerJson.getJSONObject("room").getJSONObject("typeEstimated").getString("category");
+                } catch (JSONException e) {
+                    roomType = "N/A";
+                }
+                try {
+                    numBeds = offerJson.getJSONObject("room").getJSONObject("typeEstimated").getInt("beds");
+                } catch (JSONException e) {
+                    numBeds = 0;
+                }
+                try {
+                    description = offerJson.getJSONObject("room").getJSONObject("description").getString("text");
+                } catch (JSONException e) {
+                    description = "N/A";
                 }
                 Integer numAdults = 0;
                 if (offerJson.has("guests") && offerJson.getJSONObject("guests").has("adults")) {
@@ -313,7 +319,6 @@ public class HotelsActivity extends AppCompatActivity {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            return "N/A";
         }
         return "N/A";
     }

@@ -17,6 +17,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * This adapter is for the RecylerView in ChooseFlightsActivity that displays the list of plane tickets
+ * that originate from one of the chosen departure airports, and land in one of the destination/arrival airports.
+ * Users can click on a ticket to select it, holding it on display at the top of the screen,
+ * and click "confirm" to save that ticket, automatically redirected back to the FlightsActivity.java screen.
+ */
+
 public class FlightsAdapter extends RecyclerView.Adapter<FlightsAdapter.ViewHolder> {
 
     private final Context context;

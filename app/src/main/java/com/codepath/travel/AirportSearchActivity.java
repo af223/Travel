@@ -77,7 +77,6 @@ public class AirportSearchActivity extends AppCompatActivity {
         etSearch = findViewById(R.id.etSearch);
         btnSearch = findViewById(R.id.btnSearch);
         pbAirport = findViewById(R.id.pbAirport);
-        pbAirport.setVisibility(View.VISIBLE);
         btnClearChosen = findViewById(R.id.btnClearChosen);
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,6 +116,7 @@ public class AirportSearchActivity extends AppCompatActivity {
         rvChosenAirports.setAdapter(chosenAdapter);
 
         if (!getIntent().getBooleanExtra(getResources().getString(R.string.from_departure), true)) {
+            pbAirport.setVisibility(View.VISIBLE);
             loadSuggestedAirports();
             loadingAirportSuggestions = true;
         }

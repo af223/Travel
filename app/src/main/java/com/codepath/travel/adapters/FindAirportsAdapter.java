@@ -19,6 +19,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This adapter is for the RecylerView in AirportSearchActivity that displays the search results of airports
+ * based on the user's query (or the automatically loaded suggested arrival airports).
+ * If a user clicks the "add" button next to an airport, the airport appears in the chosen airports list,
+ * and the "add" button is no longer clickable, displaying "added".
+ */
+
 public class FindAirportsAdapter extends RecyclerView.Adapter<FindAirportsAdapter.ViewHolder> {
 
     private final Context context;
