@@ -1,15 +1,17 @@
 package com.codepath.travel;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
@@ -23,7 +25,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.GetCallback;
@@ -35,7 +36,6 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -45,13 +45,21 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okio.ByteString;
+
+/**
+ * This activity allows the user to see and select suggested hotels near the destination pinned on a map.
+ * The user can see details about the hotel and its room offerings by clicking on its pin on the map.
+ *
+ * This activity appears when the user chooses hotel from the ResourcesFragment.java. The intent passed in
+ * contains the objectId for the selected destination.
+ */
 
 public class HotelsActivity extends AppCompatActivity {
 
     private static final String AMADEUS_ACCESS_URL = "https://test.api.amadeus.com/v1/security/oauth2/token";
     private static final String AMADEUS_HOTEL_URL = "https://test.api.amadeus.com/v2/shopping/hotel-offers";
     private static final String TAG = "HotelsActivity";
+    private String oauthToken;
     private ArrayList<Hotel> hotels;
     private Destination currDestination;
     private GoogleMap map;
@@ -67,13 +75,14 @@ public class HotelsActivity extends AppCompatActivity {
     private TextView tvNumBeds;
     private TextView tvCost;
     private TextView tvDescription;
+    private RelativeLayout rlProgressBar;
     private ArrayList<MarkerOptions> markers;
 
-    private OnMapReadyCallback callback = new OnMapReadyCallback() {
+    private final OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             map = googleMap;
-            getChosenDestination();
+            rlProgressBar.setVisibility(View.VISIBLE);
             googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(@NonNull @NotNull Marker marker) {
@@ -83,7 +92,11 @@ public class HotelsActivity extends AppCompatActivity {
                             break;
                         }
                     }
-                    displayChosenHotel();
+                    if (chosenHotel == null) {
+                        Toast.makeText(HotelsActivity.this, "Unable to display hotel", Toast.LENGTH_SHORT).show();
+                    } else {
+                        displayChosenHotel();
+                    }
                     return true;
                 }
             });
@@ -95,7 +108,10 @@ public class HotelsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hotels);
 
-        //requestAccessToken(); last : 8:13 PM
+        requestAccessToken();
+
+        hotels = new ArrayList<>();
+        markers = new ArrayList<>();
 
         tvHotelName = findViewById(R.id.tvHotelName);
         rbRating = findViewById(R.id.rbRating);
@@ -108,8 +124,7 @@ public class HotelsActivity extends AppCompatActivity {
         tvCost = findViewById(R.id.tvCost);
         tvDescription = findViewById(R.id.tvDescription);
         btnSelect = findViewById(R.id.btnSelect);
-        hotels = new ArrayList<>();
-        markers = new ArrayList<>();
+        rlProgressBar = findViewById(R.id.rlProgressBar);
         btnSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,18 +135,14 @@ public class HotelsActivity extends AppCompatActivity {
                 }
             }
         });
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
-            Log.i(TAG, "getting map");
             mapFragment.getMapAsync(callback);
         }
     }
 
     private void requestAccessToken() {
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addNetworkInterceptor(new StethoInterceptor())
-                .build();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().addNetworkInterceptor(new StethoInterceptor()).build();
         RequestHeaders headers = new RequestHeaders();
         headers.put("content-type", "application/x-www-form-urlencoded");
         String body = String.format("grant_type=client_credentials&client_id=%1$s&client_secret=%2$s",
@@ -146,13 +157,20 @@ public class HotelsActivity extends AppCompatActivity {
         JsonHttpResponseHandler callback = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i(TAG, "success");
+                Log.i(TAG, "got token");
+                try {
+                    oauthToken = json.jsonObject.getString("access_token");
+                    getChosenDestination();
+                } catch (JSONException e) {
+                    Log.e(TAG, "Unable to get authentication");
+                    Toast.makeText(HotelsActivity.this, "Unable to retrieve hotels", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e(TAG, "ERROR: ", throwable);
-                Log.e(TAG, response);
             }
         };
         okHttpClient.newCall(request).enqueue(callback);
@@ -160,7 +178,6 @@ public class HotelsActivity extends AppCompatActivity {
 
     private void getChosenDestination() {
         ParseQuery<Destination> query = ParseQuery.getQuery(Destination.class);
-        Log.i(TAG, getIntent().getStringExtra(Destination.KEY_OBJECT_ID));
         query.getInBackground(getIntent().getStringExtra(Destination.KEY_OBJECT_ID), new GetCallback<Destination>() {
             @Override
             public void done(Destination destination, ParseException e) {
@@ -174,7 +191,7 @@ public class HotelsActivity extends AppCompatActivity {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestHeaders headers = new RequestHeaders();
         RequestParams params = new RequestParams();
-        String authorization = "Bearer " + getResources().getString(R.string.amadeus_token);
+        String authorization = "Bearer " + oauthToken;
         headers.put("authorization", authorization);
         params.put("latitude", destination.getLatitude());
         params.put("longitude", destination.getLongitude());
@@ -184,14 +201,13 @@ public class HotelsActivity extends AppCompatActivity {
         client.get(AMADEUS_HOTEL_URL, headers, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i(TAG, "success");
                 try {
                     processHotels(json.jsonObject.getJSONArray("data"));
+                    rlProgressBar.setVisibility(View.GONE);
                     map.moveCamera(CameraUpdateFactory.newLatLng(destination.getCoords()));
                     map.moveCamera(CameraUpdateFactory.zoomBy(9));
-                    Log.i(TAG, "done processing");
                 } catch (JSONException e) {
-                    Log.i(TAG, "Unable to parse rsponse");
+                    Log.e(TAG, "Unable to parse response");
                     e.printStackTrace();
                 }
             }
@@ -199,7 +215,6 @@ public class HotelsActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e(TAG, "ERROR: ", throwable);
-                Log.e(TAG, response);
             }
         });
     }
@@ -211,12 +226,12 @@ public class HotelsActivity extends AppCompatActivity {
                 JSONObject hotelJson = hotelOfferObject.getJSONObject("hotel");
                 ArrayList<HotelOffer> offers = processHotelOffers(hotelOfferObject.getJSONArray("offers"));
                 String name = hotelJson.getString("name");
+                String latitude = String.valueOf(hotelJson.getDouble("latitude"));
+                String longitude = String.valueOf(hotelJson.getDouble("longitude"));
                 Integer rating = 0;
                 if (hotelJson.has("rating")) {
                     rating = Integer.parseInt(hotelJson.getString("rating"));
                 }
-                String latitude = String.valueOf(hotelJson.getDouble("latitude"));
-                String longitude = String.valueOf(hotelJson.getDouble("longitude"));
                 String address = "N/A";
                 if (hotelJson.has("address")) {
                     address = "";
@@ -228,31 +243,29 @@ public class HotelsActivity extends AppCompatActivity {
                     if (hotelJson.getJSONObject("address").has("cityName")) {
                         address += hotelJson.getJSONObject("address").getString("cityName") + ", ";
                     }
-                    if (hotelJson.getJSONObject("address").has("postalCode")) {
-                        address += hotelJson.getJSONObject("address").getString("postalCode") + ", ";
-                    }
                     if (hotelJson.getJSONObject("address").has("countryCode")) {
-                        address += hotelJson.getJSONObject("address").getString("countryCode") + ", ";
+                        address += hotelJson.getJSONObject("address").getString("countryCode") + " ";
+                    }
+                    if (hotelJson.getJSONObject("address").has("postalCode")) {
+                        address += hotelJson.getJSONObject("address").getString("postalCode");
                     }
                 }
                 String phoneNumber = "N/A";
-                if (hotelJson.getJSONObject("contact").has("phone")) {
-                    phoneNumber = hotelJson.getJSONObject("contact").getString("phone");
-                }
-                String email = "N/A";
-                if (hotelJson.getJSONObject("contact").has("email")) {
-                    email = hotelJson.getJSONObject("contact").getString("email");
+                String email= "N/A";
+                if (hotelJson.has("contact")) {
+                    phoneNumber = safeAccessJson("phone", hotelJson.getJSONObject("contact"));
+                    email = safeAccessJson("email", hotelJson.getJSONObject("contact"));
                 }
                 String description = "N/A";
                 if (hotelJson.has("description")) {
-                    description = hotelJson.getJSONObject("description").getString("text");
+                    description = safeAccessJson("text", hotelJson.getJSONObject("description"));
                 }
                 Hotel newHotel = new Hotel(name, address, latitude, longitude, phoneNumber, rating, email, description, offers);
                 hotels.add(newHotel);
                 markHotelOnMap(newHotel);
             }
         }  catch (JSONException e) {
-            Log.i(TAG, "Unable to parse hotels");
+            Log.e(TAG, "Unable to parse hotels");
             e.printStackTrace();
         }
     }
@@ -262,30 +275,53 @@ public class HotelsActivity extends AppCompatActivity {
         try {
             for (int i = 0; i < hotelOffersList.length(); i++) {
                 JSONObject offerJson = hotelOffersList.getJSONObject(i);
-                String checkInDate = offerJson.getString("checkInDate");
-                String checkOutDate = offerJson.getString("checkOutDate");
-                String roomType = offerJson.getJSONObject("room").getJSONObject("typeEstimated").getString("category");
-                Integer numBeds = offerJson.getJSONObject("room").getJSONObject("typeEstimated").getInt("beds");
+                String checkInDate = safeAccessJson("checkInDate", offerJson);
+                String checkOutDate = safeAccessJson("checkOutDate", offerJson);
+                String roomType = "N/A";
+                Integer numBeds = 0;
                 String description = "N/A";
-                if (offerJson.getJSONObject("room").has("description")) {
-                    description = offerJson.getJSONObject("room").getJSONObject("description").getString("text");
+                if (offerJson.has("room")) {
+                    if (offerJson.getJSONObject("room").has("typeEstimated")) {
+                        roomType = offerJson.getJSONObject("room").getJSONObject("typeEstimated").getString("category");
+                        numBeds = offerJson.getJSONObject("room").getJSONObject("typeEstimated").getInt("beds");
+                    }
+                    if (offerJson.getJSONObject("room").has("description")) {
+                        description = safeAccessJson("text", offerJson.getJSONObject("room").getJSONObject("description"));
+                    }
                 }
-                Integer numAdults = offerJson.getJSONObject("guests").getInt("adults");
-                String cost = offerJson.getJSONObject("price").getString("total");
+                Integer numAdults = 0;
+                if (offerJson.has("guests") && offerJson.getJSONObject("guests").has("adults")) {
+                    numAdults = offerJson.getJSONObject("guests").getInt("adults");
+                }
+                String cost = "N/A";
+                if (offerJson.has("price")) {
+                    cost = safeAccessJson("total", offerJson.getJSONObject("price"));
+                }
                 offersList.add(new HotelOffer(checkInDate, checkOutDate, roomType, numBeds, description, numAdults, cost));
             }
         } catch (JSONException e) {
-            Log.i(TAG, "Unable to parse offers");
+            Log.e(TAG, "Unable to parse offers");
             e.printStackTrace();
         }
         return offersList;
+    }
+
+    private String safeAccessJson(String key, JSONObject jsonObject) {
+        try {
+            if (jsonObject.has(key)) {
+                return jsonObject.getString(key);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return "N/A";
+        }
+        return "N/A";
     }
 
     private void markHotelOnMap(Hotel hotel) {
         MarkerOptions marker = new MarkerOptions().position(hotel.getCoords()).title(hotel.getName());
         map.addMarker(marker);
         markers.add(marker);
-        Log.i(TAG, "added Markers");
     }
 
     private void saveHotel(Hotel hotel) {
@@ -315,7 +351,7 @@ public class HotelsActivity extends AppCompatActivity {
         tvEmail.setText(chosenHotel.getEmail());
         tvAddress.setText(chosenHotel.getAddress());
         if (chosenHotel.getOffers().isEmpty()) {
-            tvDescription.setText("Information available");
+            tvDescription.setText(getResources().getString(R.string.info_unavailable));
             tvCheckInDate.setText("N/A");
             tvCheckOutDate.setText("N/A");
             tvNumBeds.setText("N/A");

@@ -15,4 +15,6 @@
     <string name="add">Add</string>
     <string name="airport">Airport</string>
     <string name="click_to_select_a_flight">Click to select a flight</string>
+    <string name="info_unavailable">Information unavailable</string>
+    <string name="finding_suggested_hotels">Finding suggested hotels...</string>
 </resources>
