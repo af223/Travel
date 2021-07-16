@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.travel.R;
@@ -36,6 +38,12 @@ public class CostsFragment extends Fragment {
     private RecyclerTouchListener rvTouchListener;
     private EditText etEditExpense;
     private EditText etEditCost;
+    private EditText etExpense;
+    private EditText etMoney;
+    private Button btnAddCost;
+    private Double totalCost = 0.0;
+    private TextView tvTotalCost;
+
 
     public CostsFragment() {
         // Required empty public constructor
@@ -51,13 +59,38 @@ public class CostsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        tvTotalCost = view.findViewById(R.id.tvTotalCost);
+        etExpense = view.findViewById(R.id.etExpense);
+        etMoney = view.findViewById(R.id.etMoney);
+        btnAddCost = view.findViewById(R.id.btnAddCost);
+        btnAddCost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etExpense.getText().toString().isEmpty()) {
+                    Toast.makeText(getContext(), "Expenses must be named", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (etMoney.getText().toString().isEmpty()) {
+                    Toast.makeText(getContext(), "Must enter an amount", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                saveCost(etExpense.getText().toString(), etMoney.getText().toString());
+                etExpense.setText("");
+                etMoney.setText("");
+            }
+        });
+
         rvExpenses = view.findViewById(R.id.rvExpenses);
         expenses = new ArrayList<>();
-        expenses.add(new Expense("hotel", 100.00));
-        expenses.add(new Expense("flight", 259.00));
         adapter = new ExpensesAdapter(getContext(), expenses);
         rvExpenses.setLayoutManager(new LinearLayoutManager(getContext()));
         rvExpenses.setAdapter(adapter);
+        expenses.add(new Expense("hotel", 100.00));
+        expenses.add(new Expense("flight", 259.00));
+        for (int i = 0; i < expenses.size(); i++) {
+            totalCost += expenses.get(i).getCost();
+        }
+        tvTotalCost.setText(String.format("%.2f", totalCost));
         adapter.notifyDataSetChanged();
 
         rvTouchListener = new RecyclerTouchListener(getActivity(), rvExpenses);
@@ -66,6 +99,8 @@ public class CostsFragment extends Fragment {
             public void onSwipeOptionClicked(int viewID, int position) {
                 switch (viewID) {
                     case R.id.delete_task:
+                        totalCost -= expenses.get(position).getCost();
+                        tvTotalCost.setText(String.format("%.2f", totalCost));
                         expenses.remove(position);
                         adapter.notifyItemRemoved(position);
                         break;
@@ -76,6 +111,14 @@ public class CostsFragment extends Fragment {
             }
         });
         rvExpenses.addOnItemTouchListener(rvTouchListener);
+    }
+
+    private void saveCost(String name, String cost) {
+        Expense expense = new Expense(name, Double.parseDouble(cost));
+        expenses.add(expense);
+        totalCost += Double.parseDouble(cost);
+        tvTotalCost.setText(String.format("%.2f", totalCost));
+        adapter.notifyItemInserted(expenses.size()-1);
     }
 
     private void showEditAlertDialog(Expense expense, int position) {
@@ -102,8 +145,11 @@ public class CostsFragment extends Fragment {
                             Toast.makeText(getContext(), "Must add a cost", Toast.LENGTH_SHORT).show();
                             return;
                         }
+                        totalCost -= expense.getCost();
                         expense.setName(etEditExpense.getText().toString());
                         expense.setCost(Double.parseDouble(etEditCost.getText().toString()));
+                        totalCost += expense.getCost();
+                        tvTotalCost.setText(String.format("%.2f", totalCost));
                         adapter.notifyItemChanged(position);
                     }
                 });
