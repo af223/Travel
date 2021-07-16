@@ -19,13 +19,20 @@ import android.widget.Toast;
 import com.codepath.travel.R;
 import com.codepath.travel.adapters.ExpensesAdapter;
 import com.codepath.travel.adapters.RecyclerTouchListener;
+import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Expense;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -85,24 +92,19 @@ public class CostsFragment extends Fragment {
         adapter = new ExpensesAdapter(getContext(), expenses);
         rvExpenses.setLayoutManager(new LinearLayoutManager(getContext()));
         rvExpenses.setAdapter(adapter);
-        expenses.add(new Expense("hotel", 100.00));
-        expenses.add(new Expense("flight", 259.00));
-        for (int i = 0; i < expenses.size(); i++) {
-            totalCost += expenses.get(i).getCost();
-        }
-        tvTotalCost.setText(String.format("%.2f", totalCost));
-        adapter.notifyDataSetChanged();
+        loadExpenses();
 
         rvTouchListener = new RecyclerTouchListener(getActivity(), rvExpenses);
         rvTouchListener.setSwipeOptionViews(R.id.delete_task,R.id.edit_entry).setSwipeable(R.id.rowFG, R.id.swipeMenuLayout, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
             @Override
             public void onSwipeOptionClicked(int viewID, int position) {
+                if (expenses.get(position).isProtected()) {
+                    showProtectedAlertDialog();
+                    return;
+                }
                 switch (viewID) {
                     case R.id.delete_task:
-                        totalCost -= expenses.get(position).getCost();
-                        tvTotalCost.setText(String.format("%.2f", totalCost));
-                        expenses.remove(position);
-                        adapter.notifyItemRemoved(position);
+                        deleteExpense(position);
                         break;
                     case R.id.edit_entry:
                         showEditAlertDialog(expenses.get(position), position);
@@ -113,12 +115,45 @@ public class CostsFragment extends Fragment {
         rvExpenses.addOnItemTouchListener(rvTouchListener);
     }
 
-    private void saveCost(String name, String cost) {
-        Expense expense = new Expense(name, Double.parseDouble(cost));
-        expenses.add(expense);
-        totalCost += Double.parseDouble(cost);
+    private void showProtectedAlertDialog() {
+        View messageView = LayoutInflater.from(getContext()).inflate(R.layout.no_edit_message_item, null);
+        TextView alertMessage = messageView.findViewById(R.id.tvMessage);
+        alertMessage.setText(getResources().getString(R.string.no_editing_prices_message));
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder.setView(messageView);
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialog.show();
+    }
+
+    private void deleteExpense(int position) {
+        totalCost -= Double.parseDouble(expenses.get(position).getCost());
         tvTotalCost.setText(String.format("%.2f", totalCost));
-        adapter.notifyItemInserted(expenses.size()-1);
+        Expense deleteExpense = expenses.get(position);
+        expenses.remove(position);
+        adapter.notifyItemRemoved(position);
+        deleteExpense.deleteInBackground();
+    }
+
+    private void saveCost(String name, String cost) {
+        Expense expense = createExpense(name, cost);
+        expense.setIsEditable();
+        expense.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Toast.makeText(getContext(), "Unable to save expense", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(getContext(), "Expense added!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showEditAlertDialog(Expense expense, int position) {
@@ -145,12 +180,7 @@ public class CostsFragment extends Fragment {
                             Toast.makeText(getContext(), "Must add a cost", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        totalCost -= expense.getCost();
-                        expense.setName(etEditExpense.getText().toString());
-                        expense.setCost(Double.parseDouble(etEditCost.getText().toString()));
-                        totalCost += expense.getCost();
-                        tvTotalCost.setText(String.format("%.2f", totalCost));
-                        adapter.notifyItemChanged(position);
+                        editExpense(expense, position);
                     }
                 });
         alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
@@ -160,5 +190,72 @@ public class CostsFragment extends Fragment {
                     }
                 });
         alertDialog.show();
+    }
+
+    private void editExpense(Expense expense, int position) {
+        totalCost -= Double.parseDouble(expense.getCost());
+        expense.setName(etEditExpense.getText().toString());
+        expense.setCost(etEditCost.getText().toString());
+        totalCost += Double.parseDouble(expense.getCost());
+        tvTotalCost.setText(String.format("%.2f", totalCost));
+        expense.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Toast.makeText(getContext(), "Unable to save edits", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(getContext(), "Edits saved", Toast.LENGTH_SHORT).show();
+                adapter.notifyItemChanged(position);
+            }
+        });
+    }
+
+    private void loadExpenses() {
+        loadDestinationExpenses();
+        ParseQuery<Expense> query = ParseQuery.getQuery(Expense.class);
+        query.whereEqualTo(Expense.KEY_USER, ParseUser.getCurrentUser());
+        query.findInBackground(new FindCallback<Expense>() {
+            @Override
+            public void done(List<Expense> queryExpenses, ParseException e) {
+                expenses.addAll(queryExpenses);
+                adapter.notifyDataSetChanged();
+                for (int i = 0; i < queryExpenses.size(); i++) {
+                    totalCost += Double.parseDouble(queryExpenses.get(i).getCost());
+                }
+                tvTotalCost.setText(String.format("%.2f", totalCost));
+            }
+        });
+    }
+
+    private void loadDestinationExpenses() {
+        ParseQuery<Destination> query = ParseQuery.getQuery(Destination.class);
+        query.whereEqualTo(Destination.KEY_USER, ParseUser.getCurrentUser());
+        query.findInBackground(new FindCallback<Destination>() {
+            @Override
+            public void done(List<Destination> destinations, ParseException e) {
+                for (Destination destination : destinations) {
+                    if (destination.getHotelCost() != null) {
+                        createExpense(destination.getHotelName() + " (" + destination.getCountry() + ")", destination.getHotelCost());
+                    }
+                    if (destination.getCost()!= null) {
+                        createExpense("Flight to " + destination.getArriveAirportName(), destination.getCost());
+                    }
+                }
+            }
+        });
+    }
+
+    private Expense createExpense(String name, String cost) {
+        Expense expense = new Expense();
+        expense.setUser(ParseUser.getCurrentUser());
+        expense.setName(name);
+        expense.setCost(cost);
+        expense.setIsProtected();
+        expenses.add(expense);
+        totalCost += Double.parseDouble(cost);
+        tvTotalCost.setText(String.format("%.2f", totalCost));
+        adapter.notifyItemInserted(expenses.size()-1);
+        return expense;
     }
 }

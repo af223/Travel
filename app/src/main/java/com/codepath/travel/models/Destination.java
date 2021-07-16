@@ -31,8 +31,8 @@ public class Destination extends ParseObject {
     public static final String KEY_HOTEL_PHONE = "hotelPhone";
     public static final String KEY_HOTEL_DESCRIPTION = "hotelDescription";
 
-    public String getUser() {
-        return getString(KEY_USER);
+    public ParseUser getUser() {
+        return getParseUser(KEY_USER);
     }
 
     public void setUser(ParseUser user) {

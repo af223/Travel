@@ -1,28 +1,52 @@
 package com.codepath.travel.models;
 
-public class Expense {
+import android.text.BoringLayout;
 
-    private String name;
-    private Double cost;
+import com.parse.ParseClassName;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
 
-    public Expense(String name, Double cost) {
-        this.name = name;
-        this.cost = cost;
+@ParseClassName("Expense")
+public class Expense extends ParseObject {
+
+    public static final String KEY_USER = "user";
+    public static final String KEY_NAME = "expenseName";
+    public static final String KEY_COST = "expenseCost";
+    private Boolean isProtected = false;
+
+    public ParseUser getUser() {
+        return getParseUser(KEY_USER);
+    }
+
+    public void setUser(ParseUser user) {
+        put(KEY_USER, user);
     }
 
     public String getName() {
-        return name;
+        return getString(KEY_NAME);
     }
 
     public void setName(String name) {
-        this.name = name;
+        put(KEY_NAME, name);
     }
 
-    public Double getCost() {
-        return cost;
+    public String getCost() {
+        return getString(KEY_COST);
     }
 
-    public void setCost(Double cost) {
-        this.cost = cost;
+    public void setCost(String cost) {
+        put(KEY_COST, cost);
+    }
+
+    public Boolean isProtected() {
+        return isProtected;
+    }
+
+    public void setIsEditable() {
+        isProtected = false;
+    }
+
+    public void setIsProtected() {
+        isProtected = true;
     }
 }

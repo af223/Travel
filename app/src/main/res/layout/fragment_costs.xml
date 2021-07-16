@@ -31,7 +31,7 @@
         android:layout_toStartOf="@+id/btnAddCost"
         android:ems="10"
         android:hint="$0.00"
-        android:inputType="numberDecimal" />
+        android:inputType="numberDecimal|numberSigned" />
 
     <Button
         android:id="@+id/btnAddCost"
