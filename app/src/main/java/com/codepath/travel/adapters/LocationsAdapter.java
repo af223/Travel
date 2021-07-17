@@ -3,6 +3,7 @@ package com.codepath.travel.adapters;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +23,10 @@ import com.codepath.travel.models.Destination;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +42,6 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
 
     private final Context context;
     private final List<Destination> locations;
-    private static int uniqueId = 1300100;
 
     public LocationsAdapter(Context context, List<Destination> locations) {
         this.context = context;
@@ -68,41 +70,20 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final TextView tvName;
-        private FrameLayout mFrameLayout;
+        private MapView mapView;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
-            mFrameLayout = itemView.findViewById(R.id.mFrameLayout);
+            mapView = itemView.findViewById(R.id.item_map_view);
             itemView.setOnClickListener(this);
         }
 
         public void bind(Destination destination) {
             tvName.setText(destination.getFormattedLocationName());
 
-            // Add a FrameLayout in item_location to hold a different Google Maps fragment in each item
-            // in order to display the pinned/marked location of the destination for each destination
-            FrameLayout view = (FrameLayout) mFrameLayout;
-            FrameLayout frame = new FrameLayout(context);
-            // To use the newly created frame, first must assign it a unique Resource ID.
-            // Resource IDs are assigned at build time, with layouts in the 10_____ [7 digits] range,
-            // in ascending/consecutive order. 1010101 is an arbitrary safe number, as the Resource IDs
-            // of the layouts assigned at build time are around 1000___
-            // Source: https://stackoverflow.com/questions/6517151/how-does-the-mapping-between-android-resources-and-resources-id-work
-            frame.setId(uniqueId);
-            uniqueId++;
-
-            int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 160, context.getResources().getDisplayMetrics());
-            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, height);
-            frame.setLayoutParams(layoutParams);
-
-            view.addView(frame);
-
-            GoogleMapOptions options = new GoogleMapOptions();
-            options.liteMode(true); // for faster loading, static maps suffice here
-            SupportMapFragment mapFrag = SupportMapFragment.newInstance(options);
-
-            mapFrag.getMapAsync(new OnMapReadyCallback() {
+            mapView.onCreate(null);
+            mapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(@NonNull @NotNull GoogleMap googleMap) {
                     googleMap.addMarker(new MarkerOptions().position(destination.getCoords()));
@@ -110,8 +91,6 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
                     googleMap.moveCamera(CameraUpdateFactory.zoomBy(3));
                 }
             });
-            FragmentManager fm = LocationsFragment.locationsFragManager;
-            fm.beginTransaction().add(frame.getId(), mapFrag).commit();
         }
 
         @Override

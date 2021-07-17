@@ -156,7 +156,6 @@ public class HotelsActivity extends AppCompatActivity {
         JsonHttpResponseHandler callback = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i(TAG, "got token");
                 try {
                     oauthToken = json.jsonObject.getString("access_token");
                     getChosenDestination();
