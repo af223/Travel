@@ -38,6 +38,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -180,6 +181,9 @@ public class HotelsActivity extends AppCompatActivity {
             @Override
             public void done(Destination destination, ParseException e) {
                 currDestination = destination;
+                Log.i(TAG, destination.getCoords().toString());
+                map.moveCamera(CameraUpdateFactory.newLatLng(destination.getCoords()));
+                map.animateCamera(CameraUpdateFactory.zoomTo(7));
                 findHotels(destination);
             }
         });
@@ -202,8 +206,6 @@ public class HotelsActivity extends AppCompatActivity {
                 try {
                     processHotels(json.jsonObject.getJSONArray("data"));
                     rlProgressBar.setVisibility(View.GONE);
-                    map.moveCamera(CameraUpdateFactory.newLatLng(destination.getCoords()));
-                    map.moveCamera(CameraUpdateFactory.zoomBy(9));
                 } catch (JSONException e) {
                     Log.e(TAG, "Unable to parse response");
                     e.printStackTrace();
