@@ -181,7 +181,6 @@ public class HotelsActivity extends AppCompatActivity {
             @Override
             public void done(Destination destination, ParseException e) {
                 currDestination = destination;
-                Log.i(TAG, destination.getCoords().toString());
                 map.moveCamera(CameraUpdateFactory.newLatLng(destination.getCoords()));
                 map.animateCamera(CameraUpdateFactory.zoomTo(7));
                 findHotels(destination);
