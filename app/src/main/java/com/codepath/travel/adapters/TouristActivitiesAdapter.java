@@ -64,6 +64,35 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
         public void bind(TouristSpot touristSpot) {
             Glide.with(context).load(touristSpot.getImageURL()).override(500,500).into(ivBusinessPicture);
             tvBusinessName.setText(touristSpot.getBusinessName());
+            switch (touristSpot.getRating()) {
+                case "1.0":
+                    Glide.with(context).load(R.drawable.stars_extra_large_1).into(ivYelpRating);
+                    break;
+                case "1.5":
+                    Glide.with(context).load(R.drawable.stars_extra_large_1_half).into(ivYelpRating);
+                    break;
+                case "2.0":
+                    Glide.with(context).load(R.drawable.stars_extra_large_2).into(ivYelpRating);
+                    break;
+                case "2.5":
+                    Glide.with(context).load(R.drawable.stars_extra_large_2_half).into(ivYelpRating);
+                    break;
+                case "3.0":
+                    Glide.with(context).load(R.drawable.stars_extra_large_3).into(ivYelpRating);
+                    break;
+                case "3.5":
+                    Glide.with(context).load(R.drawable.stars_extra_large_3_half).into(ivYelpRating);
+                    break;
+                case "4.0":
+                    Glide.with(context).load(R.drawable.stars_extra_large_4).into(ivYelpRating);
+                    break;
+                case "4.5":
+                    Glide.with(context).load(R.drawable.stars_extra_large_4_half).into(ivYelpRating);
+                    break;
+                case "5.0":
+                    Glide.with(context).load(R.drawable.stars_extra_large_5).into(ivYelpRating);
+                    break;
+            }
         }
     }
 }
