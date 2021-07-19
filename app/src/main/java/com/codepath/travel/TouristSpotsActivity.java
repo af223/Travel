@@ -2,6 +2,10 @@ package com.codepath.travel;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -14,18 +18,30 @@ import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.codepath.travel.adapters.TouristActivitiesAdapter;
 import com.codepath.travel.models.Destination;
+import com.codepath.travel.models.TouristSpot;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 import okhttp3.Headers;
+
+/**
+ * This activity allows the user to find suggested tourist spots/activities near the chosen destination.
+ * The user can filter by selecting one or more of the suggested categories.
+ *
+ * This activity appears when the user chooses "find activity" from ResourcesFragment.java. The intent passed in
+ * contains the objectId for the selected destination.
+ */
 
 public class TouristSpotsActivity extends AppCompatActivity {
 
@@ -41,6 +57,9 @@ public class TouristSpotsActivity extends AppCompatActivity {
                                 "landmarks", "museums", "nightlife", "shopping",
                                 "spas", "active", "tours"};
     private Destination currDestination;
+    private RecyclerView rvTouristActivities;
+    private TouristActivitiesAdapter adapter;
+    private ArrayList<TouristSpot> touristSpots;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +67,20 @@ public class TouristSpotsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tourist_spots);
 
         tvActivityType = findViewById(R.id.tvActivityType);
+        rvTouristActivities = findViewById(R.id.rvTouristActivities);
+
+        touristSpots = new ArrayList<>();
+        adapter = new TouristActivitiesAdapter(this, touristSpots);
+        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        rvTouristActivities.setLayoutManager(gridLayoutManager);
+        rvTouristActivities.setAdapter(adapter);
 
         selectedType = new boolean[typeArray.length];
 
         getChosenDestination();
     }
 
+    // TODO: avoid retrieving from Parse and get the latitude/longitude passed in from intent along with objectId
     private void getChosenDestination() {
         ParseQuery<Destination> query = ParseQuery.getQuery(Destination.class);
         query.getInBackground(getIntent().getStringExtra(Destination.KEY_OBJECT_ID), new GetCallback<Destination>() {
@@ -74,7 +101,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
                                     typeList.add(which);
                                     Collections.sort(typeList);
                                 } else {
-                                    typeList.remove(which);
+                                    typeList.remove(Integer.valueOf(which));
                                 }
                             }
                         });
@@ -82,6 +109,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
                         builder.setPositiveButton("Filter", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                touristSpots.clear();
                                 String categoryParameter = "";
                                 StringBuilder stringBuilder = new StringBuilder();
                                 for (int i = 0; i < typeList.size(); i++) {
@@ -134,6 +162,8 @@ public class TouristSpotsActivity extends AppCompatActivity {
         client.get(YELP_BUSINESS_SEARCH_URL, headers, params, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
+                        processYelpResults(json.jsonObject);
+                        adapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -142,5 +172,22 @@ public class TouristSpotsActivity extends AppCompatActivity {
                         Toast.makeText(TouristSpotsActivity.this, "Unable to find tourist activities", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void processYelpResults(JSONObject jsonObject) {
+        try {
+            JSONArray businesses = jsonObject.getJSONArray("businesses");
+            for (int i = 0; i < businesses.length(); i++) {
+                JSONObject business = businesses.getJSONObject(i);
+                String name = business.getString("name");
+                String rating = String.valueOf(business.getDouble("rating"));
+                String imageURL = business.getString("image_url");
+                String yelpURL = business.getString("url");
+                touristSpots.add(new TouristSpot(name, rating, imageURL, yelpURL));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(TouristSpotsActivity.this, "Unable to process Yelp results", Toast.LENGTH_SHORT).show();
+        }
     }
 }
