@@ -1,7 +1,10 @@
 package com.codepath.travel.fragments;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +61,7 @@ public class MapFragment extends Fragment {
     private static final String TAG = "MapsFragment";
     private static GoogleMap map;
     private TextView tvLocation;
+    private TextView tvLinkImages;
     private JSONObject chosenLocation;
     private AutocompleteSupportFragment autocompleteFragment;
 
@@ -158,8 +162,18 @@ public class MapFragment extends Fragment {
 
     private void showDestinationAlertDialog(final LatLng latLng, String address) {
         View messageView = LayoutInflater.from(getContext()).inflate(R.layout.map_message_item, null);
-        tvLocation = messageView.findViewById(R.id.etEditCost);
+        tvLocation = messageView.findViewById(R.id.tvLocationName);
         tvLocation.setText(address);
+        tvLinkImages = messageView.findViewById(R.id.tvLinkImages);
+        tvLinkImages.setMovementMethod(LinkMovementMethod.getInstance());
+        tvLinkImages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse("https://www.google.com/search?tbm=isch&q=" + address));
+                startActivity(i);
+            }
+        });
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         alertDialogBuilder.setView(messageView);

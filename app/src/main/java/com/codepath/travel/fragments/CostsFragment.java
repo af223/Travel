@@ -21,10 +21,6 @@ import com.codepath.travel.adapters.ExpensesAdapter;
 import com.codepath.travel.adapters.RecyclerTouchListener;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Expense;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -158,8 +154,8 @@ public class CostsFragment extends Fragment {
 
     private void showEditAlertDialog(Expense expense, int position) {
         View messageView = LayoutInflater.from(getContext()).inflate(R.layout.cost_message_item, null);
-        etEditExpense = messageView.findViewById(R.id.etEditExpense);
-        etEditCost = messageView.findViewById(R.id.etEditCost);
+        etEditExpense = messageView.findViewById(R.id.tvMapMessage);
+        etEditCost = messageView.findViewById(R.id.tvLocationName);
 
         etEditExpense.setText(expense.getName());
         etEditCost.setText(String.valueOf(expense.getCost()));

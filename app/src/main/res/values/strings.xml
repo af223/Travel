@@ -18,4 +18,5 @@
     <string name="info_unavailable">Information unavailable</string>
     <string name="finding_suggested_hotels">Finding suggested hotels...</string>
     <string name="no_editing_prices_message">To adjust hotel and flight prices, add new expense entry containing the difference, or choose a different hotel/flight</string>
+    <string name="click_here_to_see_images"><u>Click here to see images</u></string>
 </resources>
