@@ -27,4 +27,17 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="10dp" />
 
+    <ProgressBar
+        android:id="@+id/pbTouristLoad"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/rvTouristActivities"
+        android:layout_alignTop="@+id/rvTouristActivities"
+        android:layout_alignEnd="@+id/rvTouristActivities"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="160dp"
+        android:visibility="gone" />
+
 </RelativeLayout>

@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +49,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
     private static final String TAG = "TouristSpotsActivity";
     private static final String YELP_BUSINESS_SEARCH_URL = "https://api.yelp.com/v3/businesses/search";
     private TextView tvActivityType;
+    private ProgressBar pbTouristLoad;
     private boolean[] selectedType;
     private ArrayList<Integer> typeList = new ArrayList<>();
     private String[] typeArray = {"Amusement Parks", "Art Galleries", "Beaches", "Gardens", "Hiking",
@@ -69,6 +71,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
 
         tvActivityType = findViewById(R.id.tvActivityType);
         rvTouristActivities = findViewById(R.id.rvTouristActivities);
+        pbTouristLoad = findViewById(R.id.pbTouristLoad);
 
         touristSpots = new ArrayList<>();
         adapter = new TouristActivitiesAdapter(this, touristSpots);
@@ -101,6 +104,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
                 builder.setPositiveButton("Filter", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        pbTouristLoad.setVisibility(View.VISIBLE);
                         touristSpots.clear();
                         String categoryParameter = "";
                         StringBuilder stringBuilder = new StringBuilder();
@@ -154,6 +158,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
                         processYelpResults(json.jsonObject);
                         adapter.notifyDataSetChanged();
+                        pbTouristLoad.setVisibility(View.GONE);
                     }
 
                     @Override
