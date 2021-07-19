@@ -1,6 +1,7 @@
 package com.codepath.travel;
 
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -125,6 +126,7 @@ public class HotelsActivity extends AppCompatActivity {
         tvDescription = findViewById(R.id.tvDescription);
         btnSelect = findViewById(R.id.btnSelect);
         rlProgressBar = findViewById(R.id.rlProgressBar);
+        tvDescription.setMovementMethod(new ScrollingMovementMethod());
         btnSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -376,7 +378,11 @@ public class HotelsActivity extends AppCompatActivity {
             }
             tvCheckInDate.setText(chosenOffer.getCheckInDate());
             tvCheckOutDate.setText(chosenOffer.getCheckOutDate());
-            tvNumBeds.setText(String.valueOf(chosenOffer.getNumBeds()));
+            if (chosenOffer.getNumBeds() == 0) {
+                tvNumBeds.setText("N/A");
+            } else {
+                tvNumBeds.setText(String.valueOf(chosenOffer.getNumBeds()));
+            }
             String money = "$" + chosenOffer.getCost();
             tvCost.setText(money);
         }
