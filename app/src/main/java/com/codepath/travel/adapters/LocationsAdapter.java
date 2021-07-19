@@ -70,27 +70,15 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final TextView tvName;
-        private MapView mapView;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
-            mapView = itemView.findViewById(R.id.item_map_view);
             itemView.setOnClickListener(this);
         }
 
         public void bind(Destination destination) {
             tvName.setText(destination.getFormattedLocationName());
-
-            mapView.onCreate(null);
-            mapView.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(@NonNull @NotNull GoogleMap googleMap) {
-                    googleMap.addMarker(new MarkerOptions().position(destination.getCoords()));
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(destination.getCoords()));
-                    googleMap.moveCamera(CameraUpdateFactory.zoomBy(3));
-                }
-            });
         }
 
         @Override
