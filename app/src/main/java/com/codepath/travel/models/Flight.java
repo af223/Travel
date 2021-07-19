@@ -5,14 +5,14 @@ import org.parceler.Parcel;
 @Parcel
 public class Flight {
 
-    private String departAirportCode;
-    private String departAirportName;
-    private String arriveAirportCode;
-    private String arriveAirportName;
-    private String flightCost;
-    private String carrier;
-    private String date;
-    private Boolean isDirect;
+    public String departAirportCode;
+    public String departAirportName;
+    public String arriveAirportCode;
+    public String arriveAirportName;
+    public String flightCost;
+    public String carrier;
+    public String date;
+    public Boolean isDirect;
 
     public Flight() {}
 
