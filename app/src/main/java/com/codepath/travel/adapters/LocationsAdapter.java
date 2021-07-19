@@ -93,6 +93,8 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
                 safeAddToBundle(destination, Destination.KEY_ADMIN2, bundle);
                 safeAddToBundle(destination, Destination.KEY_COUNTRY, bundle);
                 bundle.putString(Destination.KEY_OBJECT_ID, destination.getObjectId());
+                bundle.putString(Destination.KEY_LAT, destination.getLatitude());
+                bundle.putString(Destination.KEY_LONG, destination.getLongitude());
                 fragment.setArguments(bundle);
                 MainActivity.fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
             }

@@ -56,10 +56,11 @@ public class TouristSpotsActivity extends AppCompatActivity {
     private String[] typeAlias = {"amusementparks", "galleries", "beaches", "gardens", "hiking",
                                 "landmarks", "museums", "nightlife", "shopping",
                                 "spas", "active", "tours"};
-    private Destination currDestination;
     private RecyclerView rvTouristActivities;
     private TouristActivitiesAdapter adapter;
     private ArrayList<TouristSpot> touristSpots;
+    private String latitude;
+    private String longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,77 +77,66 @@ public class TouristSpotsActivity extends AppCompatActivity {
         rvTouristActivities.setAdapter(adapter);
 
         selectedType = new boolean[typeArray.length];
+        latitude = getIntent().getStringExtra(Destination.KEY_LAT);
+        longitude = getIntent().getStringExtra(Destination.KEY_LONG);
 
-        getChosenDestination();
-    }
-
-    // TODO: avoid retrieving from Parse and get the latitude/longitude passed in from intent along with objectId
-    private void getChosenDestination() {
-        ParseQuery<Destination> query = ParseQuery.getQuery(Destination.class);
-        query.getInBackground(getIntent().getStringExtra(Destination.KEY_OBJECT_ID), new GetCallback<Destination>() {
+        tvActivityType.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void done(Destination destination, ParseException e) {
-                currDestination = destination;
-
-                tvActivityType.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(TouristSpotsActivity.this);
+                builder.setTitle("Select a category");
+                builder.setCancelable(false);
+                builder.setMultiChoiceItems(typeArray, selectedType, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(TouristSpotsActivity.this);
-                        builder.setTitle("Select a category");
-                        builder.setCancelable(false);
-                        builder.setMultiChoiceItems(typeArray, selectedType, new DialogInterface.OnMultiChoiceClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                                if (isChecked) {
-                                    typeList.add(which);
-                                    Collections.sort(typeList);
-                                } else {
-                                    typeList.remove(Integer.valueOf(which));
-                                }
-                            }
-                        });
-
-                        builder.setPositiveButton("Filter", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                touristSpots.clear();
-                                String categoryParameter = "";
-                                StringBuilder stringBuilder = new StringBuilder();
-                                for (int i = 0; i < typeList.size(); i++) {
-                                    stringBuilder.append(typeArray[typeList.get(i)]);
-                                    categoryParameter += typeAlias[typeList.get(i)];
-
-                                    if (i != typeList.size()-1) {
-                                        stringBuilder.append(", ");
-                                        categoryParameter += ",";
-                                    }
-                                }
-                                loadTouristResults(categoryParameter);
-                                tvActivityType.setText(stringBuilder.toString());
-                            }
-                        });
-
-                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-
-                        builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                for (int i = 0; i < selectedType.length; i++) {
-                                    selectedType[i] = false;
-                                    typeList.clear();
-                                    tvActivityType.setText("");
-                                }
-                            }
-                        });
-
-                        builder.show();
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        if (isChecked) {
+                            typeList.add(which);
+                            Collections.sort(typeList);
+                        } else {
+                            typeList.remove(Integer.valueOf(which));
+                        }
                     }
                 });
+
+                builder.setPositiveButton("Filter", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        touristSpots.clear();
+                        String categoryParameter = "";
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < typeList.size(); i++) {
+                            stringBuilder.append(typeArray[typeList.get(i)]);
+                            categoryParameter += typeAlias[typeList.get(i)];
+
+                            if (i != typeList.size()-1) {
+                                stringBuilder.append(", ");
+                                categoryParameter += ",";
+                            }
+                        }
+                        loadTouristResults(categoryParameter);
+                        tvActivityType.setText(stringBuilder.toString());
+                    }
+                });
+
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        for (int i = 0; i < selectedType.length; i++) {
+                            selectedType[i] = false;
+                            typeList.clear();
+                            tvActivityType.setText("");
+                        }
+                    }
+                });
+
+                builder.show();
             }
         });
     }
@@ -155,8 +145,8 @@ public class TouristSpotsActivity extends AppCompatActivity {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestHeaders headers = new RequestHeaders();
         RequestParams params = new RequestParams();
-        params.put("latitude", currDestination.getLatitude());
-        params.put("longitude", currDestination.getLongitude());
+        params.put("latitude", latitude);
+        params.put("longitude", longitude);
         params.put("categories", categoryParameter);
         headers.put("Authorization", "Bearer " + getResources().getString(R.string.yelp_api_key));
         client.get(YELP_BUSINESS_SEARCH_URL, headers, params, new JsonHttpResponseHandler() {

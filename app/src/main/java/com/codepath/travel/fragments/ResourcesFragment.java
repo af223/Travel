@@ -69,6 +69,8 @@ public class ResourcesFragment extends Fragment {
     public void startResourceActivity(Bundle bundle, Class resourceName) {
         Intent i = new Intent(getContext(), resourceName);
         i.putExtra(Destination.KEY_OBJECT_ID, bundle.getString(Destination.KEY_OBJECT_ID));
+        i.putExtra(Destination.KEY_LAT, bundle.getString(Destination.KEY_LAT));
+        i.putExtra(Destination.KEY_LONG, bundle.getString(Destination.KEY_LONG));
         getContext().startActivity(i);
     }
 }
