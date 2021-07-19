@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.codepath.travel.FlightsActivity;
 import com.codepath.travel.HotelsActivity;
 import com.codepath.travel.R;
+import com.codepath.travel.TouristSpotsActivity;
 import com.codepath.travel.models.Destination;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +29,7 @@ public class ResourcesFragment extends Fragment {
 
     private CardView toFlights;
     private CardView toHotels;
+    private CardView toTouristSpots;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,9 +45,7 @@ public class ResourcesFragment extends Fragment {
         toFlights.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getContext(), FlightsActivity.class);
-                i.putExtra(Destination.KEY_OBJECT_ID, bundle.getString(Destination.KEY_OBJECT_ID));
-                getContext().startActivity(i);
+                startResourceActivity(bundle, FlightsActivity.class);
             }
         });
 
@@ -53,10 +53,22 @@ public class ResourcesFragment extends Fragment {
         toHotels.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getContext(), HotelsActivity.class);
-                i.putExtra(Destination.KEY_OBJECT_ID, bundle.getString(Destination.KEY_OBJECT_ID));
-                getContext().startActivity(i);
+                startResourceActivity(bundle, HotelsActivity.class);
             }
         });
+
+        toTouristSpots = view.findViewById(R.id.card_view_activities);
+        toTouristSpots.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startResourceActivity(bundle, TouristSpotsActivity.class);
+            }
+        });
+    }
+
+    public void startResourceActivity(Bundle bundle, Class resourceName) {
+        Intent i = new Intent(getContext(), resourceName);
+        i.putExtra(Destination.KEY_OBJECT_ID, bundle.getString(Destination.KEY_OBJECT_ID));
+        getContext().startActivity(i);
     }
 }
