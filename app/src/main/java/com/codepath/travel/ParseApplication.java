@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Expense;
+import com.codepath.travel.models.TouristDestination;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -15,6 +16,7 @@ public class ParseApplication extends Application {
 
         ParseObject.registerSubclass(Destination.class);
         ParseObject.registerSubclass(Expense.class);
+        ParseObject.registerSubclass(TouristDestination.class);
 
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(getString(R.string.app_id))
