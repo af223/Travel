@@ -221,10 +221,14 @@ public class TouristSpotsActivity extends AppCompatActivity {
                 JSONObject business = businesses.getJSONObject(i);
                 String name = business.getString("name");
                 String rating = String.valueOf(business.getDouble("rating"));
-                String imageURL = business.getString("image_url");
+                String imageURL = "";
+                if (business.has("image_url")) {
+                    imageURL = business.getString("image_url");
+                }
                 String yelpURL = business.getString("url");
                 String placeId = business.getString("id");
-                touristSpots.add(new TouristSpot(name, rating, imageURL, yelpURL, placeId));
+                Integer reviewCount = business.getInt("review_count");
+                touristSpots.add(new TouristSpot(name, rating, imageURL, yelpURL, placeId, reviewCount));
             }
         } catch (JSONException e) {
             e.printStackTrace();

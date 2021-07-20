@@ -1,6 +1,8 @@
 package com.codepath.travel.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +57,8 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
         private TextView tvBusinessName;
         private ImageView ivYelpRating;
         private ImageButton ibAddTouristDest;
+        private ImageButton ibYelpPage;
+        private TextView tvCommentCount;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
@@ -63,10 +67,14 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
             tvBusinessName = itemView.findViewById(R.id.tvBusinessName);
             ivYelpRating = itemView.findViewById(R.id.ivYelpRating);
             ibAddTouristDest = itemView.findViewById(R.id.ibAddTouristDest);
+            ibYelpPage = itemView.findViewById(R.id.ibYelpPage);
+            tvCommentCount = itemView.findViewById(R.id.tvReviewCount);
         }
 
         public void bind(TouristSpot touristSpot) {
             tvBusinessName.setText(touristSpot.getBusinessName());
+            String numReivews = String.valueOf(touristSpot.getReviewCount()) + " reviews";
+            tvCommentCount.setText(numReivews);
             if (touristSpot.isChosen()) {
                 ibAddTouristDest.setClickable(false);
                 ibAddTouristDest.setImageResource(R.drawable.ic_baseline_check_24);
@@ -83,8 +91,17 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
                     }
                 });
             }
-
-            Glide.with(context).load(touristSpot.getImageURL()).override(500,500).into(ivBusinessPicture);
+            ibYelpPage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(touristSpot.getYelpURL()));
+                    context.startActivity(i);
+                }
+            });
+            if (!touristSpot.getImageURL().isEmpty()) {
+                Glide.with(context).load(touristSpot.getImageURL()).override(500,500).into(ivBusinessPicture);
+            }
             switch (touristSpot.getRating()) {
                 case "1.0":
                     Glide.with(context).load(R.drawable.stars_extra_large_1).into(ivYelpRating);

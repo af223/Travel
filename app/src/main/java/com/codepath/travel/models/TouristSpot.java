@@ -1,5 +1,7 @@
 package com.codepath.travel.models;
 
+import android.content.Intent;
+
 public class TouristSpot {
     private String businessName;
     private String rating;
@@ -7,14 +9,16 @@ public class TouristSpot {
     private String yelpURL;
     private Boolean chosen;
     private String placeId;
+    private Integer reviewCount;
 
-    public TouristSpot(String businessName, String rating, String imageURL, String yelpURL, String placeId) {
+    public TouristSpot(String businessName, String rating, String imageURL, String yelpURL, String placeId, Integer reviewCount) {
         this.businessName = businessName;
         this.rating = rating;
         this.imageURL = imageURL;
         this.yelpURL = yelpURL;
         this.chosen = false;
         this.placeId = placeId;
+        this.reviewCount = reviewCount;
     }
 
     public String getBusinessName() {
@@ -63,5 +67,13 @@ public class TouristSpot {
 
     public void setPlaceId(String placeId) {
         this.placeId = placeId;
+    }
+
+    public Integer getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
     }
 }
