@@ -30,19 +30,18 @@ This app makes planning trips easy, allowing users to find all necessary informa
 
 **Required Must-have Stories**
 
-- [ ] User can see and click on locations in world map
-- [ ] User can choose location by typing name
-- [ ] User can see images of selected locations
-- [ ] User can see flight options to chosen destination
-- [ ] User can find hotels
-- [ ] User can see cost summary for chosen resources and add additional expenses
-- [ ] User can see list of resources (hotel, flight)
-- [ ] User can create new account
-- [ ] User can login
+- [x] User can see and click on locations in world map
+- [x] User can choose location by typing name
+- [ ] User can see generated itinerary of trip and edit it
+- [x] User can see flight options to chosen destination
+- [x] User can find hotels
+- [x] User can see cost summary for chosen resources and add additional expenses
+- [x] User can see list of resources (hotel, flight)
+- [x] User can create new account
+- [x] User can login
 
 **Optional Nice-to-have Stories**
 
-- [ ] User can see a generated itinerary
 - [ ] User can upload their photos from trips.
 - [ ] User can find car rentals at destination
 - [ ] User can find popular tourist spots at destination
