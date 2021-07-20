@@ -1,6 +1,6 @@
 package com.codepath.travel.fragments;
 
-import android.nfc.NfcAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,15 +17,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.travel.R;
+import com.codepath.travel.WeeklyViewActivity;
 import com.codepath.travel.adapters.CalendarAdapter;
 import com.codepath.travel.adapters.OnItemListener;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
+import static com.codepath.travel.CalendarUtils.days;
+import static com.codepath.travel.CalendarUtils.formatDate;
+import static com.codepath.travel.CalendarUtils.getDaysInMonth;
+import static com.codepath.travel.CalendarUtils.selectedDate;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,9 +41,8 @@ public class ItineraryFragment extends Fragment implements OnItemListener {
     private Button btnPreviousMonth;
     private Button btnNextMonth;
     private RecyclerView rvCalendar;
-    private LocalDate selectedDate;
-    private ArrayList<String> daysInMonth;
     private CalendarAdapter adapter;
+    private Button btnWeeklyView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,6 +58,7 @@ public class ItineraryFragment extends Fragment implements OnItemListener {
         btnPreviousMonth = view.findViewById(R.id.btnPreviousMonth);
         btnNextMonth = view.findViewById(R.id.btnNextMonth);
         rvCalendar = view.findViewById(R.id.rvCalendar);
+        btnWeeklyView = view.findViewById(R.id.btnWeeklyView);
 
         btnPreviousMonth.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,9 +76,17 @@ public class ItineraryFragment extends Fragment implements OnItemListener {
             }
         });
 
-        daysInMonth = new ArrayList<>();
+        btnWeeklyView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getContext(), WeeklyViewActivity.class);
+                startActivity(i);
+            }
+        });
+
+        days = new ArrayList<>();
         selectedDate = LocalDate.now();
-        adapter = new CalendarAdapter(getContext(), daysInMonth, this);
+        adapter = new CalendarAdapter(getContext(), days, this);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 7);
         rvCalendar.setLayoutManager(layoutManager);
         rvCalendar.setAdapter(adapter);
@@ -89,28 +98,6 @@ public class ItineraryFragment extends Fragment implements OnItemListener {
         tvMonthYear.setText(formatDate(selectedDate));
         getDaysInMonth(selectedDate);
         adapter.notifyDataSetChanged();
-    }
-
-    private void getDaysInMonth(LocalDate date) {
-        daysInMonth.clear();
-        YearMonth yearMonth = YearMonth.from(date);
-        int numDaysInMonth = yearMonth.lengthOfMonth();
-
-        LocalDate firstOfMonth = selectedDate.withDayOfMonth(1);
-        int dayOfWeek = firstOfMonth.getDayOfWeek().getValue() % 7; // Sunday is leftmost column
-
-        for (int i = 1; i <= 42; i++) {
-            if (i <= dayOfWeek || i > numDaysInMonth + dayOfWeek) {
-                daysInMonth.add("");
-            } else {
-                daysInMonth.add(String.valueOf(i - dayOfWeek));
-            }
-        }
-    }
-
-    private String formatDate(LocalDate date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
-        return date.format(formatter);
     }
 
     @Override

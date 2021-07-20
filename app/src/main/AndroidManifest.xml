@@ -18,7 +18,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Travel">
-        <activity android:name=".TouristSpotsActivity"></activity>
+        <activity android:name=".WeeklyViewActivity"></activity>
+        <activity android:name=".CreateEventActivity" />
+        <activity android:name=".TouristSpotsActivity" />
         <activity android:name=".HotelsActivity" />
         <activity android:name=".ChooseFlightActivity" />
         <activity android:name=".AirportSearchActivity" />
