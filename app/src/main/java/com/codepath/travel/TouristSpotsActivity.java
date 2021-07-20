@@ -2,13 +2,11 @@ package com.codepath.travel;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +22,6 @@ import com.codepath.travel.adapters.TouristActivitiesAdapter;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.TouristDestination;
 import com.codepath.travel.models.TouristSpot;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -51,6 +48,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
 
     private static final String TAG = "TouristSpotsActivity";
     private static final String YELP_BUSINESS_SEARCH_URL = "https://api.yelp.com/v3/businesses/search";
+    private static final int NUM_LOAD_BUSINESSES = 20;
     private TextView tvActivityType;
     private ProgressBar pbTouristLoad;
     private boolean[] selectedType;
@@ -68,6 +66,9 @@ public class TouristSpotsActivity extends AppCompatActivity {
     private String longitude;
     private static String destinationID;
     private static Destination currDestination;
+    private static int offset;
+    private String categoryParameter;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     public static void saveTouristDestination(TouristSpot touristSpot) {
         TouristDestination touristDestination = new TouristDestination();
@@ -107,11 +108,19 @@ public class TouristSpotsActivity extends AppCompatActivity {
         StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rvTouristActivities.setLayoutManager(gridLayoutManager);
         rvTouristActivities.setAdapter(adapter);
+        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadTouristResults();
+            }
+        };
+        rvTouristActivities.addOnScrollListener(scrollListener);
 
         selectedType = new boolean[typeArray.length];
         latitude = getIntent().getStringExtra(Destination.KEY_LAT);
         longitude = getIntent().getStringExtra(Destination.KEY_LONG);
         destinationID = getIntent().getStringExtra(Destination.KEY_OBJECT_ID);
+        offset = 0;
 
         tvActivityType.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,8 +144,10 @@ public class TouristSpotsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         pbTouristLoad.setVisibility(View.VISIBLE);
+                        offset = 0;
                         touristSpots.clear();
-                        String categoryParameter = "";
+                        scrollListener.resetState();
+                        categoryParameter = "";
                         StringBuilder stringBuilder = new StringBuilder();
                         for (int i = 0; i < typeList.size(); i++) {
                             stringBuilder.append(typeArray[typeList.get(i)]);
@@ -147,7 +158,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
                                 categoryParameter += ",";
                             }
                         }
-                        loadTouristResults(categoryParameter);
+                        loadTouristResults();
                         tvActivityType.setText(stringBuilder.toString());
                     }
                 });
@@ -167,6 +178,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
                             typeList.clear();
                             tvActivityType.setText("");
                         }
+                        builder.show();
                     }
                 });
 
@@ -175,13 +187,15 @@ public class TouristSpotsActivity extends AppCompatActivity {
         });
     }
 
-    private void loadTouristResults(String categoryParameter) {
+    private void loadTouristResults() {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestHeaders headers = new RequestHeaders();
         RequestParams params = new RequestParams();
         params.put("latitude", latitude);
         params.put("longitude", longitude);
         params.put("categories", categoryParameter);
+        params.put("limit", NUM_LOAD_BUSINESSES);
+        params.put("offset", offset);
         headers.put("Authorization", "Bearer " + getResources().getString(R.string.yelp_api_key));
         client.get(YELP_BUSINESS_SEARCH_URL, headers, params, new JsonHttpResponseHandler() {
                     @Override
@@ -189,6 +203,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
                         processYelpResults(json.jsonObject);
                         adapter.notifyDataSetChanged();
                         pbTouristLoad.setVisibility(View.GONE);
+                        offset += NUM_LOAD_BUSINESSES;
                     }
 
                     @Override
