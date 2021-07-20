@@ -100,7 +100,8 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
                 }
             });
             if (!touristSpot.getImageURL().isEmpty()) {
-                Glide.with(context).load(touristSpot.getImageURL()).override(500,500).into(ivBusinessPicture);
+                ivBusinessPicture.layout(0,0,0,0);
+                Glide.with(context).load(touristSpot.getImageURL()).into(ivBusinessPicture);
             }
             switch (touristSpot.getRating()) {
                 case "1.0":

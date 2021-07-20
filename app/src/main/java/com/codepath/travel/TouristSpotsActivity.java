@@ -106,6 +106,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
         touristSpots = new ArrayList<>();
         adapter = new TouristActivitiesAdapter(this, touristSpots);
         StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         rvTouristActivities.setLayoutManager(gridLayoutManager);
         rvTouristActivities.setAdapter(adapter);
         scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
