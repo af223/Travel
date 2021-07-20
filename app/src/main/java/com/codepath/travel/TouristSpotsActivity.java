@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,11 +22,13 @@ import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.adapters.TouristActivitiesAdapter;
 import com.codepath.travel.models.Destination;
+import com.codepath.travel.models.TouristDestination;
 import com.codepath.travel.models.TouristSpot;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,6 +66,32 @@ public class TouristSpotsActivity extends AppCompatActivity {
     private ArrayList<TouristSpot> touristSpots;
     private String latitude;
     private String longitude;
+    private static String destinationID;
+    private static Destination currDestination;
+
+    public static void saveTouristDestination(TouristSpot touristSpot) {
+        TouristDestination touristDestination = new TouristDestination();
+        touristDestination.setUser(ParseUser.getCurrentUser());
+        touristDestination.setPlaceId(touristSpot.getPlaceId());
+        if (currDestination != null) {
+            touristDestination.setDestination(currDestination);
+            touristDestination.saveInBackground();
+        } else {
+            ParseQuery<Destination> query = ParseQuery.getQuery(Destination.class);
+            query.getInBackground(destinationID, new GetCallback<Destination>() {
+                @Override
+                public void done(Destination object, ParseException e) {
+                    if (e != null) {
+                        Log.e(TAG, "Unable to save tourist destination");
+                    }
+                    currDestination = object;
+                    touristDestination.setDestination(currDestination);
+                    touristDestination.saveInBackground();
+                }
+            });
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +111,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
         selectedType = new boolean[typeArray.length];
         latitude = getIntent().getStringExtra(Destination.KEY_LAT);
         longitude = getIntent().getStringExtra(Destination.KEY_LONG);
+        destinationID = getIntent().getStringExtra(Destination.KEY_OBJECT_ID);
 
         tvActivityType.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,7 +208,8 @@ public class TouristSpotsActivity extends AppCompatActivity {
                 String rating = String.valueOf(business.getDouble("rating"));
                 String imageURL = business.getString("image_url");
                 String yelpURL = business.getString("url");
-                touristSpots.add(new TouristSpot(name, rating, imageURL, yelpURL));
+                String placeId = business.getString("id");
+                touristSpots.add(new TouristSpot(name, rating, imageURL, yelpURL, placeId));
             }
         } catch (JSONException e) {
             e.printStackTrace();

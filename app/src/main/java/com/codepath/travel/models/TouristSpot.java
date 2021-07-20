@@ -5,12 +5,16 @@ public class TouristSpot {
     private String rating;
     private String imageURL;
     private String yelpURL;
+    private Boolean chosen;
+    private String placeId;
 
-    public TouristSpot(String businessName, String rating, String imageURL, String yelpURL) {
+    public TouristSpot(String businessName, String rating, String imageURL, String yelpURL, String placeId) {
         this.businessName = businessName;
         this.rating = rating;
         this.imageURL = imageURL;
         this.yelpURL = yelpURL;
+        this.chosen = false;
+        this.placeId = placeId;
     }
 
     public String getBusinessName() {
@@ -43,5 +47,21 @@ public class TouristSpot {
 
     public void setYelpURL(String yelpURL) {
         this.yelpURL = yelpURL;
+    }
+
+    public Boolean isChosen() {
+        return chosen;
+    }
+
+    public void flipChosen() {
+        chosen = !chosen;
+    }
+
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
     }
 }

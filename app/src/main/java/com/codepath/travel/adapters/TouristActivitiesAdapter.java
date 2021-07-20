@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.travel.R;
+import com.codepath.travel.TouristSpotsActivity;
 import com.codepath.travel.models.TouristSpot;
 
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +54,7 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
         private ImageView ivBusinessPicture;
         private TextView tvBusinessName;
         private ImageView ivYelpRating;
+        private ImageButton ibAddTouristDest;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
@@ -59,11 +62,29 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
             ivBusinessPicture = itemView.findViewById(R.id.ivBusinessPicture);
             tvBusinessName = itemView.findViewById(R.id.tvBusinessName);
             ivYelpRating = itemView.findViewById(R.id.ivYelpRating);
+            ibAddTouristDest = itemView.findViewById(R.id.ibAddTouristDest);
         }
 
         public void bind(TouristSpot touristSpot) {
-            Glide.with(context).load(touristSpot.getImageURL()).override(500,500).into(ivBusinessPicture);
             tvBusinessName.setText(touristSpot.getBusinessName());
+            if (touristSpot.isChosen()) {
+                ibAddTouristDest.setClickable(false);
+                ibAddTouristDest.setImageResource(R.drawable.ic_baseline_check_24);
+            } else {
+                ibAddTouristDest.setClickable(true);
+                ibAddTouristDest.setImageResource(R.drawable.ic_baseline_add_24);
+                ibAddTouristDest.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ibAddTouristDest.setClickable(false);
+                        ibAddTouristDest.setImageResource(R.drawable.ic_baseline_check_24);
+                        touristSpot.flipChosen();
+                        TouristSpotsActivity.saveTouristDestination(touristSpot);
+                    }
+                });
+            }
+
+            Glide.with(context).load(touristSpot.getImageURL()).override(500,500).into(ivBusinessPicture);
             switch (touristSpot.getRating()) {
                 case "1.0":
                     Glide.with(context).load(R.drawable.stars_extra_large_1).into(ivYelpRating);
