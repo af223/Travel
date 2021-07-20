@@ -32,6 +32,9 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
+ * This fragment displays the list of expenses for the trip with any prior selected expenses from flight, hotel, etc.
+ * already loaded in. The user can add, edit, and delete expenses (except those that were automatically loaded in).
+ * The user can reach this fragment through bottom navigation.
  */
 public class CostsFragment extends Fragment {
 

@@ -15,6 +15,12 @@
         android:title="@string/destinations"
         app:showAsAction="always" />
     <item
+        android:id="@+id/action_itinerary"
+        android:icon="@drawable/ic_baseline_calendar_today_24"
+        android:enabled="true"
+        android:title="@string/itinerary"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_costs"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_attach_money_24"

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.codepath.travel.fragments.CostsFragment;
+import com.codepath.travel.fragments.ItineraryFragment;
 import com.codepath.travel.fragments.LocationsFragment;
 import com.codepath.travel.fragments.MapFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -39,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.action_locations:
                         fragment = new LocationsFragment();
+                        break;
+                    case R.id.action_itinerary:
+                        fragment = new ItineraryFragment();
                         break;
                     case R.id.action_costs:
                     default:
