@@ -22,4 +22,6 @@
     <string name="itinerary">Itinerary</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="prev_month_arrow"><![CDATA[<-]]></string>
+    <string name="next_month_arrow"><![CDATA[->]]></string>
 </resources>
