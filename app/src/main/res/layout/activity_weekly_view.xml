@@ -135,9 +135,10 @@
         android:layout_gravity="center"
         android:textSize="20sp" />
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5" />
+        android:layout_weight="5"
+        android:id="@+id/rvEventsList" />
 
 </LinearLayout>

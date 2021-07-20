@@ -2,16 +2,19 @@ package com.codepath.travel;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.codepath.travel.adapters.CalendarAdapter;
+import com.codepath.travel.adapters.EventsAdapter;
 import com.codepath.travel.adapters.OnItemListener;
+import com.codepath.travel.models.Event;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,14 +24,22 @@ import static com.codepath.travel.CalendarUtils.formatDate;
 import static com.codepath.travel.CalendarUtils.getDaysInWeek;
 import static com.codepath.travel.CalendarUtils.selectedDate;
 
+/**
+ * This activity allows the user to a see one week at the top of the screen, and the schedule for that day
+ * below. This activity is reached from the itinerary fragment.
+ */
+
 public class WeeklyViewActivity extends AppCompatActivity implements OnItemListener {
 
     private TextView tvMonthYear;
     private Button btnPreviousWeek;
     private Button btnNextWeek;
     private RecyclerView rvCalendar;
-    private CalendarAdapter adapter;
+    private CalendarAdapter calendarAdapter;
     private Button btnCreateEvent;
+    private RecyclerView rvEventsList;
+    private EventsAdapter eventsAdapter;
+    private ArrayList<Event> events;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +51,7 @@ public class WeeklyViewActivity extends AppCompatActivity implements OnItemListe
         btnNextWeek = findViewById(R.id.btnNextWeek);
         rvCalendar = findViewById(R.id.rvCalendar);
         btnCreateEvent = findViewById(R.id.btnCreateEvent);
+        rvEventsList = findViewById(R.id.rvEventsList);
 
         btnPreviousWeek.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,19 +69,45 @@ public class WeeklyViewActivity extends AppCompatActivity implements OnItemListe
             }
         });
 
+        btnCreateEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(WeeklyViewActivity.this, CreateEventActivity.class);
+                startActivity(i);
+            }
+        });
+
         days = new ArrayList<>();
-        adapter = new CalendarAdapter(WeeklyViewActivity.this, days, this);
+        calendarAdapter = new CalendarAdapter(WeeklyViewActivity.this, days, this);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(WeeklyViewActivity.this, 7);
         rvCalendar.setLayoutManager(layoutManager);
-        rvCalendar.setAdapter(adapter);
+        rvCalendar.setAdapter(calendarAdapter);
+
+        events = new ArrayList<>();
+        eventsAdapter = new EventsAdapter(WeeklyViewActivity.this, events);
+        rvEventsList.setLayoutManager(new LinearLayoutManager(this));
+        rvEventsList.setAdapter(eventsAdapter);
 
         setWeekView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshEventsAdapter();
+    }
+
+    private void refreshEventsAdapter() {
+        events.clear();
+        events.addAll(Event.eventsForDate(selectedDate));
+        eventsAdapter.notifyDataSetChanged();
     }
 
     private void setWeekView() {
         tvMonthYear.setText(formatDate(selectedDate));
         getDaysInWeek(selectedDate);
-        adapter.notifyDataSetChanged();
+        calendarAdapter.notifyDataSetChanged();
+        refreshEventsAdapter();
     }
 
     @Override
