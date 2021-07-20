@@ -133,8 +133,8 @@ public class AirportSearchActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 displayAirports(json.jsonObject);
-                pbAirport.setVisibility(View.GONE);
                 foundAdapter.notifyDataSetChanged();
+                pbAirport.setVisibility(View.GONE);
             }
 
             @Override
@@ -178,10 +178,15 @@ public class AirportSearchActivity extends AppCompatActivity {
                     foundAirports.add(airport);
                 }
             }
-            loadingAirportSuggestions = false;
             if (matchingPlaces.length() == 0) {
-                Toast.makeText(AirportSearchActivity.this, "No airports found, try broader search", Toast.LENGTH_LONG).show();
+                if (loadingAirportSuggestions) {
+                    loadingAirportSuggestions = false;
+                    findMatchingAirports(getIntent().getStringExtra(Destination.KEY_COUNTRY));
+                } else {
+                    Toast.makeText(AirportSearchActivity.this, "No airports found, try broader search", Toast.LENGTH_LONG).show();
+                }
             }
+            loadingAirportSuggestions = false;
         } catch (JSONException e) {
             Toast.makeText(AirportSearchActivity.this, "Unable to process airports", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Error parsing airports JSON: ", e);
