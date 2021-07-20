@@ -9,10 +9,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,9 +24,15 @@ import com.codepath.travel.R;
 import com.codepath.travel.WeeklyViewActivity;
 import com.codepath.travel.adapters.CalendarAdapter;
 import com.codepath.travel.adapters.OnItemListener;
+import com.codepath.travel.models.Destination;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.codepath.travel.CalendarUtils.days;
 import static com.codepath.travel.CalendarUtils.formatDate;
@@ -35,14 +45,16 @@ import static com.codepath.travel.CalendarUtils.selectedDate;
  * The tourist spots which the user chose for that location is also loaded in, and will automatically be
  * scheduled, but the user can edit the suggested itinerary.
  */
-public class ItineraryFragment extends Fragment implements OnItemListener {
+public class ItineraryFragment extends Fragment implements OnItemListener, AdapterView.OnItemSelectedListener {
 
+    private static final String TAG = "ItineraryFragment";
     private TextView tvMonthYear;
     private Button btnPreviousMonth;
     private Button btnNextMonth;
     private RecyclerView rvCalendar;
     private CalendarAdapter adapter;
     private Button btnWeeklyView;
+    private Spinner destinationSpinner;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,6 +71,9 @@ public class ItineraryFragment extends Fragment implements OnItemListener {
         btnNextMonth = view.findViewById(R.id.btnNextMonth);
         rvCalendar = view.findViewById(R.id.rvCalendar);
         btnWeeklyView = view.findViewById(R.id.btnWeeklyView);
+        destinationSpinner = view.findViewById(R.id.destination_spinner);
+
+        loadAllDestinations();
 
         btnPreviousMonth.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +111,27 @@ public class ItineraryFragment extends Fragment implements OnItemListener {
         setMonthView();
     }
 
+    private void loadAllDestinations() {
+        ParseQuery<Destination> query = ParseQuery.getQuery(Destination.class);
+        query.whereEqualTo(Destination.KEY_USER, ParseUser.getCurrentUser());
+        query.findInBackground(new FindCallback<Destination>() {
+            @Override
+            public void done(List<Destination> destinations, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Unable to load locations", e);
+                    Toast.makeText(getContext(), "Unable to load locations", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                ArrayList<String> destinationNames = new ArrayList<>();
+                for (Destination destination : destinations) {
+                    destinationNames.add(destination.getFormattedLocationName());
+                }
+                ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(), R.layout.item_spinner_destination, destinationNames);
+                destinationSpinner.setAdapter(spinnerAdapter);
+            }
+        });
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -114,5 +150,15 @@ public class ItineraryFragment extends Fragment implements OnItemListener {
             selectedDate = date;
             setMonthView();
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }
