@@ -85,12 +85,20 @@ public class ItineraryFragment extends Fragment implements OnItemListener {
         });
 
         days = new ArrayList<>();
-        selectedDate = LocalDate.now();
+        if (selectedDate == null) {
+            selectedDate = LocalDate.now();
+        }
         adapter = new CalendarAdapter(getContext(), days, this);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 7);
         rvCalendar.setLayoutManager(layoutManager);
         rvCalendar.setAdapter(adapter);
 
+        setMonthView();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         setMonthView();
     }
 
@@ -101,10 +109,10 @@ public class ItineraryFragment extends Fragment implements OnItemListener {
     }
 
     @Override
-    public void onItemClick(int position, String dayText) {
-        if(!dayText.isEmpty()) {
-            String message = "Selected Date " + dayText + " " + formatDate(selectedDate);
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    public void onItemClick(int position, LocalDate date) {
+        if (date != null) {
+            selectedDate = date;
+            setMonthView();
         }
     }
 }

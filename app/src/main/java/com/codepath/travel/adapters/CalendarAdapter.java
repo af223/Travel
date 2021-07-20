@@ -42,7 +42,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         } else { // week view
             layoutParams.height = (int) parent.getHeight();
         }
-        return new ViewHolder(view, onItemListener);
+        return new ViewHolder(view, onItemListener, days);
     }
 
     @Override
@@ -61,14 +61,16 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         private final TextView tvCellDate;
         private final OnItemListener onItemListener;
         private final View clCalendarCell;
+        private final ArrayList<LocalDate> days;
 
-        public ViewHolder(@NonNull @NotNull View itemView, OnItemListener onItemListener) {
+        public ViewHolder(@NonNull @NotNull View itemView, OnItemListener onItemListener, ArrayList<LocalDate> days) {
             super(itemView);
 
             tvCellDate = itemView.findViewById(R.id.tvCellDate);
             clCalendarCell = itemView.findViewById(R.id.clCalendarCell);
             this.onItemListener = onItemListener;
             itemView.setOnClickListener(this);
+            this.days = days;
         }
 
         public void bind(LocalDate date) {
@@ -86,7 +88,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
 
         @Override
         public void onClick(View v) {
-            onItemListener.onItemClick(getAdapterPosition(), tvCellDate.getText().toString());
+            onItemListener.onItemClick(getAdapterPosition(), days.get(getAdapterPosition()));
         }
     }
 }

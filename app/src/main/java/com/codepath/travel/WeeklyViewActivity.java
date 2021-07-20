@@ -58,7 +58,6 @@ public class WeeklyViewActivity extends AppCompatActivity implements OnItemListe
         });
 
         days = new ArrayList<>();
-        selectedDate = LocalDate.now();
         adapter = new CalendarAdapter(WeeklyViewActivity.this, days, this);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(WeeklyViewActivity.this, 7);
         rvCalendar.setLayoutManager(layoutManager);
@@ -74,8 +73,8 @@ public class WeeklyViewActivity extends AppCompatActivity implements OnItemListe
     }
 
     @Override
-    public void onItemClick(int position, String dayText) {
-        String message = "Selected Date " + dayText + " " + formatDate(selectedDate);
-        Toast.makeText(WeeklyViewActivity.this, message, Toast.LENGTH_SHORT).show();
+    public void onItemClick(int position, LocalDate date) {
+        selectedDate = date;
+        setWeekView();
     }
 }
