@@ -31,6 +31,8 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +50,7 @@ import static com.codepath.travel.CalendarUtils.selectedDate;
 public class ItineraryFragment extends Fragment implements OnItemListener, AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "ItineraryFragment";
+    private static final String SEE_ALL_ITINERARIES = "ALL";
     private TextView tvMonthYear;
     private Button btnPreviousMonth;
     private Button btnNextMonth;
@@ -55,6 +58,7 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
     private CalendarAdapter adapter;
     private Button btnWeeklyView;
     private Spinner destinationSpinner;
+    private ArrayList<Destination> allDestinations;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -122,12 +126,15 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                     Toast.makeText(getContext(), "Unable to load locations", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                allDestinations = (ArrayList) destinations;
                 ArrayList<String> destinationNames = new ArrayList<>();
+                destinationNames.add(SEE_ALL_ITINERARIES);
                 for (Destination destination : destinations) {
                     destinationNames.add(destination.getFormattedLocationName());
                 }
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(), R.layout.item_spinner_destination, destinationNames);
                 destinationSpinner.setAdapter(spinnerAdapter);
+                destinationSpinner.setOnItemSelectedListener(ItineraryFragment.this);
             }
         });
     }
@@ -154,11 +161,23 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+        if (parent.getItemAtPosition(position).equals(SEE_ALL_ITINERARIES)) {
+            selectedDate = LocalDate.now();
+        } else {
+            selectedDate = getLocalDate(allDestinations.get(position-1).getDate());
+        }
+        setMonthView();
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    private LocalDate getLocalDate(String date) {
+        if (date == null) {
+            return LocalDate.now();
+        }
+        return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 }
