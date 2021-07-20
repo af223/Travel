@@ -19,6 +19,7 @@ import com.codepath.travel.models.Destination;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +63,7 @@ public class LocationsFragment extends Fragment {
 
     private void loadLocations() {
         ParseQuery<Destination> query = ParseQuery.getQuery(Destination.class);
-        query.include(Destination.KEY_USER);
+        query.whereEqualTo(Destination.KEY_USER, ParseUser.getCurrentUser());
         query.addAscendingOrder(Destination.KEY_CREATED_AT);
         query.findInBackground(new FindCallback<Destination>() {
             @Override
