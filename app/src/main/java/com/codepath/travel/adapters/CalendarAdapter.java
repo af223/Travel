@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import static com.codepath.travel.CalendarUtils.datesOfInterest;
+import static com.codepath.travel.CalendarUtils.destinationColorCode;
 import static com.codepath.travel.CalendarUtils.selectedDate;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHolder> {
@@ -62,12 +65,14 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         private final OnItemListener onItemListener;
         private final View clCalendarCell;
         private final ArrayList<LocalDate> days;
+        private final ImageView ivSelectedDate;
 
         public ViewHolder(@NonNull @NotNull View itemView, OnItemListener onItemListener, ArrayList<LocalDate> days) {
             super(itemView);
 
             tvCellDate = itemView.findViewById(R.id.tvCellDate);
             clCalendarCell = itemView.findViewById(R.id.clCalendarCell);
+            ivSelectedDate = itemView.findViewById(R.id.ivSelectedDate);
             this.onItemListener = onItemListener;
             itemView.setOnClickListener(this);
             this.days = days;
@@ -79,7 +84,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
             } else {
                 tvCellDate.setText(String.valueOf(date.getDayOfMonth()));
                 if (date.equals(selectedDate)) {
-                    clCalendarCell.setBackgroundColor(Color.LTGRAY);
+                    ivSelectedDate.setVisibility(View.VISIBLE);
+                } else {
+                    ivSelectedDate.setVisibility(View.GONE);
+                }
+                if (datesOfInterest.containsKey(date.toString())) {
+                    clCalendarCell.setBackgroundColor(destinationColorCode.get(datesOfInterest.get(date.toString())));
                 } else {
                     clCalendarCell.setBackgroundColor(Color.TRANSPARENT);
                 }

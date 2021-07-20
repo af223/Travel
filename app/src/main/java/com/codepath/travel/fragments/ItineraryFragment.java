@@ -36,10 +36,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.codepath.travel.CalendarUtils.datesOfInterest;
 import static com.codepath.travel.CalendarUtils.days;
+import static com.codepath.travel.CalendarUtils.destinationColorCode;
 import static com.codepath.travel.CalendarUtils.formatDate;
+import static com.codepath.travel.CalendarUtils.generateDestinationColorCode;
 import static com.codepath.travel.CalendarUtils.getDaysInMonth;
+import static com.codepath.travel.CalendarUtils.getLocalDate;
 import static com.codepath.travel.CalendarUtils.selectedDate;
+import static com.codepath.travel.CalendarUtils.selectedDestination;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,7 +82,9 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
         btnWeeklyView = view.findViewById(R.id.btnWeeklyView);
         destinationSpinner = view.findViewById(R.id.destination_spinner);
 
-        loadAllDestinations();
+        if (allDestinations == null) {
+            loadAllDestinations();
+        }
 
         btnPreviousMonth.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,10 +138,15 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                 destinationNames.add(SEE_ALL_ITINERARIES);
                 for (Destination destination : destinations) {
                     destinationNames.add(destination.getFormattedLocationName());
+                    datesOfInterest.put(destination.getDate(), destination);
                 }
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(), R.layout.item_spinner_destination, destinationNames);
                 destinationSpinner.setAdapter(spinnerAdapter);
                 destinationSpinner.setOnItemSelectedListener(ItineraryFragment.this);
+
+                if (destinationColorCode.isEmpty()) {
+                    generateDestinationColorCode(allDestinations);
+                }
             }
         });
     }
@@ -163,8 +175,10 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (parent.getItemAtPosition(position).equals(SEE_ALL_ITINERARIES)) {
             selectedDate = LocalDate.now();
+            selectedDestination = null;
         } else {
             selectedDate = getLocalDate(allDestinations.get(position-1).getDate());
+            selectedDestination = allDestinations.get(position-1);
         }
         setMonthView();
     }
@@ -172,12 +186,5 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
-    }
-
-    private LocalDate getLocalDate(String date) {
-        if (date == null) {
-            return LocalDate.now();
-        }
-        return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 }

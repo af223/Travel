@@ -1,16 +1,27 @@
 package com.codepath.travel;
 
+import android.graphics.Color;
+
+import com.codepath.travel.models.Destination;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Random;
 
 public class CalendarUtils {
 
     public static LocalDate selectedDate;
     public static ArrayList<LocalDate> days;
+    public static Destination selectedDestination;
+    public static HashMap<Destination, Integer> destinationColorCode = new HashMap<>();
+    public static HashMap<String, Destination> datesOfInterest = new HashMap<>();
 
     public static String formatDate(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
@@ -25,6 +36,13 @@ public class CalendarUtils {
     public static String formatTime(LocalTime time) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
         return time.format(formatter);
+    }
+
+    public static LocalDate getLocalDate(String date) {
+        if (date == null) {
+            return LocalDate.now();
+        }
+        return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     public static void getDaysInMonth(LocalDate date) {
@@ -64,5 +82,13 @@ public class CalendarUtils {
             current = current.minusDays(1);
         }
         return null;
+    }
+
+    public static void generateDestinationColorCode(ArrayList<Destination> destinations) {
+        Random rnd = new Random();
+        for (Destination destination : destinations) {
+            int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+            destinationColorCode.put(destination, color);
+        }
     }
 }
