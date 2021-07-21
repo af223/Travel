@@ -1,8 +1,13 @@
 package com.codepath.travel;
 
+import android.content.Intent;
 import android.graphics.Color;
 
+import androidx.core.util.Pair;
+
 import com.codepath.travel.models.Destination;
+import com.codepath.travel.models.Event;
+import com.codepath.travel.models.TouristDestination;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -13,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import static com.codepath.travel.models.Event.eventsList;
+
 public class CalendarUtils {
 
     public static LocalDate selectedDate;
@@ -20,6 +27,7 @@ public class CalendarUtils {
     public static Destination selectedDestination;
     public static HashMap<Destination, Integer> destinationColorCode = new HashMap<>();
     public static HashMap<String, Destination> datesOfInterest = new HashMap<>();
+    public static HashMap<String, ArrayList<Pair<LocalTime, LocalTime>>> busyTimeSlots = new HashMap<>();
 
     public static String formatDate(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
@@ -41,6 +49,10 @@ public class CalendarUtils {
             return LocalDate.now();
         }
         return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+    public static LocalTime getLocalTime(String time) {
+        return LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm:ss"));
     }
 
     public static void getDaysInMonth(LocalDate date) {
@@ -87,6 +99,20 @@ public class CalendarUtils {
         for (Destination destination : destinations) {
             int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
             destinationColorCode.put(destination, color);
+        }
+    }
+
+    public static void setUpTimeSlots(ArrayList<TouristDestination> scheduledEvents) {
+        for (TouristDestination touristDestination : scheduledEvents) {
+            String dateOfVisit = touristDestination.getDateVisited();
+            if (!busyTimeSlots.containsKey(dateOfVisit)) {
+                busyTimeSlots.put(dateOfVisit, new ArrayList<>());
+            }
+            LocalTime timeOfVisit = getLocalTime(touristDestination.getTimeVisited());
+            Pair block = new Pair(timeOfVisit, timeOfVisit.plusHours(Integer.parseInt(touristDestination.getVisitLength())));
+            busyTimeSlots.get(dateOfVisit).add(block);
+            Event event = new Event(touristDestination.getName(), getLocalDate(touristDestination.getDateVisited()), timeOfVisit);
+            eventsList.add(event);
         }
     }
 }

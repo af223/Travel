@@ -48,6 +48,7 @@ import static com.codepath.travel.CalendarUtils.getLocalDate;
 import static com.codepath.travel.CalendarUtils.selectedDate;
 import static com.codepath.travel.CalendarUtils.selectedDestination;
 import static com.codepath.travel.CalendarUtils.setUpTimeSlots;
+import static com.codepath.travel.models.Event.eventsList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -87,9 +88,7 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
         btnWeeklyView = view.findViewById(R.id.btnWeeklyView);
         destinationSpinner = view.findViewById(R.id.destination_spinner);
 
-        if (allDestinations == null) {
-            loadAllDestinations();
-        }
+        reloadEverything();
 
         btnPreviousMonth.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,6 +132,14 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
         setMonthView();
     }
 
+    private void reloadEverything() {
+        eventsList.clear();
+        destinationColorCode.clear();
+        datesOfInterest.clear();
+        busyTimeSlots.clear();
+        loadAllDestinations();
+    }
+
     private void loadAllDestinations() {
         ParseQuery<Destination> query = ParseQuery.getQuery(Destination.class);
         query.whereEqualTo(Destination.KEY_USER, ParseUser.getCurrentUser());
@@ -153,13 +160,12 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                     datesOfInterest.put(destination.getDate(), destination);
                     String arrivalName = "Arrival at " + destination.getArriveAirportName() + " Airport in " + destination.getFormattedLocationName();
                     Event event = new Event(arrivalName, getLocalDate(destination.getDate()), LocalTime.of(12, 0, 0, 0));
-                    Event.eventsList.add(event);
+                    eventsList.add(event);
                 }
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(), R.layout.item_spinner_destination, destinationNames);
                 destinationSpinner.setAdapter(spinnerAdapter);
                 destinationSpinner.setOnItemSelectedListener(ItineraryFragment.this);
 
-                destinationColorCode.clear();
                 generateDestinationColorCode(allDestinations);
             }
         });
@@ -179,9 +185,7 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                         scheduledEvents.add(touristDestination);
                     }
                 }
-                if (busyTimeSlots.isEmpty()) {
-                    setUpTimeSlots(scheduledEvents);
-                }
+                setUpTimeSlots(scheduledEvents);
             }
         });
     }
