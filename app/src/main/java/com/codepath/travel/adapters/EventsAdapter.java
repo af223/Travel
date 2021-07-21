@@ -57,7 +57,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         }
 
         public void bind(Event event) {
-            String eventTitle = event.getName() + " " + CalendarUtils.formatTime(event.getTime());
+            String eventTitle = CalendarUtils.formatTime(event.getTime()) + " ... " + event.getName();
             tvEventName.setText(eventTitle);
         }
     }

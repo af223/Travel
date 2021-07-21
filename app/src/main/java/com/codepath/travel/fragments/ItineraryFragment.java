@@ -45,6 +45,8 @@ import static com.codepath.travel.CalendarUtils.formatDate;
 import static com.codepath.travel.CalendarUtils.generateDestinationColorCode;
 import static com.codepath.travel.CalendarUtils.getDaysInMonth;
 import static com.codepath.travel.CalendarUtils.getLocalDate;
+import static com.codepath.travel.CalendarUtils.nextAvailableDate;
+import static com.codepath.travel.CalendarUtils.scheduleUnscheduledEvents;
 import static com.codepath.travel.CalendarUtils.selectedDate;
 import static com.codepath.travel.CalendarUtils.selectedDestination;
 import static com.codepath.travel.CalendarUtils.setUpTimeSlots;
@@ -137,6 +139,7 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
         destinationColorCode.clear();
         datesOfInterest.clear();
         busyTimeSlots.clear();
+        nextAvailableDate.clear();
         loadAllDestinations();
     }
 
@@ -186,6 +189,7 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                     }
                 }
                 setUpTimeSlots(scheduledEvents);
+                scheduleUnscheduledEvents(unscheduledEvents);
             }
         });
     }
