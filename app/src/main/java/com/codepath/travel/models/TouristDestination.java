@@ -12,6 +12,7 @@ public class TouristDestination extends ParseObject {
     public static final String KEY_DESTINATION = "destination";
     public static final String KEY_PLACEID = "placeId";
     public static final String KEY_DATE_VISIT = "dateVisited";
+    public static final String KEY_NAME = "businessName";
 
     public ParseUser getUser() {
         return getParseUser(KEY_USER);
@@ -43,5 +44,13 @@ public class TouristDestination extends ParseObject {
 
     public void setDateVisited(Date dateVisited) {
         put(KEY_DATE_VISIT, dateVisited);
+    }
+
+    public String getName() {
+        return getString(KEY_NAME);
+    }
+
+    public void setName(String name) {
+        put(KEY_NAME, name);
     }
 }

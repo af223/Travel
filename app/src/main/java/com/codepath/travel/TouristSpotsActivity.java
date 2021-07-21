@@ -74,6 +74,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
         TouristDestination touristDestination = new TouristDestination();
         touristDestination.setUser(ParseUser.getCurrentUser());
         touristDestination.setPlaceId(touristSpot.getPlaceId());
+        touristDestination.setName(touristSpot.getBusinessName());
         if (currDestination != null) {
             touristDestination.setDestination(currDestination);
             touristDestination.saveInBackground();
