@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,29 +40,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment;
+                boolean addToBackStack = false;
                 switch (item.getItemId()) {
                     case R.id.action_map:
-                        getSupportActionBar().hide();
                         fragment = new MapFragment();
                         break;
                     case R.id.action_locations:
-                        toolbar.setTitle("Choose a location");
                         getSupportActionBar().show();
                         fragment = new LocationsFragment();
+                        addToBackStack = true;
                         break;
                     case R.id.action_itinerary:
-                        toolbar.setTitle("Itinerary");
                         getSupportActionBar().show();
                         fragment = new ItineraryFragment();
                         break;
                     case R.id.action_costs:
                     default:
-                        toolbar.setTitle("Cost Breakdown");
                         getSupportActionBar().show();
                         fragment = new CostsFragment();
                         break;
                 }
-                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                if (addToBackStack)
+                    fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+                else
+                    fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                 return true;
             }
         });
@@ -82,6 +84,11 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(this, LoginActivity.class);
             startActivity(i);
             finish();
+        }
+        if (item.getItemId() == android.R.id.home) {
+            fragmentManager.popBackStackImmediate();
+            //fragmentManager.beginTransaction().replace(R.id.flContainer, new LocationsFragment()).commit();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
