@@ -7,6 +7,7 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -21,11 +22,15 @@ public class MainActivity extends AppCompatActivity {
 
     public static FragmentManager fragmentManager;
     private BottomNavigationView bottomNavigationView;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -36,16 +41,23 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment;
                 switch (item.getItemId()) {
                     case R.id.action_map:
+                        getSupportActionBar().hide();
                         fragment = new MapFragment();
                         break;
                     case R.id.action_locations:
+                        toolbar.setTitle("Choose a location");
+                        getSupportActionBar().show();
                         fragment = new LocationsFragment();
                         break;
                     case R.id.action_itinerary:
+                        toolbar.setTitle("Itinerary");
+                        getSupportActionBar().show();
                         fragment = new ItineraryFragment();
                         break;
                     case R.id.action_costs:
                     default:
+                        toolbar.setTitle("Cost Breakdown");
+                        getSupportActionBar().show();
                         fragment = new CostsFragment();
                         break;
                 }
