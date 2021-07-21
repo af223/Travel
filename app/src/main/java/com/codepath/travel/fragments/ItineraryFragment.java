@@ -26,6 +26,7 @@ import com.codepath.travel.adapters.CalendarAdapter;
 import com.codepath.travel.adapters.OnItemListener;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Event;
+import com.codepath.travel.models.TouristDestination;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -33,10 +34,10 @@ import com.parse.ParseUser;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.codepath.travel.CalendarUtils.busyTimeSlots;
 import static com.codepath.travel.CalendarUtils.datesOfInterest;
 import static com.codepath.travel.CalendarUtils.days;
 import static com.codepath.travel.CalendarUtils.destinationColorCode;
@@ -46,6 +47,7 @@ import static com.codepath.travel.CalendarUtils.getDaysInMonth;
 import static com.codepath.travel.CalendarUtils.getLocalDate;
 import static com.codepath.travel.CalendarUtils.selectedDate;
 import static com.codepath.travel.CalendarUtils.selectedDestination;
+import static com.codepath.travel.CalendarUtils.setUpTimeSlots;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,6 +67,8 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
     private Button btnWeeklyView;
     private Spinner destinationSpinner;
     private ArrayList<Destination> allDestinations;
+    private ArrayList<TouristDestination> unscheduledEvents;
+    private ArrayList<TouristDestination> scheduledEvents;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -115,6 +119,12 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
         if (selectedDate == null) {
             selectedDate = LocalDate.now();
         }
+        if (unscheduledEvents == null) {
+            unscheduledEvents = new ArrayList<>();
+        }
+        if (scheduledEvents == null) {
+            scheduledEvents = new ArrayList<>();
+        }
         adapter = new CalendarAdapter(getContext(), days, this);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 7);
         rvCalendar.setLayoutManager(layoutManager);
@@ -135,12 +145,13 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                     return;
                 }
                 allDestinations = (ArrayList) destinations;
+                loadAllEvents();
                 ArrayList<String> destinationNames = new ArrayList<>();
                 destinationNames.add(SEE_ALL_ITINERARIES);
                 for (Destination destination : destinations) {
                     destinationNames.add(destination.getFormattedLocationName());
                     datesOfInterest.put(destination.getDate(), destination);
-                    String arrivalName = "Arrival at " + destination.getArriveAirportName() + " in " + destination.getFormattedLocationName();
+                    String arrivalName = "Arrival at " + destination.getArriveAirportName() + " Airport in " + destination.getFormattedLocationName();
                     Event event = new Event(arrivalName, getLocalDate(destination.getDate()), LocalTime.of(12, 0, 0, 0));
                     Event.eventsList.add(event);
                 }
@@ -148,8 +159,28 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                 destinationSpinner.setAdapter(spinnerAdapter);
                 destinationSpinner.setOnItemSelectedListener(ItineraryFragment.this);
 
-                if (destinationColorCode.isEmpty()) {
-                    generateDestinationColorCode(allDestinations);
+                destinationColorCode.clear();
+                generateDestinationColorCode(allDestinations);
+            }
+        });
+    }
+
+    private void loadAllEvents() {
+        ParseQuery<TouristDestination> query = ParseQuery.getQuery(TouristDestination.class);
+        query.include(TouristDestination.KEY_DESTINATION);
+        query.whereEqualTo(TouristDestination.KEY_USER, ParseUser.getCurrentUser());
+        query.findInBackground(new FindCallback<TouristDestination>() {
+            @Override
+            public void done(List<TouristDestination> touristDestinations, ParseException e) {
+                for (TouristDestination touristDestination : touristDestinations) {
+                    if (touristDestination.getDateVisited() == null) {
+                        unscheduledEvents.add(touristDestination);
+                    } else {
+                        scheduledEvents.add(touristDestination);
+                    }
+                }
+                if (busyTimeSlots.isEmpty()) {
+                    setUpTimeSlots(scheduledEvents);
                 }
             }
         });
