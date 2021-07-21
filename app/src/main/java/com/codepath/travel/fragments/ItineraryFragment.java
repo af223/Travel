@@ -25,6 +25,7 @@ import com.codepath.travel.WeeklyViewActivity;
 import com.codepath.travel.adapters.CalendarAdapter;
 import com.codepath.travel.adapters.OnItemListener;
 import com.codepath.travel.models.Destination;
+import com.codepath.travel.models.Event;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -139,6 +140,9 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                 for (Destination destination : destinations) {
                     destinationNames.add(destination.getFormattedLocationName());
                     datesOfInterest.put(destination.getDate(), destination);
+                    String arrivalName = "Arrival at " + destination.getArriveAirportName() + " in " + destination.getFormattedLocationName();
+                    Event event = new Event(arrivalName, getLocalDate(destination.getDate()), LocalTime.of(12, 0, 0, 0));
+                    Event.eventsList.add(event);
                 }
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(), R.layout.item_spinner_destination, destinationNames);
                 destinationSpinner.setAdapter(spinnerAdapter);
