@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -104,6 +105,7 @@ public class WeeklyViewActivity extends AppCompatActivity implements OnItemListe
     }
 
     private void setWeekView() {
+        Log.i("WeekView", selectedDate.toString());
         tvMonthYear.setText(formatDate(selectedDate));
         getDaysInWeek(selectedDate);
         calendarAdapter.notifyDataSetChanged();

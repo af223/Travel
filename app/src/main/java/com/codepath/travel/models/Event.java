@@ -3,6 +3,7 @@ package com.codepath.travel.models;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Event {
 
@@ -15,6 +16,18 @@ public class Event {
                 events.add(event);
             }
         }
+        events.sort(new Comparator<Event>() {
+            @Override
+            public int compare(Event event1, Event event2) {
+                if (event1.getTime().isBefore(event2.getTime())) {
+                    return -1;
+                } else if (event1.getTime().isAfter(event2.getTime())) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
         return events;
     }
 

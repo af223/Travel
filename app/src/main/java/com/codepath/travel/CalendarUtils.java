@@ -58,7 +58,7 @@ public class CalendarUtils {
     }
 
     public static LocalTime getLocalTime(String time) {
-        return LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm:ss"));
+        return LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
     }
 
     public static void getDaysInMonth(LocalDate date) {
@@ -138,25 +138,25 @@ public class CalendarUtils {
         }
     }
 
-    public static void scheduleUnscheduledEvents(ArrayList<TouristDestination> unscheduledEvents) {
+    public static void scheduleTheseEvents(ArrayList<TouristDestination> unscheduledEvents) {
         for (TouristDestination touristDestination : unscheduledEvents) {
             LocalDate dateOfVisit = getLocalDate(touristDestination.getDestination().getDate()).plusDays(1);
             LocalTime timeOfVisit = LocalTime.of(8, 0, 0);;
             outer: while (true) {
                 if (!busyTimeSlots.containsKey(dateOfVisit.toString())) {
                     busyTimeSlots.put(dateOfVisit.toString(), new ArrayList<>());
-                    addEventToSchedule(touristDestination.getName(), dateOfVisit, timeOfVisit, 0);
+                    addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, 0);
                     break;
                 }
                 ArrayList<Pair<LocalTime, LocalTime>> blockedTimes = busyTimeSlots.get(dateOfVisit.toString());
                 if (timeOfVisit.plusHours(2).isBefore(blockedTimes.get(0).first.plusMinutes(1))) {
-                    addEventToSchedule(touristDestination.getName(), dateOfVisit, timeOfVisit, 0);
+                    addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, 0);
                     break;
                 }
                 timeOfVisit = blockedTimes.get(0).second.plusMinutes(15);
                 for(int i = 1; i < blockedTimes.size(); i++) {
                     if (timeOfVisit.isAfter(blockedTimes.get(i-1).second) && timeOfVisit.plusHours(2).isBefore(blockedTimes.get(i).first.plusMinutes(1))) {
-                        addEventToSchedule(touristDestination.getName(), dateOfVisit, timeOfVisit, i);
+                        addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, i);
                         break outer;
                     } else {
                         timeOfVisit = blockedTimes.get(i).second.plusMinutes(15);
@@ -164,7 +164,7 @@ public class CalendarUtils {
                 }
                 if (timeOfVisit.isAfter(blockedTimes.get(blockedTimes.size()-1).second)
                         && timeOfVisit.plusHours(2).isBefore(curfew)) {
-                    addEventToSchedule(touristDestination.getName(), dateOfVisit, timeOfVisit, blockedTimes.size());
+                    addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, blockedTimes.size());
                     break;
                 }
                 timeOfVisit = LocalTime.of(8, 0, 0);
@@ -173,10 +173,19 @@ public class CalendarUtils {
         }
     }
 
-    private static void addEventToSchedule(String name, LocalDate dateOfVisit, LocalTime timeOfVisit, int index) {
-        Event event = new Event(name, dateOfVisit, timeOfVisit);
+    private static void addEventToSchedule(TouristDestination touristDestination, LocalDate dateOfVisit, LocalTime timeOfVisit, int index) {
+        Event event = new Event(touristDestination.getName(), dateOfVisit, timeOfVisit);
         eventsList.add(event);
         Pair block = new Pair(timeOfVisit, timeOfVisit.plusHours(2));
         busyTimeSlots.get(dateOfVisit.toString()).add(index, block);
+        saveEvent(touristDestination, dateOfVisit.toString(), "2", timeOfVisit.toString());
+    }
+
+    public static void saveEvent(TouristDestination touristDestination, String dateVisited,
+                                 String visitLength, String timeVisited) {
+        touristDestination.setDateVisited(dateVisited);
+        touristDestination.setVisitLength(visitLength);
+        touristDestination.setTimeVisited(timeVisited);
+        touristDestination.saveInBackground();
     }
 }

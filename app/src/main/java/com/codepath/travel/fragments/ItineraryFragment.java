@@ -46,7 +46,7 @@ import static com.codepath.travel.CalendarUtils.generateDestinationColorCode;
 import static com.codepath.travel.CalendarUtils.getDaysInMonth;
 import static com.codepath.travel.CalendarUtils.getLocalDate;
 import static com.codepath.travel.CalendarUtils.nextAvailableDate;
-import static com.codepath.travel.CalendarUtils.scheduleUnscheduledEvents;
+import static com.codepath.travel.CalendarUtils.scheduleTheseEvents;
 import static com.codepath.travel.CalendarUtils.selectedDate;
 import static com.codepath.travel.CalendarUtils.selectedDestination;
 import static com.codepath.travel.CalendarUtils.setUpTimeSlots;
@@ -126,12 +126,16 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
         if (scheduledEvents == null) {
             scheduledEvents = new ArrayList<>();
         }
+        reloadAdapter();
+
+        setMonthView();
+    }
+
+    private void reloadAdapter() {
         adapter = new CalendarAdapter(getContext(), days, this);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 7);
         rvCalendar.setLayoutManager(layoutManager);
         rvCalendar.setAdapter(adapter);
-
-        setMonthView();
     }
 
     private void reloadEverything() {
@@ -189,7 +193,9 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                     }
                 }
                 setUpTimeSlots(scheduledEvents);
-                scheduleUnscheduledEvents(unscheduledEvents);
+                scheduleTheseEvents(unscheduledEvents);
+                scheduledEvents.addAll(unscheduledEvents);
+                unscheduledEvents.clear();
             }
         });
     }
@@ -197,10 +203,12 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
     @Override
     public void onResume() {
         super.onResume();
+        reloadAdapter();
         setMonthView();
     }
 
     private void setMonthView() {
+        Log.i(TAG, selectedDate.toString());
         tvMonthYear.setText(formatDate(selectedDate));
         getDaysInMonth(selectedDate);
         adapter.notifyDataSetChanged();
