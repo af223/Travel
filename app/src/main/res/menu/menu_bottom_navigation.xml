@@ -3,16 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_map"
+        android:id="@+id/action_locations"
         android:enabled="true"
         android:icon="@android:drawable/ic_dialog_map"
         android:title="@string/map_view"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_locations"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_location_on_24"
-        android:title="@string/destinations"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_itinerary"

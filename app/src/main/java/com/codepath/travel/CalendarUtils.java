@@ -1,6 +1,5 @@
 package com.codepath.travel;
 
-import android.content.Intent;
 import android.graphics.Color;
 
 import androidx.core.util.Pair;
@@ -9,7 +8,6 @@ import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Event;
 import com.codepath.travel.models.TouristDestination;
 
-import java.lang.reflect.Array;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -33,7 +31,7 @@ public class CalendarUtils {
     public static HashMap<String, Destination> datesOfInterest = new HashMap<>();
     public static HashMap<String, ArrayList<Pair<LocalTime, LocalTime>>> busyTimeSlots = new HashMap<>();
     public static HashMap<Destination, LocalDate> nextAvailableDate = new HashMap<>();
-    private static LocalTime curfew = LocalTime.of(23, 1, 0);
+    private static final LocalTime curfew = LocalTime.of(23, 1, 0);
 
     public static String formatDate(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
@@ -122,7 +120,7 @@ public class CalendarUtils {
         }
         Iterator it = busyTimeSlots.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<String, ArrayList<Pair<LocalTime, LocalTime>>> date = (Map.Entry)it.next();
+            Map.Entry<String, ArrayList<Pair<LocalTime, LocalTime>>> date = (Map.Entry) it.next();
             date.getValue().sort(new Comparator<Pair<LocalTime, LocalTime>>() {
                 @Override
                 public int compare(Pair<LocalTime, LocalTime> time1, Pair<LocalTime, LocalTime> time2) {
@@ -141,8 +139,9 @@ public class CalendarUtils {
     public static void scheduleTheseEvents(ArrayList<TouristDestination> unscheduledEvents) {
         for (TouristDestination touristDestination : unscheduledEvents) {
             LocalDate dateOfVisit = getLocalDate(touristDestination.getDestination().getDate()).plusDays(1);
-            LocalTime timeOfVisit = LocalTime.of(8, 0, 0);;
-            outer: while (true) {
+            LocalTime timeOfVisit = LocalTime.of(8, 0, 0);
+            outer:
+            while (true) {
                 if (!busyTimeSlots.containsKey(dateOfVisit.toString())) {
                     busyTimeSlots.put(dateOfVisit.toString(), new ArrayList<>());
                     addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, 0);
@@ -154,15 +153,15 @@ public class CalendarUtils {
                     break;
                 }
                 timeOfVisit = blockedTimes.get(0).second.plusMinutes(15);
-                for(int i = 1; i < blockedTimes.size(); i++) {
-                    if (timeOfVisit.isAfter(blockedTimes.get(i-1).second) && timeOfVisit.plusHours(2).isBefore(blockedTimes.get(i).first.plusMinutes(1))) {
+                for (int i = 1; i < blockedTimes.size(); i++) {
+                    if (timeOfVisit.isAfter(blockedTimes.get(i - 1).second) && timeOfVisit.plusHours(2).isBefore(blockedTimes.get(i).first.plusMinutes(1))) {
                         addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, i);
                         break outer;
                     } else {
                         timeOfVisit = blockedTimes.get(i).second.plusMinutes(15);
                     }
                 }
-                if (timeOfVisit.isAfter(blockedTimes.get(blockedTimes.size()-1).second)
+                if (timeOfVisit.isAfter(blockedTimes.get(blockedTimes.size() - 1).second)
                         && timeOfVisit.plusHours(2).isBefore(curfew)) {
                     addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, blockedTimes.size());
                     break;

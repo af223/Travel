@@ -21,12 +21,13 @@ import com.codepath.travel.models.Flight;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+
+import static com.codepath.travel.MainActivity.logout;
 
 /**
  * This activity allows the user navigate to find and select departure and arrival airports and to see
@@ -169,12 +170,9 @@ public class FlightsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        final int logout = R.id.logout;
-        if (item.getItemId() == logout) {
-            ParseUser.logOut();
-            Intent i = new Intent(this, LoginActivity.class);
-            startActivity(i);
-            finish();
+        if (item.getItemId() == R.id.logout) {
+            logout(this);
+            return true;
         }
         if (item.getItemId() == android.R.id.home) {
             finish();

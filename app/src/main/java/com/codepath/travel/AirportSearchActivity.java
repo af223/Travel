@@ -20,7 +20,6 @@ import com.codepath.travel.adapters.ChosenAirportsAdapter;
 import com.codepath.travel.adapters.FindAirportsAdapter;
 import com.codepath.travel.models.Airport;
 import com.codepath.travel.models.Destination;
-import com.google.android.libraries.places.api.model.Place;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,16 +34,16 @@ import okhttp3.Headers;
  * that they want to see plane tickets for. For arrival airports (at the selected travel location), suggested
  * airports are automatically loaded. Users can see choose airports marked (General) to see plane tickets from
  * any airport in that area.
- *
+ * <p>
  * This activity appears when the user clicks the "select [arrival/departure] airport" buttons from FlightsActivity.java.
  */
 
 public class AirportSearchActivity extends AppCompatActivity {
 
     private static final String TAG = "AirportSearchActivity";
+    private static final String findQueryURL = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/autosuggest/v1.0/%1$s/%2$s/%3$s/?query=%4$s";
     private static FindAirportsAdapter foundAdapter;
     private static ChosenAirportsAdapter chosenAdapter;
-    private static final String findQueryURL = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/autosuggest/v1.0/%1$s/%2$s/%3$s/?query=%4$s";
     private EditText etSearch;
     private Button btnSearch;
     private RecyclerView rvChosenAirports;

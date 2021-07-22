@@ -1,14 +1,6 @@
 package com.codepath.travel;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,6 +9,13 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
@@ -39,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import okhttp3.Headers;
+
+import static com.codepath.travel.MainActivity.logout;
 
 /**
  * This activity allows the user to find suggested tourist spots/activities near the chosen destination.
@@ -255,12 +256,9 @@ public class TouristSpotsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        final int logout = R.id.logout;
-        if (item.getItemId() == logout) {
-            ParseUser.logOut();
-            Intent i = new Intent(this, LoginActivity.class);
-            startActivity(i);
-            finish();
+        if (item.getItemId() == R.id.logout) {
+            logout(this);
+            return true;
         }
         if (item.getItemId() == android.R.id.home) {
             finish();

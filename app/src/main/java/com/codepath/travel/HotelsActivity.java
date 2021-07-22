@@ -1,6 +1,5 @@
 package com.codepath.travel;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -34,7 +33,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.jetbrains.annotations.NotNull;
@@ -44,13 +42,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+
+import static com.codepath.travel.MainActivity.logout;
 
 /**
  * This activity allows the user to see and select suggested hotels near the destination pinned on a map.
@@ -406,12 +405,9 @@ public class HotelsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        final int logout = R.id.logout;
-        if (item.getItemId() == logout) {
-            ParseUser.logOut();
-            Intent i = new Intent(this, LoginActivity.class);
-            startActivity(i);
-            finish();
+        if (item.getItemId() == R.id.logout) {
+            logout(this);
+            return true;
         }
         if (item.getItemId() == android.R.id.home) {
             finish();

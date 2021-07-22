@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.codepath.travel.MainActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.models.Destination;
 import com.google.android.gms.common.api.Status;
@@ -37,6 +38,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -48,6 +50,8 @@ import org.json.JSONObject;
 import java.util.Arrays;
 
 import okhttp3.Headers;
+
+import static com.codepath.travel.fragments.LocationsFragment.addLocation;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,6 +68,7 @@ public class MapFragment extends Fragment {
     private TextView tvLocation;
     private TextView tvLinkImages;
     private JSONObject chosenLocation;
+    private BottomNavigationView bottomNavigationView;
     private AutocompleteSupportFragment autocompleteFragment;
 
     private final OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -97,6 +102,8 @@ public class MapFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+        bottomNavigationView = getActivity().findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setVisibility(View.GONE);
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -248,6 +255,10 @@ public class MapFragment extends Fragment {
                     Toast.makeText(getContext(), "Unable to select location", Toast.LENGTH_SHORT).show();
                 }
                 Toast.makeText(getContext(), "Location chosen!", Toast.LENGTH_SHORT).show();
+                addLocation(dest);
+                bottomNavigationView.setVisibility(View.VISIBLE);
+                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+                MainActivity.fragmentManager.popBackStackImmediate();
             }
         });
     }

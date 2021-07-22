@@ -14,6 +14,11 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+/**
+ * This activity automatically starts when the app opens. If a user has previously logged in, then it
+ * automatically starts MainActivity. Otherwise, it starts the activity once the user logs in.
+ */
+
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";

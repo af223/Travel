@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.codepath.travel.MainActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.adapters.LocationsAdapter;
 import com.codepath.travel.models.Destination;
@@ -36,11 +38,17 @@ public class LocationsFragment extends Fragment {
     private static final String TAG = "LocationsFragment";
     public static FragmentManager locationsFragManager;
     private RecyclerView rvLocations;
-    private List<Destination> locations;
-    private LocationsAdapter adapter;
+    private Button btnAddLocation;
+    private static List<Destination> locations;
+    private static LocationsAdapter adapter;
 
     public LocationsFragment() {
         // Required empty public constructor
+    }
+
+    public static void addLocation(Destination destination) {
+        locations.add(destination);
+        adapter.notifyItemInserted(locations.size()-1);
     }
 
     @Override
@@ -55,6 +63,14 @@ public class LocationsFragment extends Fragment {
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Choose a location");
+        btnAddLocation = view.findViewById(R.id.btnAddLocation);
+        btnAddLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new MapFragment();
+                MainActivity.fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+            }
+        });
 
         locationsFragManager = getChildFragmentManager();
         locations = new ArrayList<>();

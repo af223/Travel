@@ -45,8 +45,7 @@ import okhttp3.Headers;
 public class ChooseFlightActivity extends AppCompatActivity {
 
     private static final String TAG = "ChooseFlightActivity";
-    private RecyclerView rvFlights;
-    private static String getRoutesURLBase = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/US/USD/en-US/%1$s/%2$s/anytime?inboundpartialdate=anytime";
+    private static final String getRoutesURLBase = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/US/USD/en-US/%1$s/%2$s/anytime?inboundpartialdate=anytime";
     private static CardView cvFlight;
     private static Button btnConfirm;
     private static TextView tvDepartAirport;
@@ -55,8 +54,9 @@ public class ChooseFlightActivity extends AppCompatActivity {
     private static TextView tvAirline;
     private static TextView tvDate;
     private static Context context;
-    private ProgressBar pbFlights;
     private static Flight chosenFlight;
+    private RecyclerView rvFlights;
+    private ProgressBar pbFlights;
     private ArrayList<Flight> flights;
     private FlightsAdapter adapter;
     private Dictionary<Integer, String> placesCode;
