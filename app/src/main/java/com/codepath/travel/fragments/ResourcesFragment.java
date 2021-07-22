@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,9 +30,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ResourcesFragment extends Fragment {
 
-    private CardView toFlights;
-    private CardView toHotels;
-    private CardView toTouristSpots;
+    private TextView tvFlights;
+    private TextView tvHotels;
+    private TextView tvTouristSpots;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,27 +48,27 @@ public class ResourcesFragment extends Fragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Resources");
 
-        toFlights = view.findViewById(R.id.card_view_flights);
-        toFlights.setOnClickListener(new View.OnClickListener() {
+        tvFlights = view.findViewById(R.id.tvFlights);
+        tvFlights.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startResourceActivity(bundle, FlightsActivity.class, toFlights, "to_flights_transition");
+                startResourceActivity(bundle, FlightsActivity.class, tvFlights, "to_flights_transition");
             }
         });
 
-        toHotels = view.findViewById(R.id.card_view_hotels);
-        toHotels.setOnClickListener(new View.OnClickListener() {
+        tvHotels = view.findViewById(R.id.tvHotels);
+        tvHotels.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startResourceActivity(bundle, HotelsActivity.class, toHotels, "to_hotels_transition");
+                startResourceActivity(bundle, HotelsActivity.class, tvHotels, "to_hotels_transition");
             }
         });
 
-        toTouristSpots = view.findViewById(R.id.card_view_activities);
-        toTouristSpots.setOnClickListener(new View.OnClickListener() {
+        tvTouristSpots = view.findViewById(R.id.tvTouristSpots);
+        tvTouristSpots.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startResourceActivity(bundle, TouristSpotsActivity.class, toTouristSpots, "to_tourist_spots_transition");
+                startResourceActivity(bundle, TouristSpotsActivity.class, tvTouristSpots, "to_tourist_spots_transition");
             }
         });
     }

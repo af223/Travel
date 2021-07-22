@@ -11,70 +11,57 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="5dp">
+        android:orientation="vertical">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_view_flights"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvFlights"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:clickable="true"
+            android:padding="3dp"
+            android:layout_margin="16dp"
+            android:text="Flights"
+            android:textColor="#000000"
             android:transitionName="to_flights_transition"
-            card_view:cardCornerRadius="10dp">
+            android:textSize="20sp">
+        </TextView>
 
-            <TextView
-                android:id="@+id/tvFlights"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="3dp"
-                android:layout_margin="5dp"
-                android:text="Flights"
-                android:textColor="#000000"
-                android:textSize="20sp">
-            </TextView>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_view_hotels"
+        <View
             android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+
+        <TextView
+            android:id="@+id/tvHotels"
+            android:padding="3dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:clickable="true"
+            android:layout_margin="16dp"
+            android:text="Hotels"
+            android:textColor="#000000"
             android:transitionName="to_hotels_transition"
-            card_view:cardCornerRadius="10dp">
+            android:textSize="20sp">
+        </TextView>
 
-            <TextView
-                android:id="@+id/tvHotels"
-                android:padding="3dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="Hotels"
-                android:textColor="#000000"
-                android:textSize="20sp">
-            </TextView>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_view_activities"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:clickable="true"
-            android:transitionName="to_tourist_spots_transition"
-            card_view:cardCornerRadius="10dp">
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
 
-            <TextView
-                android:id="@+id/tvActivities"
-                android:padding="3dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="Find Activities"
-                android:textColor="#000000"
-                android:textSize="20sp">
-            </TextView>
-        </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/tvTouristSpots"
+            android:padding="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="Find Activities"
+            android:transitionName="to_tourist_spots_transition"
+            android:textColor="#000000"
+            android:textSize="20sp">
+        </TextView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
     </LinearLayout>
 </ScrollView>
