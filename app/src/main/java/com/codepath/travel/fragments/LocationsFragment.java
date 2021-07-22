@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -64,13 +65,13 @@ public class LocationsFragment extends Fragment {
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Choose a location");
+
         fabAddLocation = view.findViewById(R.id.fabAddLocation);
         fabAddLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Fragment fragment = new MapFragment();
-                MainActivity.fragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
-                        .replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+                MainActivity.fragmentManager.beginTransaction().addSharedElement(fabAddLocation, "to_map_transition").replace(R.id.flContainer, fragment).addToBackStack(null).commit();
             }
         });
 

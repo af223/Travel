@@ -31,6 +31,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.transition.Transition;
+import androidx.transition.TransitionInflater;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestParams;
@@ -110,6 +112,14 @@ public class MapFragment extends Fragment implements LocationListener {
         }
     }
 
+    @Override
+    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Transition transition = TransitionInflater.from(requireContext())
+                .inflateTransition(R.transition.shared_image);
+        setSharedElementEnterTransition(transition);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -125,6 +135,7 @@ public class MapFragment extends Fragment implements LocationListener {
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         bottomNavigationView = getActivity().findViewById(R.id.bottom_navigation);
         bottomNavigationView.setVisibility(View.GONE);
+
 
         locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         int permissionCheck = ContextCompat.checkSelfPermission(getActivity(),
