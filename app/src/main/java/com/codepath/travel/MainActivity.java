@@ -70,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new CostsFragment();
                         break;
                 }
-                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                fragmentManager.beginTransaction().setCustomAnimations(R.anim.fade_in,R.anim.anim)
+                        .replace(R.id.flContainer, fragment).commit();
                 return true;
             }
         });

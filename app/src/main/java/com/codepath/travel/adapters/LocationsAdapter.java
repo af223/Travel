@@ -83,7 +83,8 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
                 bundle.putString(Destination.KEY_LAT, destination.getLatitude());
                 bundle.putString(Destination.KEY_LONG, destination.getLongitude());
                 fragment.setArguments(bundle);
-                MainActivity.fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+                MainActivity.fragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
+                        .replace(R.id.flContainer, fragment).addToBackStack(null).commit();
             }
         }
 
