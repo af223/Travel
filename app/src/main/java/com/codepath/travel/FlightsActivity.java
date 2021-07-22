@@ -58,6 +58,7 @@ public class FlightsActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Flights");
 
         tvDepartureAirport = findViewById(R.id.tvDepartureAirport);
         tvArrivalAirport = findViewById(R.id.tvArrivalAirport);
@@ -175,7 +176,7 @@ public class FlightsActivity extends AppCompatActivity {
             return true;
         }
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            supportFinishAfterTransition();
             return true;
         }
         return super.onOptionsItemSelected(item);

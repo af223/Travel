@@ -109,6 +109,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Find Activities");
 
         tvActivityType = findViewById(R.id.tvActivityType);
         rvTouristActivities = findViewById(R.id.rvTouristActivities);
@@ -261,7 +262,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
             return true;
         }
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            supportFinishAfterTransition();
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.codepath.travel.FlightsActivity;
@@ -50,7 +51,7 @@ public class ResourcesFragment extends Fragment {
         toFlights.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startResourceActivity(bundle, FlightsActivity.class);
+                startResourceActivity(bundle, FlightsActivity.class, toFlights, "to_flights_transition");
             }
         });
 
@@ -58,7 +59,7 @@ public class ResourcesFragment extends Fragment {
         toHotels.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startResourceActivity(bundle, HotelsActivity.class);
+                startResourceActivity(bundle, HotelsActivity.class, toHotels, "to_hotels_transition");
             }
         });
 
@@ -66,16 +67,17 @@ public class ResourcesFragment extends Fragment {
         toTouristSpots.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startResourceActivity(bundle, TouristSpotsActivity.class);
+                startResourceActivity(bundle, TouristSpotsActivity.class, toTouristSpots, "to_tourist_spots_transition");
             }
         });
     }
 
-    public void startResourceActivity(Bundle bundle, Class resourceName) {
+    public void startResourceActivity(Bundle bundle, Class resourceName, View sharedView, String name) {
         Intent i = new Intent(getContext(), resourceName);
         i.putExtra(Destination.KEY_OBJECT_ID, bundle.getString(Destination.KEY_OBJECT_ID));
         i.putExtra(Destination.KEY_LAT, bundle.getString(Destination.KEY_LAT));
         i.putExtra(Destination.KEY_LONG, bundle.getString(Destination.KEY_LONG));
-        getContext().startActivity(i);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), sharedView, name);
+        getContext().startActivity(i, options.toBundle());
     }
 }

@@ -42,6 +42,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -122,6 +123,7 @@ public class HotelsActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Hotels");
 
         tvHotelName = findViewById(R.id.tvHotelName);
         rbRating = findViewById(R.id.rbRating);
@@ -153,7 +155,7 @@ public class HotelsActivity extends AppCompatActivity {
     }
 
     private void requestAccessToken() {
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().addNetworkInterceptor(new StethoInterceptor()).build();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().addNetworkInterceptor(new StethoInterceptor()).writeTimeout(5, TimeUnit.MINUTES).build();
         RequestHeaders headers = new RequestHeaders();
         headers.put("content-type", "application/x-www-form-urlencoded");
         String body = String.format("grant_type=client_credentials&client_id=%1$s&client_secret=%2$s",
@@ -201,6 +203,9 @@ public class HotelsActivity extends AppCompatActivity {
 
     private void findHotels(Destination destination) {
         AsyncHttpClient client = new AsyncHttpClient();
+        client.setConnectTimeout(60);
+        client.setTimeout(60);
+        client.setConnectTimeout(60);
         RequestHeaders headers = new RequestHeaders();
         RequestParams params = new RequestParams();
         String authorization = "Bearer " + oauthToken;
@@ -410,7 +415,7 @@ public class HotelsActivity extends AppCompatActivity {
             return true;
         }
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            supportFinishAfterTransition();
             return true;
         }
         return super.onOptionsItemSelected(item);

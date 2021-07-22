@@ -20,6 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:clickable="true"
+            android:transitionName="to_flights_transition"
             card_view:cardCornerRadius="10dp">
 
             <TextView
@@ -28,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:padding="3dp"
                 android:layout_margin="5dp"
-                android:text="Flight"
+                android:text="Flights"
                 android:textColor="#000000"
                 android:textSize="20sp">
             </TextView>
@@ -40,6 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:clickable="true"
+            android:transitionName="to_hotels_transition"
             card_view:cardCornerRadius="10dp">
 
             <TextView
@@ -48,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:text="Hotel"
+                android:text="Hotels"
                 android:textColor="#000000"
                 android:textSize="20sp">
             </TextView>
@@ -60,6 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:clickable="true"
+            android:transitionName="to_tourist_spots_transition"
             card_view:cardCornerRadius="10dp">
 
             <TextView
