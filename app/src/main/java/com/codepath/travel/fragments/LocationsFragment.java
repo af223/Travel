@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -41,6 +42,7 @@ public class LocationsFragment extends Fragment {
     public static FragmentManager locationsFragManager;
     private RecyclerView rvLocations;
     private FloatingActionButton fabAddLocation;
+    private ProgressBar pbLoadDestinations;
     public static List<Destination> locations;
     private static LocationsAdapter adapter;
 
@@ -66,6 +68,8 @@ public class LocationsFragment extends Fragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Choose a location");
 
+        pbLoadDestinations = view.findViewById(R.id.pbLoadDestinations);
+        pbLoadDestinations.setVisibility(View.VISIBLE);
         fabAddLocation = view.findViewById(R.id.fabAddLocation);
         fabAddLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,6 +102,7 @@ public class LocationsFragment extends Fragment {
                 }
                 locations.addAll(destinations);
                 adapter.notifyDataSetChanged();
+                pbLoadDestinations.setVisibility(View.GONE);
             }
         });
     }

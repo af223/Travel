@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,15 +59,29 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final TextView tvName;
+        private final ImageView ivGotPlaneTicket;
+        private final ImageView ivGotHotel;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
+            ivGotPlaneTicket = itemView.findViewById(R.id.ivGotPlaneTicket);
+            ivGotHotel = itemView.findViewById(R.id.ivGotHotel);
             itemView.setOnClickListener(this);
         }
 
         public void bind(Destination destination) {
             tvName.setText(destination.getFormattedLocationName());
+            if (destination.getDate() != null) {
+                DrawableCompat.setTint(DrawableCompat.wrap(ivGotPlaneTicket.getDrawable()), context.getResources().getColor(R.color.dark_green));
+            } else {
+                DrawableCompat.setTint(DrawableCompat.wrap(ivGotPlaneTicket.getDrawable()), context.getResources().getColor(R.color.gray));
+            }
+            if (destination.getHotelName() != null) {
+                DrawableCompat.setTint(DrawableCompat.wrap(ivGotHotel.getDrawable()), context.getResources().getColor(R.color.dark_green));
+            } else {
+                DrawableCompat.setTint(DrawableCompat.wrap(ivGotHotel.getDrawable()), context.getResources().getColor(R.color.gray));
+            }
         }
 
         @Override
@@ -83,7 +99,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
                 bundle.putString(Destination.KEY_LAT, destination.getLatitude());
                 bundle.putString(Destination.KEY_LONG, destination.getLongitude());
                 fragment.setArguments(bundle);
-                MainActivity.fragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
+                MainActivity.fragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in, R.anim.anim, R.anim.slide_in, R.anim.anim)
                         .replace(R.id.flContainer, fragment).addToBackStack(null).commit();
             }
         }

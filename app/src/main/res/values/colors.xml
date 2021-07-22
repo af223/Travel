@@ -13,7 +13,8 @@
     <color name="pastel_pink">#FED0DC</color>
     <color name="medium_pink">#f19eac</color>
     <color name="dark_pink">#f06a7b</color>
-    <color name="pastel_green">#d0fef2</color>
-    <color name="medium_green">#b4feea</color>
+    <color name="pastel_green">#cbfef2</color>
+    <color name="medium_green">#adffeb</color>
+    <color name="dark_green">#78e0c0</color>
     <color name="brown">#442C2E</color>
 </resources>
