@@ -39,7 +39,7 @@ public class LocationsFragment extends Fragment {
     public static FragmentManager locationsFragManager;
     private RecyclerView rvLocations;
     private Button btnAddLocation;
-    private static List<Destination> locations;
+    public static List<Destination> locations;
     private static LocationsAdapter adapter;
 
     public LocationsFragment() {

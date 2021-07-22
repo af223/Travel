@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/btnAddLocation"
-        android:text="Add another destination" />
+        android:text="See map / Add another destination" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvLocations"

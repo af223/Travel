@@ -52,6 +52,7 @@ import java.util.Arrays;
 import okhttp3.Headers;
 
 import static com.codepath.travel.fragments.LocationsFragment.addLocation;
+import static com.codepath.travel.fragments.LocationsFragment.locations;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -78,7 +79,9 @@ public class MapFragment extends Fragment {
             // TODO: start map at user's location
             LatLng sydney = new LatLng(-34, 151);
             googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            //googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+            markChosenDestinations();
 
             googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                 @Override
@@ -88,6 +91,14 @@ public class MapFragment extends Fragment {
             });
         }
     };
+
+    private void markChosenDestinations() {
+        BitmapDescriptor defaultMarker =
+                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+        for (Destination destination : locations) {
+            map.addMarker(new MarkerOptions().position(destination.getCoords()).icon(defaultMarker).title(destination.getLocality()));
+        }
+    }
 
     @Nullable
     @Override
