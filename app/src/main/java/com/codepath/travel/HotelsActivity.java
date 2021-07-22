@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Headers;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -155,7 +156,7 @@ public class HotelsActivity extends AppCompatActivity {
     }
 
     private void requestAccessToken() {
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().addNetworkInterceptor(new StethoInterceptor()).writeTimeout(5, TimeUnit.MINUTES).build();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().addNetworkInterceptor(new StethoInterceptor()).build();
         RequestHeaders headers = new RequestHeaders();
         headers.put("content-type", "application/x-www-form-urlencoded");
         String body = String.format("grant_type=client_credentials&client_id=%1$s&client_secret=%2$s",
@@ -202,10 +203,10 @@ public class HotelsActivity extends AppCompatActivity {
     }
 
     private void findHotels(Destination destination) {
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setConnectTimeout(60);
-        client.setTimeout(60);
-        client.setConnectTimeout(60);
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().addNetworkInterceptor(new StethoInterceptor())
+                .connectTimeout(5, TimeUnit.MINUTES)
+                .readTimeout(5, TimeUnit.MINUTES)
+                .writeTimeout(5, TimeUnit.MINUTES).build();
         RequestHeaders headers = new RequestHeaders();
         RequestParams params = new RequestParams();
         String authorization = "Bearer " + oauthToken;
@@ -215,7 +216,21 @@ public class HotelsActivity extends AppCompatActivity {
         params.put("radius", "50");
         params.put("radiusUnit", "MILE");
         params.put("currency", "USD");
-        client.get(AMADEUS_HOTEL_URL, headers, params, new JsonHttpResponseHandler() {
+        String url = AMADEUS_HOTEL_URL;
+        HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder();
+        for (Map.Entry<String, String> param : params.entrySet()) {
+            httpBuider.addQueryParameter(param.getKey(), param.getValue());
+        }
+        url = httpBuider.build().toString();
+
+        Request.Builder requestBuilder = new Request.Builder().url(url);
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            requestBuilder.addHeader(entry.getKey(), entry.getValue());
+        }
+
+        Request request = requestBuilder.build();
+
+        JsonHttpResponseHandler callback = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 try {
@@ -229,9 +244,12 @@ public class HotelsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Toast.makeText(HotelsActivity.this, "Unable to load hotels, please exit and try again", Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "ERROR: ", throwable);
             }
-        });
+        };
+
+        okHttpClient.newCall(request).enqueue(callback);
     }
 
     private void processHotels(JSONArray hotelsList) {
