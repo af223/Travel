@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +19,10 @@ import com.codepath.travel.fragments.LocationsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseUser;
 
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+
 /**
  * This activity holds the container for the main fragments to see destinations, choose them, see and plan
  * the itinerary, and see and edit the cost breakdown. It is started automatically from LoginActivity if the
@@ -31,6 +34,11 @@ public class MainActivity extends AppCompatActivity {
     public static FragmentManager fragmentManager;
     private BottomNavigationView bottomNavigationView;
     private Toolbar toolbar;
+    public static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+            .connectTimeout(5, TimeUnit.MINUTES)
+            .readTimeout(5, TimeUnit.MINUTES)
+            .writeTimeout(5, TimeUnit.MINUTES).build();
+
 
     public static void logout(Context context) {
         ParseUser.logOut();
@@ -45,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

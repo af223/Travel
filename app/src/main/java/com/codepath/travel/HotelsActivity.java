@@ -16,14 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Hotel;
 import com.codepath.travel.models.HotelOffer;
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -42,16 +40,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
 import static com.codepath.travel.MainActivity.logout;
+import static com.codepath.travel.MainActivity.okHttpClient;
 
 /**
  * This activity allows the user to see and select suggested hotels near the destination pinned on a map.
@@ -156,7 +153,6 @@ public class HotelsActivity extends AppCompatActivity {
     }
 
     private void requestAccessToken() {
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().addNetworkInterceptor(new StethoInterceptor()).build();
         RequestHeaders headers = new RequestHeaders();
         headers.put("content-type", "application/x-www-form-urlencoded");
         String body = String.format("grant_type=client_credentials&client_id=%1$s&client_secret=%2$s",
@@ -203,10 +199,6 @@ public class HotelsActivity extends AppCompatActivity {
     }
 
     private void findHotels(Destination destination) {
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().addNetworkInterceptor(new StethoInterceptor())
-                .connectTimeout(5, TimeUnit.MINUTES)
-                .readTimeout(5, TimeUnit.MINUTES)
-                .writeTimeout(5, TimeUnit.MINUTES).build();
         RequestHeaders headers = new RequestHeaders();
         RequestParams params = new RequestParams();
         String authorization = "Bearer " + oauthToken;
@@ -216,18 +208,17 @@ public class HotelsActivity extends AppCompatActivity {
         params.put("radius", "50");
         params.put("radiusUnit", "MILE");
         params.put("currency", "USD");
+
         String url = AMADEUS_HOTEL_URL;
         HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder();
         for (Map.Entry<String, String> param : params.entrySet()) {
             httpBuider.addQueryParameter(param.getKey(), param.getValue());
         }
         url = httpBuider.build().toString();
-
         Request.Builder requestBuilder = new Request.Builder().url(url);
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             requestBuilder.addHeader(entry.getKey(), entry.getValue());
         }
-
         Request request = requestBuilder.build();
 
         JsonHttpResponseHandler callback = new JsonHttpResponseHandler() {
@@ -245,10 +236,10 @@ public class HotelsActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Toast.makeText(HotelsActivity.this, "Unable to load hotels, please exit and try again", Toast.LENGTH_SHORT).show();
+                rlProgressBar.setVisibility(View.GONE);
                 Log.e(TAG, "ERROR: ", throwable);
             }
         };
-
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -265,24 +256,7 @@ public class HotelsActivity extends AppCompatActivity {
                 if (hotelJson.has("rating")) {
                     rating = Integer.parseInt(hotelJson.getString("rating"));
                 }
-                String address = "N/A";
-                if (hotelJson.has("address")) {
-                    address = "";
-                    if (hotelJson.getJSONObject("address").has("lines")) {
-                        for (int j = 0; j < hotelJson.getJSONObject("address").getJSONArray("lines").length(); j++) {
-                            address += hotelJson.getJSONObject("address").getJSONArray("lines").get(j) + ", ";
-                        }
-                    }
-                    if (hotelJson.getJSONObject("address").has("cityName")) {
-                        address += hotelJson.getJSONObject("address").getString("cityName") + ", ";
-                    }
-                    if (hotelJson.getJSONObject("address").has("countryCode")) {
-                        address += hotelJson.getJSONObject("address").getString("countryCode") + " ";
-                    }
-                    if (hotelJson.getJSONObject("address").has("postalCode")) {
-                        address += hotelJson.getJSONObject("address").getString("postalCode");
-                    }
-                }
+                String address = createAddress(hotelJson);
                 String phoneNumber = "N/A";
                 String email = "N/A";
                 if (hotelJson.has("contact")) {
@@ -303,6 +277,33 @@ public class HotelsActivity extends AppCompatActivity {
             Log.e(TAG, "Unable to parse hotels");
             e.printStackTrace();
         }
+    }
+
+    private String createAddress(JSONObject hotelJson) {
+        try {
+            if (hotelJson.has("address")) {
+                String address = "";
+                if (hotelJson.getJSONObject("address").has("lines")) {
+                    for (int j = 0; j < hotelJson.getJSONObject("address").getJSONArray("lines").length(); j++) {
+                        address += hotelJson.getJSONObject("address").getJSONArray("lines").get(j) + ", ";
+                    }
+                }
+                if (hotelJson.getJSONObject("address").has("cityName")) {
+                    address += hotelJson.getJSONObject("address").getString("cityName") + ", ";
+                }
+                if (hotelJson.getJSONObject("address").has("countryCode")) {
+                    address += hotelJson.getJSONObject("address").getString("countryCode") + " ";
+                }
+                if (hotelJson.getJSONObject("address").has("postalCode")) {
+                    address += hotelJson.getJSONObject("address").getString("postalCode");
+                }
+                return address;
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Unable to parse address");
+            e.printStackTrace();
+        }
+        return "N/A";
     }
 
     private ArrayList<HotelOffer> processHotelOffers(JSONArray hotelOffersList) {
