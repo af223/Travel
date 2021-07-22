@@ -1,7 +1,9 @@
 package com.codepath.travel;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -9,6 +11,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -51,6 +55,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
     private static final int NUM_LOAD_BUSINESSES = 20;
     private TextView tvActivityType;
     private ProgressBar pbTouristLoad;
+    private Toolbar toolbar;
     private boolean[] selectedType;
     private ArrayList<Integer> typeList = new ArrayList<>();
     private String[] typeArray = {"Amusement Parks", "Art Galleries", "Beaches", "Gardens", "Hiking",
@@ -99,6 +104,10 @@ public class TouristSpotsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tourist_spots);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         tvActivityType = findViewById(R.id.tvActivityType);
         rvTouristActivities = findViewById(R.id.rvTouristActivities);
@@ -236,5 +245,27 @@ public class TouristSpotsActivity extends AppCompatActivity {
             e.printStackTrace();
             Toast.makeText(TouristSpotsActivity.this, "Unable to process Yelp results", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        final int logout = R.id.logout;
+        if (item.getItemId() == logout) {
+            ParseUser.logOut();
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
+            finish();
+        }
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

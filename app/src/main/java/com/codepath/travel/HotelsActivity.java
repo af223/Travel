@@ -1,8 +1,11 @@
 package com.codepath.travel;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
@@ -12,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
@@ -30,6 +34,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.jetbrains.annotations.NotNull;
@@ -76,6 +81,7 @@ public class HotelsActivity extends AppCompatActivity {
     private TextView tvNumBeds;
     private TextView tvCost;
     private TextView tvDescription;
+    private Toolbar toolbar;
     private RelativeLayout rlProgressBar;
     private ArrayList<MarkerOptions> markers;
 
@@ -113,6 +119,10 @@ public class HotelsActivity extends AppCompatActivity {
 
         hotels = new ArrayList<>();
         markers = new ArrayList<>();
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         tvHotelName = findViewById(R.id.tvHotelName);
         rbRating = findViewById(R.id.rbRating);
@@ -386,5 +396,27 @@ public class HotelsActivity extends AppCompatActivity {
             String money = "$" + chosenOffer.getCost();
             tvCost.setText(money);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        final int logout = R.id.logout;
+        if (item.getItemId() == logout) {
+            ParseUser.logOut();
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
+            finish();
+        }
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
