@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
 import com.codepath.travel.models.Airport;
 import com.codepath.travel.models.Destination;
@@ -42,13 +43,13 @@ public class FlightsActivity extends AppCompatActivity {
     private static final String TAG = "FlightsActivity";
     public static ArrayList<Airport> departureAirports = new ArrayList<>();
     public static ArrayList<Airport> arrivalAirports = new ArrayList<>();
-    private TextView tvDepartureAirport;
-    private TextView tvArrivalAirport;
     private Button btnDepart;
     private Button btnArrive;
     private Button btnToFlights;
     private Toolbar toolbar;
     private Destination thisDestination;
+    private View chosenOutboundFlight;
+    private View chosenInboundFlight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +61,8 @@ public class FlightsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Flights");
 
-        tvDepartureAirport = findViewById(R.id.tvDepartureAirport);
-        tvArrivalAirport = findViewById(R.id.tvArrivalAirport);
+        chosenOutboundFlight = findViewById(R.id.chosenOutboundFlight);
+        chosenInboundFlight = findViewById(R.id.chosenInboundFlight);
         btnDepart = findViewById(R.id.btnDepart);
         btnArrive = findViewById(R.id.btnArrive);
         btnToFlights = findViewById(R.id.btnToFlights);
@@ -98,14 +99,7 @@ public class FlightsActivity extends AppCompatActivity {
                     return;
                 }
                 thisDestination = destination;
-                if (destination.getDepartAirportName() != null) {
-                    tvDepartureAirport.setText(destination.getDepartAirportName());
-                    btnDepart.setText(getResources().getString(R.string.change_depart_airport));
-                }
-                if (destination.getArriveAirportName() != null) {
-                    tvArrivalAirport.setText(destination.getArriveAirportName());
-                    btnArrive.setText(getResources().getString(R.string.change_arrive_airport));
-                }
+                loadChosenFlights();
                 btnDepart.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -129,14 +123,25 @@ public class FlightsActivity extends AppCompatActivity {
         });
     }
 
+    private void loadChosenFlights() {
+        if (thisDestination.getDate() == null) {
+            chosenOutboundFlight.setVisibility(View.INVISIBLE);
+        } else {
+            ((TextView) chosenOutboundFlight.findViewById(R.id.tvDepartAirport)).setText(thisDestination.getDepartAirportName());
+            ((TextView) chosenOutboundFlight.findViewById(R.id.tvArriveAirport)).setText(thisDestination.getArriveAirportName());
+            ((TextView) chosenOutboundFlight.findViewById(R.id.tvCost)).setText("$" + thisDestination.getCost());
+            ((TextView) chosenOutboundFlight.findViewById(R.id.tvAirline)).setText(thisDestination.getCarrier());
+            ((TextView) chosenOutboundFlight.findViewById(R.id.tvDate)).setText(thisDestination.getDate());
+        }
+        chosenInboundFlight.setVisibility(View.INVISIBLE);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == CHOOSE_FLIGHT_REQUEST_CODE) {
                 Flight chosenFlight = Parcels.unwrap(data.getParcelableExtra(Flight.class.getSimpleName()));
                 saveFlightData(chosenFlight);
-                tvDepartureAirport.setText(chosenFlight.getDepartAirportName());
-                tvArrivalAirport.setText(chosenFlight.getArriveAirportName());
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
