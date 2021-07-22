@@ -6,7 +6,7 @@
     android:minHeight="?attr/actionBarSize"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:titleTextColor="@android:color/black"
+    app:titleTextColor="@color/brown"
     android:layout_alignParentTop="true"
     android:background="@color/pastel_pink"
     android:theme="@style/ToolbarTheme"

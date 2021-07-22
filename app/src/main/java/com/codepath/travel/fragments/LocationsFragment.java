@@ -19,6 +19,7 @@ import com.codepath.travel.MainActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.adapters.LocationsAdapter;
 import com.codepath.travel.models.Destination;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -38,7 +39,7 @@ public class LocationsFragment extends Fragment {
     private static final String TAG = "LocationsFragment";
     public static FragmentManager locationsFragManager;
     private RecyclerView rvLocations;
-    private Button btnAddLocation;
+    private FloatingActionButton fabAddLocation;
     public static List<Destination> locations;
     private static LocationsAdapter adapter;
 
@@ -63,8 +64,8 @@ public class LocationsFragment extends Fragment {
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Choose a location");
-        btnAddLocation = view.findViewById(R.id.btnAddLocation);
-        btnAddLocation.setOnClickListener(new View.OnClickListener() {
+        fabAddLocation = view.findViewById(R.id.fabAddLocation);
+        fabAddLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Fragment fragment = new MapFragment();
