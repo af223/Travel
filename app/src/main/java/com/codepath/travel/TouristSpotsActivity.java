@@ -137,7 +137,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
         tvActivityType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(TouristSpotsActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(TouristSpotsActivity.this, R.style.AppCompatAlertDialogStyle);
                 builder.setTitle("Select a category");
                 builder.setCancelable(false);
                 builder.setMultiChoiceItems(typeArray, selectedType, new DialogInterface.OnMultiChoiceClickListener() {
