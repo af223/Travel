@@ -1,7 +1,16 @@
 package com.codepath.travel.fragments;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Camera;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -11,11 +20,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
@@ -61,7 +75,7 @@ import static com.codepath.travel.fragments.LocationsFragment.locations;
  * one of the autocomplete results.
  */
 
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements LocationListener {
 
     private static final String revGeocodeURL = "https://maps.googleapis.com/maps/api/geocode/json";
     private static final String TAG = "MapsFragment";
@@ -71,18 +85,14 @@ public class MapFragment extends Fragment {
     private JSONObject chosenLocation;
     private BottomNavigationView bottomNavigationView;
     private AutocompleteSupportFragment autocompleteFragment;
+    private LocationManager locationManager;
+    private LatLng currentCoords;
 
     private final OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             map = googleMap;
-            // TODO: start map at user's location
-            LatLng sydney = new LatLng(-34, 151);
-            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-            //googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
             markChosenDestinations();
-
             googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                 @Override
                 public void onMapLongClick(LatLng latLng) {
@@ -112,9 +122,19 @@ public class MapFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         bottomNavigationView = getActivity().findViewById(R.id.bottom_navigation);
         bottomNavigationView.setVisibility(View.GONE);
+
+        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        int permissionCheck = ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        if(permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+        } else {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        }
+
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -277,4 +297,24 @@ public class MapFragment extends Fragment {
     private String formatLatlng(LatLng coords) {
         return coords.latitude + "," + coords.longitude;
     }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        if (location != null && map != null) {
+            currentCoords = new LatLng(location.getLatitude(), location.getLongitude());
+            map.addMarker(new MarkerOptions().position(currentCoords).title("Current Position"));
+            map.moveCamera(CameraUpdateFactory.newLatLng(currentCoords));
+            locationManager.removeUpdates(this);
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                } else {
+                    Toast.makeText(getContext(), "unable to access location", Toast.LENGTH_SHORT).show();
+                }
+            });
 }
