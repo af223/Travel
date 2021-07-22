@@ -2,32 +2,19 @@ package com.codepath.travel.adapters;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.TypedValue;
-import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.travel.MainActivity;
 import com.codepath.travel.R;
-import com.codepath.travel.fragments.LocationsFragment;
 import com.codepath.travel.fragments.ResourcesFragment;
 import com.codepath.travel.models.Destination;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -96,7 +83,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
                 bundle.putString(Destination.KEY_LAT, destination.getLatitude());
                 bundle.putString(Destination.KEY_LONG, destination.getLongitude());
                 fragment.setArguments(bundle);
-                MainActivity.fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                MainActivity.fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
             }
         }
 

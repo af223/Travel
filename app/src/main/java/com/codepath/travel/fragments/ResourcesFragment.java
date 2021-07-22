@@ -3,10 +3,8 @@ package com.codepath.travel.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,7 +14,6 @@ import androidx.fragment.app.Fragment;
 
 import com.codepath.travel.FlightsActivity;
 import com.codepath.travel.HotelsActivity;
-import com.codepath.travel.MainActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.TouristSpotsActivity;
 import com.codepath.travel.models.Destination;

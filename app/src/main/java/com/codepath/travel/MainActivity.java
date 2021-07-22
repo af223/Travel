@@ -2,9 +2,9 @@ package com.codepath.travel;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment;
-                boolean addToBackStack = false;
                 switch (item.getItemId()) {
                     case R.id.action_map:
                         fragment = new MapFragment();
@@ -48,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_locations:
                         getSupportActionBar().show();
                         fragment = new LocationsFragment();
-                        addToBackStack = true;
                         break;
                     case R.id.action_itinerary:
                         getSupportActionBar().show();
@@ -60,10 +58,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new CostsFragment();
                         break;
                 }
-                if (addToBackStack)
-                    fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-                else
-                    fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                 return true;
             }
         });
@@ -87,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
         }
         if (item.getItemId() == android.R.id.home) {
             fragmentManager.popBackStackImmediate();
-            //fragmentManager.beginTransaction().replace(R.id.flContainer, new LocationsFragment()).commit();
             return true;
         }
         return super.onOptionsItemSelected(item);
