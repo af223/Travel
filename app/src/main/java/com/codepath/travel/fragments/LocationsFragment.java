@@ -68,7 +68,8 @@ public class LocationsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Fragment fragment = new MapFragment();
-                MainActivity.fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+                MainActivity.fragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
+                        .replace(R.id.flContainer, fragment).addToBackStack(null).commit();
             }
         });
 

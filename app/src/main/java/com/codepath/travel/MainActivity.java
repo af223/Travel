@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new CostsFragment();
                         break;
                 }
-                fragmentManager.beginTransaction().setCustomAnimations(R.anim.fade_in,R.anim.anim)
+                fragmentManager.beginTransaction().setCustomAnimations(R.anim.fade_in,R.anim.anim, R.anim.slide_in, R.anim.slide_out)
                         .replace(R.id.flContainer, fragment).commit();
                 return true;
             }
