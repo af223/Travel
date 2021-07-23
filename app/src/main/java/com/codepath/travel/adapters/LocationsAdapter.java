@@ -72,7 +72,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
 
         public void bind(Destination destination) {
             tvName.setText(destination.getFormattedLocationName());
-            if (destination.getDate() != null) {
+            if (destination.getDate() != null && destination.getInboundDate() != null) {
                 DrawableCompat.setTint(DrawableCompat.wrap(ivGotPlaneTicket.getDrawable()), context.getResources().getColor(R.color.dark_green));
             } else {
                 DrawableCompat.setTint(DrawableCompat.wrap(ivGotPlaneTicket.getDrawable()), context.getResources().getColor(R.color.gray));

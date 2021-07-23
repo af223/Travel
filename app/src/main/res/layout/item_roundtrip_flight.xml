@@ -42,9 +42,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_toLeftOf="@+id/tvCost"
-            android:layout_toRightOf="@+id/ivPlane"
+            android:layout_toStartOf="@+id/tvCost"
+            android:layout_toEndOf="@+id/ivPlane"
             android:text="Destination"
             android:gravity="center|start"
             android:textColor="#000000"
@@ -82,6 +81,73 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvDepartAirport"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="false"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:text="Date"
+            android:textColor="#000000" />
+
+
+        <TextView
+            android:id="@+id/tvReturnDepartAirport"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvAirline"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center|start"
+            android:text="Origin"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/ivReturnPlane"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/tvReturnDepartAirport"
+            android:rotation="90"
+            card_view:srcCompat="@drawable/ic_baseline_airplanemode_active_24" />
+
+        <TextView
+            android:id="@+id/tvReturnArriveAirport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvAirline"
+            android:layout_marginStart="10dp"
+            android:layout_toStartOf="@+id/tvCost"
+            android:layout_toEndOf="@+id/ivReturnPlane"
+            android:layout_marginTop="5dp"
+            android:text="Destination"
+            android:gravity="center|start"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvReturnAirline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvReturnDepartAirport"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="false"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/tvReturnDate"
+            android:text="Airline"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvReturnDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvReturnDepartAirport"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="false"
             android:layout_marginTop="5dp"

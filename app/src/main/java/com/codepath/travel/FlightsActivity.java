@@ -31,7 +31,7 @@ import static com.codepath.travel.MainActivity.logout;
 
 /**
  * This activity allows the user navigate to find and select departure and arrival airports and to see
- * and select the flight.
+ * and select the flight. The user can choose to see a roundtrip or one-way tickets.
  * <p>
  * This activity is started when the user chooses "Flights" in ResourcesFragment.java.
  */
@@ -90,7 +90,7 @@ public class FlightsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (checkAirportsSelected()) {
-                    Intent i = new Intent(FlightsActivity.this, ChooseFlightActivity.class);
+                    Intent i = new Intent(FlightsActivity.this, RoundtripFlightsActivity.class);
                     i.putExtra(getString(R.string.flight_type), CHOOSE_ROUND_FLIGHT_REQUEST_CODE);
                     startActivityForResult(i, CHOOSE_ROUND_FLIGHT_REQUEST_CODE);
                 }
@@ -173,8 +173,10 @@ public class FlightsActivity extends AppCompatActivity {
     private void setFlightType() {
         if (thisDestination.isRoundtrip()) {
             tvFlightType.setText(R.string.is_roundtrip);
+            chosenInboundFlight.findViewById(R.id.tvCost).setVisibility(View.INVISIBLE);
         } else {
             tvFlightType.setText(R.string.is_one_way);
+            chosenInboundFlight.findViewById(R.id.tvCost).setVisibility(View.VISIBLE);
         }
     }
 
@@ -192,7 +194,10 @@ public class FlightsActivity extends AppCompatActivity {
                 }
 
             } else if (requestCode == CHOOSE_ROUND_FLIGHT_REQUEST_CODE) {
-                Toast.makeText(this, "from roundtrip", Toast.LENGTH_SHORT).show();
+                Flight chosenOutFlight = Parcels.unwrap(data.getParcelableExtra(getString(R.string.outbound)));
+                saveOutboundFlightData(chosenOutFlight);
+                Flight chosenInFlight = Parcels.unwrap(data.getParcelableExtra(getString(R.string.inbound)));
+                saveInboundFlightData(chosenInFlight);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -225,13 +230,13 @@ public class FlightsActivity extends AppCompatActivity {
     }
 
     private void clearInboundFlightData() {
-        thisDestination.setInboundDepartCode(null);
-        thisDestination.setInboundDepartName(null);
-        thisDestination.setInboundArriveCode(null);
-        thisDestination.setInboundArriveName(null);
-        thisDestination.setInboundCost(null);
-        thisDestination.setInboundCarrier(null);
-        thisDestination.setInboundDate(null);
+        thisDestination.remove(Destination.KEY_INBOUND_DEPART_CODE);
+        thisDestination.remove(Destination.KEY_INBOUND_DEPART_NAME);
+        thisDestination.remove(Destination.KEY_INBOUND_ARRIVE_CODE);
+        thisDestination.remove(Destination.KEY_INBOUND_ARRIVE_NAME);
+        thisDestination.remove(Destination.KEY_INBOUND_COST);
+        thisDestination.remove(Destination.KEY_INBOUND_CARRIER);
+        thisDestination.remove(Destination.KEY_INBOUND_DATE);
     }
 
     private void saveInboundFlightData(Flight chosenFlight) {
@@ -261,13 +266,13 @@ public class FlightsActivity extends AppCompatActivity {
     }
 
     private void clearOutboundFlightData() {
-        thisDestination.setDepartAirportCode(null);
-        thisDestination.setDepartAirportName(null);
-        thisDestination.setArriveAirportCode(null);
-        thisDestination.setArriveAirportName(null);
-        thisDestination.setCost(null);
-        thisDestination.setCarrier(null);
-        thisDestination.setInboundDate(null);
+        thisDestination.remove(Destination.KEY_DEPART_CODE);
+        thisDestination.remove(Destination.KEY_DEPART_NAME);
+        thisDestination.remove(Destination.KEY_ARRIVE_NAME);
+        thisDestination.remove(Destination.KEY_ARRIVE_CODE);
+        thisDestination.remove(Destination.KEY_COST);
+        thisDestination.remove(Destination.KEY_CARRIER);
+        thisDestination.remove(Destination.KEY_DATE);
     }
 
     @Override

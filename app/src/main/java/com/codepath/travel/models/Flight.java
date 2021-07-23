@@ -12,13 +12,12 @@ public class Flight {
     public String flightCost;
     public String carrier;
     public String date;
-    public Boolean isDirect;
     public Boolean isRoundtrip;
 
     public Flight() {}
 
     public Flight(String departAirportCode, String departAirportName, String arriveAirportCode,
-                  String arriveAirportName, String flightCost, String carrier, String date, Boolean isDirect, Boolean isRoundtrip) {
+                  String arriveAirportName, String flightCost, String carrier, String date, Boolean isRoundtrip) {
         this.departAirportCode = departAirportCode;
         this.departAirportName = departAirportName;
         this.arriveAirportCode = arriveAirportCode;
@@ -26,7 +25,6 @@ public class Flight {
         this.flightCost = flightCost;
         this.carrier = carrier;
         this.date = date;
-        this.isDirect = isDirect;
         this.isRoundtrip = isRoundtrip;
     }
 
@@ -86,12 +84,7 @@ public class Flight {
         this.date = date;
     }
 
-    public Boolean getDirect() {
-        return isDirect;
-    }
-
     public void setDirect(Boolean direct) {
-        isDirect = direct;
     }
 
     public Boolean isRoundtrip() {

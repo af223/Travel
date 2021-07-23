@@ -6,49 +6,46 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.travel.R;
-import com.codepath.travel.fragments.Ticket;
+import com.codepath.travel.RoundtripFlightsActivity;
 import com.codepath.travel.models.Flight;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
- * This adapter is for the RecylerView in InboundFragment and OutboundFragment that displays the list of plane tickets
+ * This adapter is for the RecylerView in RoundtripFlightsActivity that displays the list of roundtrip plane tickets
  * that originate from one of the chosen departure airports, and land in one of the destination/arrival airports.
  * Users can click on a ticket to select it, holding it on display at the top of the screen,
  * and click "confirm" to save that ticket, automatically redirected back to the FlightsActivity.java screen.
  */
 
-public class FlightsAdapter extends RecyclerView.Adapter<FlightsAdapter.ViewHolder> {
+public class RoundtripsAdapter extends RecyclerView.Adapter<RoundtripsAdapter.ViewHolder> {
 
     private final Context context;
-    private final List<Flight> flights;
-    private final View ticket;
-    private final Boolean outbound;
+    private final ArrayList<Pair<Flight, Flight>> flights;
 
-    public FlightsAdapter(Context context, List<Flight> flights, View ticket, Boolean outbound) {
+    public RoundtripsAdapter(Context context, ArrayList<Pair<Flight, Flight>> flights) {
         this.context = context;
         this.flights = flights;
-        this.ticket = ticket;
-        this.outbound = outbound;
     }
 
     @NonNull
     @NotNull
     @Override
-    public FlightsAdapter.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_flight, parent, false);
+    public RoundtripsAdapter.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_roundtrip_flight, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull @NotNull FlightsAdapter.ViewHolder holder, int position) {
-        Flight flight = flights.get(position);
-        holder.bind(flight);
+    public void onBindViewHolder(@NonNull @NotNull RoundtripsAdapter.ViewHolder holder, int position) {
+        Pair<Flight, Flight> flightPair = flights.get(position);
+        holder.bind(flightPair);
     }
 
     @Override
@@ -62,20 +59,19 @@ public class FlightsAdapter extends RecyclerView.Adapter<FlightsAdapter.ViewHold
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
-
             view = itemView;
             itemView.setOnClickListener(this);
         }
 
-        public void bind(Flight flight) {
-            Ticket.displayTicket(flight, view);
+        public void bind(Pair<Flight, Flight> flightPair) {
+            RoundtripFlightsActivity.displayTicket(flightPair, view);
         }
 
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
-                Ticket.choose(flights.get(position), ticket, outbound, context);
+                RoundtripFlightsActivity.chooseRoundtrip(flights.get(position));
             }
         }
     }
