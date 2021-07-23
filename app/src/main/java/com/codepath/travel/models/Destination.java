@@ -30,6 +30,13 @@ public class Destination extends ParseObject {
     public static final String KEY_HOTEL_ADDRESS = "hotelAddress";
     public static final String KEY_HOTEL_PHONE = "hotelPhone";
     public static final String KEY_HOTEL_DESCRIPTION = "hotelDescription";
+    public static final String KEY_INBOUND_DEPART_CODE = "inboundDepartCode";
+    public static final String KEY_INBOUND_DEPART_NAME = "inboundDepartName";
+    public static final String KEY_INBOUND_ARRIVE_CODE = "inboundArriveCode";
+    public static final String KEY_INBOUND_ARRIVE_NAME = "inboundArriveName";
+    public static final String KEY_INBOUND_COST = "inboundFlightCost";
+    public static final String KEY_INBOUND_CARRIER = "inboundCarrier";
+    public static final String KEY_INBOUND_DATE = "inboundDate";
 
     public ParseUser getUser() {
         return getParseUser(KEY_USER);
@@ -205,6 +212,62 @@ public class Destination extends ParseObject {
 
     public void setHotelDescription(String description) {
         put(KEY_HOTEL_DESCRIPTION, description);
+    }
+
+    public String getInboundDepartCode() {
+        return getString(KEY_INBOUND_DEPART_CODE);
+    }
+
+    public void setInboundDepartCode(String code) {
+        put(KEY_INBOUND_DEPART_CODE, code);
+    }
+
+    public String getInboundDepartName() {
+        return getString(KEY_INBOUND_DEPART_NAME);
+    }
+
+    public void setInboundDepartName(String name) {
+        put(KEY_INBOUND_DEPART_NAME, name);
+    }
+
+    public String getInboundArriveCode() {
+        return getString(KEY_INBOUND_ARRIVE_CODE);
+    }
+
+    public void setInboundArriveCode(String code) {
+        put(KEY_INBOUND_ARRIVE_CODE, code);
+    }
+
+    public String getInboundArriveName() {
+        return getString(KEY_INBOUND_ARRIVE_NAME);
+    }
+
+    public void setInboundArriveName(String name) {
+        put(KEY_INBOUND_ARRIVE_NAME, name);
+    }
+
+    public String getInboundCost() {
+        return getString(KEY_INBOUND_COST);
+    }
+
+    public void setInboundCost(String cost) {
+        put(KEY_INBOUND_COST, cost);
+    }
+
+    public String getInboundCarrier() {
+        return getString(KEY_INBOUND_CARRIER);
+    }
+
+    public void setInboundCarrier(String carrier) {
+        put(KEY_INBOUND_CARRIER, carrier);
+    }
+
+    public String getInboundDate() {
+        return getString(KEY_INBOUND_DATE);
+    }
+
+    public void setInboundDate(String date) {
+        put(KEY_INBOUND_DATE, date);
     }
 
     public LatLng getCoords() {

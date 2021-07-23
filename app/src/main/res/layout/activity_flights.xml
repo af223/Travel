@@ -86,29 +86,46 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/chosenInboundFlight"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="Select Departure Airport" />
+        android:text="Select Departure Airports" />
 
     <Button
         android:id="@+id/btnArrive"
         android:layout_width="185dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnDepart"
-        android:layout_alignParentStart="true"
-        android:layout_margin="16dp"
-        android:layout_marginTop="40dp"
-        android:text="Select Arrival Airport" />
+        android:layout_below="@+id/chosenInboundFlight"
+        android:layout_toEndOf="@+id/btnDepart"
+        android:layout_marginTop="32dp"
+        android:text="Select Arrival Airports" />
 
     <Button
-        android:id="@+id/btnToFlights"
+        android:id="@+id/btnToOutboundFlights"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnArrive"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:text="See Flights" />
+        android:layout_marginTop="50dp"
+        android:text="See Outbound One-way Flights" />
+
+    <Button
+        android:id="@+id/btnToInboundFlights"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnToOutboundFlights"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="See Inbound One-way Flights" />
+
+    <Button
+        android:id="@+id/btnToRoundTrips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnToInboundFlights"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="See Roundtrips" />
 
 
 </RelativeLayout>

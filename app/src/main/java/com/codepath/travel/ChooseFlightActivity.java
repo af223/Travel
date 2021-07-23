@@ -34,6 +34,10 @@ import java.util.Hashtable;
 
 import okhttp3.Headers;
 
+import static com.codepath.travel.FlightsActivity.CHOOSE_INBOUND_FLIGHT_REQUEST_CODE;
+import static com.codepath.travel.FlightsActivity.CHOOSE_OUTBOUND_FLIGHT_REQUEST_CODE;
+import static com.codepath.travel.FlightsActivity.CHOOSE_ROUND_FLIGHT_REQUEST_CODE;
+
 /**
  * This activity allows the user to see all flights from their chosen departure airports landing in
  * their chosen arrival airports. The user can choose a ticket by clicking on it, then clicking the confirm
@@ -116,10 +120,27 @@ public class ChooseFlightActivity extends AppCompatActivity {
         rvFlights.setAdapter(adapter);
 
         pbFlights.setVisibility(View.VISIBLE);
-        for (Airport originAirport : FlightsActivity.departureAirports) {
-            for (Airport destinationAirport : FlightsActivity.arrivalAirports) {
-                getFlights(originAirport.getIATACode(), destinationAirport.getIATACode());
-            }
+
+        switch (getIntent().getIntExtra(getString(R.string.flight_type), 0)) {
+            case CHOOSE_OUTBOUND_FLIGHT_REQUEST_CODE:
+                for (Airport originAirport : FlightsActivity.departureAirports) {
+                    for (Airport destinationAirport : FlightsActivity.arrivalAirports) {
+                        getFlights(originAirport.getIATACode(), destinationAirport.getIATACode());
+                    }
+                }
+                break;
+            case CHOOSE_INBOUND_FLIGHT_REQUEST_CODE:
+                for (Airport originAirport : FlightsActivity.departureAirports) {
+                    for (Airport destinationAirport : FlightsActivity.arrivalAirports) {
+                        getFlights(destinationAirport.getIATACode(), originAirport.getIATACode());
+                    }
+                }
+                break;
+            case CHOOSE_ROUND_FLIGHT_REQUEST_CODE:
+                Toast.makeText(this, "round trips", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                Toast.makeText(this, "unable to recognize", Toast.LENGTH_SHORT).show();
         }
     }
 

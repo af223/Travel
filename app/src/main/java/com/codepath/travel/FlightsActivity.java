@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 
 import com.codepath.travel.models.Airport;
 import com.codepath.travel.models.Destination;
@@ -39,13 +38,17 @@ import static com.codepath.travel.MainActivity.logout;
 
 public class FlightsActivity extends AppCompatActivity {
 
-    private static final int CHOOSE_FLIGHT_REQUEST_CODE = 24;
+    public static final int CHOOSE_OUTBOUND_FLIGHT_REQUEST_CODE = 24;
+    public static final int CHOOSE_INBOUND_FLIGHT_REQUEST_CODE = 13;
+    public static final int CHOOSE_ROUND_FLIGHT_REQUEST_CODE = 9;
     private static final String TAG = "FlightsActivity";
     public static ArrayList<Airport> departureAirports = new ArrayList<>();
     public static ArrayList<Airport> arrivalAirports = new ArrayList<>();
     private Button btnDepart;
     private Button btnArrive;
-    private Button btnToFlights;
+    private Button btnToOutboundFlights;
+    private Button btnToInboundFlights;
+    private Button btnToRoundTrips;
     private Toolbar toolbar;
     private Destination thisDestination;
     private View chosenOutboundFlight;
@@ -65,27 +68,58 @@ public class FlightsActivity extends AppCompatActivity {
         chosenInboundFlight = findViewById(R.id.chosenInboundFlight);
         btnDepart = findViewById(R.id.btnDepart);
         btnArrive = findViewById(R.id.btnArrive);
-        btnToFlights = findViewById(R.id.btnToFlights);
+        btnToOutboundFlights = findViewById(R.id.btnToOutboundFlights);
+        btnToInboundFlights = findViewById(R.id.btnToInboundFlights);
+        btnToRoundTrips = findViewById(R.id.btnToRoundTrips);
 
         departureAirports.clear();
         arrivalAirports.clear();
         getChosenDestination();
 
-        btnToFlights.setOnClickListener(new View.OnClickListener() {
+        btnToOutboundFlights.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (departureAirports.isEmpty()) {
-                    Toast.makeText(FlightsActivity.this, "Need to select at least one departure airport", Toast.LENGTH_SHORT).show();
-                    return;
+                if (checkAirportsSelected()) {
+                    Intent i = new Intent(FlightsActivity.this, ChooseFlightActivity.class);
+                    i.putExtra(getString(R.string.flight_type), CHOOSE_OUTBOUND_FLIGHT_REQUEST_CODE);
+                    startActivityForResult(i, CHOOSE_OUTBOUND_FLIGHT_REQUEST_CODE);
                 }
-                if (arrivalAirports.isEmpty()) {
-                    Toast.makeText(FlightsActivity.this, "Need to select at least one destination airport", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Intent i = new Intent(FlightsActivity.this, ChooseFlightActivity.class);
-                startActivityForResult(i, CHOOSE_FLIGHT_REQUEST_CODE);
             }
         });
+
+        btnToInboundFlights.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkAirportsSelected()) {
+                    Intent i = new Intent(FlightsActivity.this, ChooseFlightActivity.class);
+                    i.putExtra(getString(R.string.flight_type), CHOOSE_INBOUND_FLIGHT_REQUEST_CODE);
+                    startActivityForResult(i, CHOOSE_INBOUND_FLIGHT_REQUEST_CODE);
+                }
+            }
+        });
+
+        btnToRoundTrips.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkAirportsSelected()) {
+                    Intent i = new Intent(FlightsActivity.this, ChooseFlightActivity.class);
+                    i.putExtra(getString(R.string.flight_type), CHOOSE_ROUND_FLIGHT_REQUEST_CODE);
+                    startActivityForResult(i, CHOOSE_ROUND_FLIGHT_REQUEST_CODE);
+                }
+            }
+        });
+    }
+
+    private boolean checkAirportsSelected() {
+        if (departureAirports.isEmpty()) {
+            Toast.makeText(FlightsActivity.this, "Need to select at least one departure airport", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (arrivalAirports.isEmpty()) {
+            Toast.makeText(FlightsActivity.this, "Need to select at least one destination airport", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     private void getChosenDestination() {
@@ -127,27 +161,41 @@ public class FlightsActivity extends AppCompatActivity {
         if (thisDestination.getDate() == null) {
             chosenOutboundFlight.setVisibility(View.INVISIBLE);
         } else {
+            chosenOutboundFlight.setVisibility(View.VISIBLE);
             ((TextView) chosenOutboundFlight.findViewById(R.id.tvDepartAirport)).setText(thisDestination.getDepartAirportName());
             ((TextView) chosenOutboundFlight.findViewById(R.id.tvArriveAirport)).setText(thisDestination.getArriveAirportName());
             ((TextView) chosenOutboundFlight.findViewById(R.id.tvCost)).setText("$" + thisDestination.getCost());
             ((TextView) chosenOutboundFlight.findViewById(R.id.tvAirline)).setText(thisDestination.getCarrier());
             ((TextView) chosenOutboundFlight.findViewById(R.id.tvDate)).setText(thisDestination.getDate());
         }
-        chosenInboundFlight.setVisibility(View.INVISIBLE);
+        if (thisDestination.getInboundDate() == null) {
+            chosenInboundFlight.setVisibility(View.INVISIBLE);
+        } else {
+            chosenInboundFlight.setVisibility(View.VISIBLE);
+            ((TextView) chosenInboundFlight.findViewById(R.id.tvDepartAirport)).setText(thisDestination.getInboundDepartName());
+            ((TextView) chosenInboundFlight.findViewById(R.id.tvArriveAirport)).setText(thisDestination.getInboundArriveName());
+            ((TextView) chosenInboundFlight.findViewById(R.id.tvCost)).setText("$" + thisDestination.getInboundCost());
+            ((TextView) chosenInboundFlight.findViewById(R.id.tvAirline)).setText(thisDestination.getInboundCarrier());
+            ((TextView) chosenInboundFlight.findViewById(R.id.tvDate)).setText(thisDestination.getInboundDate());
+        }
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == CHOOSE_FLIGHT_REQUEST_CODE) {
+            if (requestCode == CHOOSE_OUTBOUND_FLIGHT_REQUEST_CODE) {
                 Flight chosenFlight = Parcels.unwrap(data.getParcelableExtra(Flight.class.getSimpleName()));
-                saveFlightData(chosenFlight);
+                saveOutboundFlightData(chosenFlight);
+            } else if (requestCode == CHOOSE_INBOUND_FLIGHT_REQUEST_CODE) {
+                Flight chosenFlight = Parcels.unwrap(data.getParcelableExtra(Flight.class.getSimpleName()));
+                saveInboundFlightData(chosenFlight);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void saveFlightData(Flight chosenFlight) {
+    private void saveOutboundFlightData(Flight chosenFlight) {
         thisDestination.setDepartAirportCode(chosenFlight.getDepartAirportCode());
         thisDestination.setDepartAirportName(chosenFlight.getDepartAirportName());
         thisDestination.setArriveAirportCode(chosenFlight.getArriveAirportCode());
@@ -164,6 +212,28 @@ public class FlightsActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(FlightsActivity.this, "flight chosen!", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+    }
+
+    private void saveInboundFlightData(Flight chosenFlight) {
+        thisDestination.setInboundDepartCode(chosenFlight.getDepartAirportCode());
+        thisDestination.setInboundDepartName(chosenFlight.getDepartAirportName());
+        thisDestination.setInboundArriveCode(chosenFlight.getArriveAirportCode());
+        thisDestination.setInboundArriveName(chosenFlight.getArriveAirportName());
+        thisDestination.setInboundCost(chosenFlight.getFlightCost());
+        thisDestination.setInboundCarrier(chosenFlight.getCarrier());
+        thisDestination.setInboundDate(chosenFlight.getDate());
+        thisDestination.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Error while saving flight: ", e);
+                    Toast.makeText(FlightsActivity.this, "Error while saving flight", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                loadChosenFlights();
+                Toast.makeText(FlightsActivity.this, "flight chosen!", Toast.LENGTH_SHORT).show();
             }
         });
     }
