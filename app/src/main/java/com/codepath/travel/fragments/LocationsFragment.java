@@ -22,7 +22,10 @@ import com.codepath.travel.R;
 import com.codepath.travel.adapters.LocationsAdapter;
 import com.codepath.travel.adapters.RecyclerTouchListener;
 import com.codepath.travel.models.Destination;
+import com.codepath.travel.models.Expense;
+import com.codepath.travel.models.TouristDestination;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -87,28 +90,18 @@ public class LocationsFragment extends Fragment {
         rvLocations = view.findViewById(R.id.rvLocations);
         rvLocations.setLayoutManager(new LinearLayoutManager(getContext()));
         rvLocations.setAdapter(adapter);
-
         rvTouchListener = new RecyclerTouchListener(getActivity(), rvLocations);
         rvTouchListener.setSwipeOptionViews(R.id.delete_task,R.id.edit_entry).setSwipeable(R.id.card_view, R.id.swipeMenuLayout, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
             @Override
             public void onSwipeOptionClicked(int viewID, int position) {
-                switch (viewID) {
-                    case R.id.delete_task:
-                        deleteDestination(position);
-                        break;
-                    case R.id.edit_entry:
-                        Toast.makeText(getContext(), "Placeholder", Toast.LENGTH_SHORT).show();
-                        break;
+                if (viewID == R.id.delete_task) {
+                    deleteDestination(position);
                 }
             }
         });
         rvLocations.addOnItemTouchListener(rvTouchListener);
 
         loadLocations();
-    }
-
-    private void deleteDestination(int position) {
-        Toast.makeText(getContext(), "Delete", Toast.LENGTH_SHORT).show();
     }
 
     private void loadLocations() {
@@ -126,6 +119,32 @@ public class LocationsFragment extends Fragment {
                 locations.addAll(destinations);
                 adapter.notifyDataSetChanged();
                 pbLoadDestinations.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void deleteDestination(int position) {
+        Destination toDelete = locations.get(position);
+        ParseQuery<TouristDestination> query = ParseQuery.getQuery(TouristDestination.class);
+        query.whereEqualTo(TouristDestination.KEY_DESTINATION, toDelete);
+        query.findInBackground(new FindCallback<TouristDestination>() {
+            @Override
+            public void done(List<TouristDestination> touristDestinations, ParseException e) {
+                for (TouristDestination activity : touristDestinations) {
+                    activity.deleteInBackground();
+                }
+            }
+        });
+        toDelete.deleteInBackground(new DeleteCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Toast.makeText(getContext(), "Unable to delete", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
+                locations.remove(position);
+                adapter.notifyItemRemoved(position);
             }
         });
     }
