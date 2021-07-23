@@ -34,7 +34,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
-        android:layout_below="@+id/tvActivityType"
+        android:layout_below="@+id/etQueryActivity"
         android:layout_alignParentStart="true"
         android:layout_marginTop="5dp" />
 
@@ -50,5 +50,32 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="160dp"
         android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/etQueryActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvActivityType"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="3dp"
+        android:layout_toStartOf="@+id/btnQueryActivity"
+        android:ems="10"
+        android:hint="@string/search_by_keyword"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/btnQueryActivity"
+        android:layout_width="86dp"
+        android:layout_height="40dp"
+        android:textSize="12sp"
+        android:layout_below="@+id/tvActivityType"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="16dp"
+        android:text="Search" />
 
 </RelativeLayout>

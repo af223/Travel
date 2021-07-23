@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +45,7 @@ import static com.codepath.travel.MainActivity.logout;
 
 /**
  * This activity allows the user to find suggested tourist spots/activities near the chosen destination.
- * The user can filter by selecting one or more of the suggested categories.
+ * The user can filter by selecting one or more of the suggested categories, or search by keyword.
  *
  * This activity appears when the user chooses "find activity" from ResourcesFragment.java. The intent passed in
  * contains the objectId for the selected destination.
@@ -62,9 +64,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
     private String[] typeArray = {"Amusement Parks", "Art Galleries", "Beaches", "Gardens", "Hiking",
                                 "Landmarks/Historical Buildings", "Museums", "Nightlife", "Shopping",
                                 "Spas", "Sports", "Tours"};
-    private String[] typeAlias = {"amusementparks", "galleries", "beaches", "gardens", "hiking",
-                                "landmarks", "museums", "nightlife", "shopping",
-                                "spas", "active", "tours"};
+    private static String categoryParameter;
     private RecyclerView rvTouristActivities;
     private TouristActivitiesAdapter adapter;
     private ArrayList<TouristSpot> touristSpots;
@@ -73,8 +73,13 @@ public class TouristSpotsActivity extends AppCompatActivity {
     private static String destinationID;
     private static Destination currDestination;
     private static int offset;
-    private String categoryParameter;
+    private static String keywordQuery;
+    private final String[] typeAlias = {"amusementparks", "galleries", "beaches", "gardens", "hiking",
+            "landmarks", "museums", "nightlife", "shopping",
+            "spas", "active", "tours"};
     private EndlessRecyclerViewScrollListener scrollListener;
+    private EditText etQueryActivity;
+    private Button btnQueryActivity;
 
     public static void saveTouristDestination(TouristSpot touristSpot) {
         TouristDestination touristDestination = new TouristDestination();
@@ -98,7 +103,6 @@ public class TouristSpotsActivity extends AppCompatActivity {
                 }
             });
         }
-
     }
 
     @Override
@@ -114,11 +118,13 @@ public class TouristSpotsActivity extends AppCompatActivity {
         tvActivityType = findViewById(R.id.tvActivityType);
         rvTouristActivities = findViewById(R.id.rvTouristActivities);
         pbTouristLoad = findViewById(R.id.pbTouristLoad);
+        etQueryActivity = findViewById(R.id.etQueryActivity);
+        btnQueryActivity = findViewById(R.id.btnQueryActivity);
 
         touristSpots = new ArrayList<>();
         adapter = new TouristActivitiesAdapter(this, touristSpots);
         StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+        gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
         rvTouristActivities.setLayoutManager(gridLayoutManager);
         rvTouristActivities.setAdapter(adapter);
         scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
@@ -135,69 +141,97 @@ public class TouristSpotsActivity extends AppCompatActivity {
         destinationID = getIntent().getStringExtra(Destination.KEY_OBJECT_ID);
         offset = 0;
 
+        btnQueryActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etQueryActivity.getText().toString().isEmpty()) {
+                    Toast.makeText(TouristSpotsActivity.this, "No keywords entered", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                setUpToLoadResults();
+                resetCategoryFilter();
+                keywordQuery = etQueryActivity.getText().toString();
+                etQueryActivity.setText("");
+                loadTouristResults();
+            }
+        });
+
         tvActivityType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(TouristSpotsActivity.this, R.style.AppCompatAlertDialogStyle);
-                builder.setTitle("Select a category");
-                builder.setCancelable(false);
-                builder.setMultiChoiceItems(typeArray, selectedType, new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        if (isChecked) {
-                            typeList.add(which);
-                            Collections.sort(typeList);
-                        } else {
-                            typeList.remove(Integer.valueOf(which));
-                        }
+                showCategorySelecter();
+            }
+        });
+    }
+
+    private void showCategorySelecter() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(TouristSpotsActivity.this, R.style.AppCompatAlertDialogStyle);
+        builder.setTitle("Select a category");
+        builder.setCancelable(false);
+        builder.setMultiChoiceItems(typeArray, selectedType, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                if (isChecked) {
+                    typeList.add(which);
+                    Collections.sort(typeList);
+                } else {
+                    typeList.remove(Integer.valueOf(which));
+                }
+            }
+        });
+
+        builder.setPositiveButton("Filter", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                setUpToLoadResults();
+                StringBuilder stringBuilder = new StringBuilder();
+                for (int i = 0; i < typeList.size(); i++) {
+                    stringBuilder.append(typeArray[typeList.get(i)]);
+                    categoryParameter += typeAlias[typeList.get(i)];
+
+                    if (i != typeList.size()-1) {
+                        stringBuilder.append(", ");
+                        categoryParameter += ",";
                     }
-                });
+                }
+                loadTouristResults();
+                tvActivityType.setText(stringBuilder.toString());
+            }
+        });
 
-                builder.setPositiveButton("Filter", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        pbTouristLoad.setVisibility(View.VISIBLE);
-                        offset = 0;
-                        touristSpots.clear();
-                        scrollListener.resetState();
-                        categoryParameter = "";
-                        StringBuilder stringBuilder = new StringBuilder();
-                        for (int i = 0; i < typeList.size(); i++) {
-                            stringBuilder.append(typeArray[typeList.get(i)]);
-                            categoryParameter += typeAlias[typeList.get(i)];
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
 
-                            if (i != typeList.size()-1) {
-                                stringBuilder.append(", ");
-                                categoryParameter += ",";
-                            }
-                        }
-                        loadTouristResults();
-                        tvActivityType.setText(stringBuilder.toString());
-                    }
-                });
-
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        for (int i = 0; i < selectedType.length; i++) {
-                            selectedType[i] = false;
-                            typeList.clear();
-                            tvActivityType.setText("");
-                        }
-                        builder.show();
-                    }
-                });
-
+        builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                resetCategoryFilter();
                 builder.show();
             }
         });
+
+        builder.show();
+    }
+
+    private void setUpToLoadResults() {
+        pbTouristLoad.setVisibility(View.VISIBLE);
+        offset = 0;
+        touristSpots.clear();
+        scrollListener.resetState();
+        keywordQuery = "";
+        categoryParameter = "";
+    }
+
+    private void resetCategoryFilter() {
+        for (int i = 0; i < selectedType.length; i++) {
+            selectedType[i] = false;
+            typeList.clear();
+            tvActivityType.setText("");
+        }
     }
 
     private void loadTouristResults() {
@@ -206,17 +240,23 @@ public class TouristSpotsActivity extends AppCompatActivity {
         RequestParams params = new RequestParams();
         params.put("latitude", latitude);
         params.put("longitude", longitude);
-        params.put("categories", categoryParameter);
+        if (!categoryParameter.isEmpty()) {
+            params.put("categories", categoryParameter);
+        }
+        if (!keywordQuery.isEmpty()) {
+            params.put("term", keywordQuery);
+        }
         params.put("limit", NUM_LOAD_BUSINESSES);
         params.put("offset", offset);
         headers.put("Authorization", "Bearer " + getResources().getString(R.string.yelp_api_key));
         client.get(YELP_BUSINESS_SEARCH_URL, headers, params, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Headers headers, JSON json) {
-                        processYelpResults(json.jsonObject);
-                        adapter.notifyDataSetChanged();
-                        pbTouristLoad.setVisibility(View.GONE);
-                        offset += NUM_LOAD_BUSINESSES;
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                processYelpResults(json.jsonObject);
+                adapter.notifyDataSetChanged();
+                pbTouristLoad.setVisibility(View.GONE);
+                offset += NUM_LOAD_BUSINESSES;
+                rvTouristActivities.smoothScrollToPosition(0);
                     }
 
                     @Override
