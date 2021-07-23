@@ -23,7 +23,7 @@
     <string name="prev_month_arrow"><![CDATA[<-]]></string>
     <string name="next_month_arrow"><![CDATA[->]]></string>
     <string name="flight_type">flight type</string>
-    <string name="outbound_instructions">Click to select a flight. Swipe to see one-way inbound tickets and confirm your ticket selection.</string>
+    <string name="outbound_instructions">Click to select a flight. Confirm your ticket selection on Inbound Flights page.</string>
     <string name="outbound">Outbound</string>
     <string name="inbound">Inbound</string>
     <string name="is_roundtrip">Roundtrip tickets:</string>

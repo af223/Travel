@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.codepath.travel.adapters.PagerAdapter;
+import com.google.android.material.tabs.TabLayout;
 
 
 /**
@@ -29,5 +30,8 @@ public class ChooseFlightActivity extends AppCompatActivity {
         ViewPager vpPager = (ViewPager) findViewById(R.id.vpPager);
         adapterViewPager = new PagerAdapter(getSupportFragmentManager());
         vpPager.setAdapter(adapterViewPager);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(vpPager);
     }
 }

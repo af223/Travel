@@ -2,19 +2,23 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/sliding_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        app:tabIndicatorColor="@color/medium_pink"
+        app:tabSelectedTextColor="@color/medium_pink"
+        app:tabTextColor="@color/brown"
+        app:tabMode="fixed" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/vpPager"
+        android:layout_below="@+id/sliding_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <androidx.viewpager.widget.PagerTabStrip
-            android:id="@+id/pager_header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:paddingBottom="4dp"
-            android:paddingTop="4dp" />
     </androidx.viewpager.widget.ViewPager>
 </RelativeLayout>
