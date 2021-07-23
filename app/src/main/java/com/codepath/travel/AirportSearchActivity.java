@@ -145,7 +145,12 @@ public class AirportSearchActivity extends AppCompatActivity {
     }
 
     private void loadSuggestedAirports() {
-        findMatchingAirports(getIntent().getStringExtra(Destination.KEY_ADMIN1));
+        if (getIntent().getStringExtra(Destination.KEY_ADMIN1) != null) {
+            findMatchingAirports(getIntent().getStringExtra(Destination.KEY_ADMIN1));
+        } else {
+            loadingAirportSuggestions = false;
+            findMatchingAirports(getIntent().getStringExtra(Destination.KEY_COUNTRY));
+        }
     }
 
     private void displayAirports(JSONObject jsonObject) {

@@ -81,7 +81,7 @@ public class FindAirportsAdapter extends RecyclerView.Adapter<FindAirportsAdapte
             } else {
                 btnAddAirport.setClickable(true);
                 btnAddAirport.setText("Add");
-                btnAddAirport.setBackgroundColor(context.getResources().getColor(R.color.purple_500));
+                btnAddAirport.setBackgroundColor(context.getResources().getColor(R.color.lightest_pink));
                 btnAddAirport.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
