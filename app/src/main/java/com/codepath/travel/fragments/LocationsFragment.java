@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.codepath.travel.MainActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.adapters.LocationsAdapter;
+import com.codepath.travel.adapters.RecyclerTouchListener;
 import com.codepath.travel.models.Destination;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
@@ -45,6 +46,7 @@ public class LocationsFragment extends Fragment {
     private ProgressBar pbLoadDestinations;
     public static List<Destination> locations;
     private static LocationsAdapter adapter;
+    private RecyclerTouchListener rvTouchListener;
 
     public LocationsFragment() {
         // Required empty public constructor
@@ -85,7 +87,28 @@ public class LocationsFragment extends Fragment {
         rvLocations = view.findViewById(R.id.rvLocations);
         rvLocations.setLayoutManager(new LinearLayoutManager(getContext()));
         rvLocations.setAdapter(adapter);
+
+        rvTouchListener = new RecyclerTouchListener(getActivity(), rvLocations);
+        rvTouchListener.setSwipeOptionViews(R.id.delete_task,R.id.edit_entry).setSwipeable(R.id.card_view, R.id.swipeMenuLayout, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
+            @Override
+            public void onSwipeOptionClicked(int viewID, int position) {
+                switch (viewID) {
+                    case R.id.delete_task:
+                        deleteDestination(position);
+                        break;
+                    case R.id.edit_entry:
+                        Toast.makeText(getContext(), "Placeholder", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
+        rvLocations.addOnItemTouchListener(rvTouchListener);
+
         loadLocations();
+    }
+
+    private void deleteDestination(int position) {
+        Toast.makeText(getContext(), "Delete", Toast.LENGTH_SHORT).show();
     }
 
     private void loadLocations() {
