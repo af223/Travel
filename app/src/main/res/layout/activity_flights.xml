@@ -41,7 +41,7 @@
         layout="@layout/item_flight"
         android:id="@+id/chosenOutboundFlight"
         android:layout_margin="16dp"
-        android:layout_below="@+id/toolbar"
+        android:layout_below="@+id/tvFlightType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -98,34 +98,39 @@
         android:layout_below="@+id/chosenInboundFlight"
         android:layout_toEndOf="@+id/btnDepart"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
         android:text="Select Arrival Airports" />
 
     <Button
-        android:id="@+id/btnToOutboundFlights"
+        android:id="@+id/btnToOneWay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnArrive"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:text="See Outbound One-way Flights" />
-
-    <Button
-        android:id="@+id/btnToInboundFlights"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnToOutboundFlights"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:text="See Inbound One-way Flights" />
+        android:text="See One-way Tickets" />
 
     <Button
         android:id="@+id/btnToRoundTrips"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnToInboundFlights"
+        android:layout_below="@+id/btnToOneWay"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:text="See Roundtrips" />
+        android:text="See Roundtrip Tickets" />
+
+    <TextView
+        android:id="@+id/tvFlightType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textSize="20sp"
+        android:text="@string/no_tickets_selected"
+        android:textColor="@color/brown"
+        android:textStyle="bold" />
 
 
 </RelativeLayout>

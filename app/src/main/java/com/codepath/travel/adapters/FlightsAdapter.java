@@ -9,8 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.codepath.travel.ChooseFlightActivity;
 import com.codepath.travel.R;
+import com.codepath.travel.fragments.Ticket;
 import com.codepath.travel.models.Flight;
 
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * This adapter is for the RecylerView in ChooseFlightsActivity that displays the list of plane tickets
+ * This adapter is for the RecylerView in InboundFragment and OutboundFragment that displays the list of plane tickets
  * that originate from one of the chosen departure airports, and land in one of the destination/arrival airports.
  * Users can click on a ticket to select it, holding it on display at the top of the screen,
  * and click "confirm" to save that ticket, automatically redirected back to the FlightsActivity.java screen.
@@ -28,10 +28,14 @@ public class FlightsAdapter extends RecyclerView.Adapter<FlightsAdapter.ViewHold
 
     private final Context context;
     private final List<Flight> flights;
+    private final View ticket;
+    private final Boolean outbound;
 
-    public FlightsAdapter(Context context, List<Flight> flights) {
+    public FlightsAdapter(Context context, List<Flight> flights, View ticket, Boolean outbound) {
         this.context = context;
         this.flights = flights;
+        this.ticket = ticket;
+        this.outbound = outbound;
     }
 
     @NonNull
@@ -85,7 +89,7 @@ public class FlightsAdapter extends RecyclerView.Adapter<FlightsAdapter.ViewHold
         public void onClick(View v) {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
-                ChooseFlightActivity.choose(flights.get(position));
+                Ticket.choose(flights.get(position), ticket, outbound, context);
             }
         }
     }

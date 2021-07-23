@@ -38,21 +38,20 @@ import static com.codepath.travel.MainActivity.logout;
 
 public class FlightsActivity extends AppCompatActivity {
 
-    public static final int CHOOSE_OUTBOUND_FLIGHT_REQUEST_CODE = 24;
-    public static final int CHOOSE_INBOUND_FLIGHT_REQUEST_CODE = 13;
-    public static final int CHOOSE_ROUND_FLIGHT_REQUEST_CODE = 9;
+    private static final int CHOOSE_ONE_WAY_FLIGHT_REQUEST_CODE = 13;
+    private static final int CHOOSE_ROUND_FLIGHT_REQUEST_CODE = 9;
     private static final String TAG = "FlightsActivity";
     public static ArrayList<Airport> departureAirports = new ArrayList<>();
     public static ArrayList<Airport> arrivalAirports = new ArrayList<>();
     private Button btnDepart;
     private Button btnArrive;
-    private Button btnToOutboundFlights;
-    private Button btnToInboundFlights;
+    private Button btnToOneWay;
     private Button btnToRoundTrips;
     private Toolbar toolbar;
     private Destination thisDestination;
     private View chosenOutboundFlight;
     private View chosenInboundFlight;
+    private TextView tvFlightType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,32 +67,21 @@ public class FlightsActivity extends AppCompatActivity {
         chosenInboundFlight = findViewById(R.id.chosenInboundFlight);
         btnDepart = findViewById(R.id.btnDepart);
         btnArrive = findViewById(R.id.btnArrive);
-        btnToOutboundFlights = findViewById(R.id.btnToOutboundFlights);
-        btnToInboundFlights = findViewById(R.id.btnToInboundFlights);
+        btnToOneWay = findViewById(R.id.btnToOneWay);
         btnToRoundTrips = findViewById(R.id.btnToRoundTrips);
+        tvFlightType = findViewById(R.id.tvFlightType);
 
         departureAirports.clear();
         arrivalAirports.clear();
         getChosenDestination();
 
-        btnToOutboundFlights.setOnClickListener(new View.OnClickListener() {
+        btnToOneWay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (checkAirportsSelected()) {
                     Intent i = new Intent(FlightsActivity.this, ChooseFlightActivity.class);
-                    i.putExtra(getString(R.string.flight_type), CHOOSE_OUTBOUND_FLIGHT_REQUEST_CODE);
-                    startActivityForResult(i, CHOOSE_OUTBOUND_FLIGHT_REQUEST_CODE);
-                }
-            }
-        });
-
-        btnToInboundFlights.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkAirportsSelected()) {
-                    Intent i = new Intent(FlightsActivity.this, ChooseFlightActivity.class);
-                    i.putExtra(getString(R.string.flight_type), CHOOSE_INBOUND_FLIGHT_REQUEST_CODE);
-                    startActivityForResult(i, CHOOSE_INBOUND_FLIGHT_REQUEST_CODE);
+                    i.putExtra(getString(R.string.flight_type), CHOOSE_ONE_WAY_FLIGHT_REQUEST_CODE);
+                    startActivityForResult(i, CHOOSE_ONE_WAY_FLIGHT_REQUEST_CODE);
                 }
             }
         });
@@ -161,6 +149,7 @@ public class FlightsActivity extends AppCompatActivity {
         if (thisDestination.getDate() == null) {
             chosenOutboundFlight.setVisibility(View.INVISIBLE);
         } else {
+            setFlightType();
             chosenOutboundFlight.setVisibility(View.VISIBLE);
             ((TextView) chosenOutboundFlight.findViewById(R.id.tvDepartAirport)).setText(thisDestination.getDepartAirportName());
             ((TextView) chosenOutboundFlight.findViewById(R.id.tvArriveAirport)).setText(thisDestination.getArriveAirportName());
@@ -171,6 +160,7 @@ public class FlightsActivity extends AppCompatActivity {
         if (thisDestination.getInboundDate() == null) {
             chosenInboundFlight.setVisibility(View.INVISIBLE);
         } else {
+            setFlightType();
             chosenInboundFlight.setVisibility(View.VISIBLE);
             ((TextView) chosenInboundFlight.findViewById(R.id.tvDepartAirport)).setText(thisDestination.getInboundDepartName());
             ((TextView) chosenInboundFlight.findViewById(R.id.tvArriveAirport)).setText(thisDestination.getInboundArriveName());
@@ -178,18 +168,31 @@ public class FlightsActivity extends AppCompatActivity {
             ((TextView) chosenInboundFlight.findViewById(R.id.tvAirline)).setText(thisDestination.getInboundCarrier());
             ((TextView) chosenInboundFlight.findViewById(R.id.tvDate)).setText(thisDestination.getInboundDate());
         }
+    }
 
+    private void setFlightType() {
+        if (thisDestination.isRoundtrip()) {
+            tvFlightType.setText(R.string.is_roundtrip);
+        } else {
+            tvFlightType.setText(R.string.is_one_way);
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == CHOOSE_OUTBOUND_FLIGHT_REQUEST_CODE) {
-                Flight chosenFlight = Parcels.unwrap(data.getParcelableExtra(Flight.class.getSimpleName()));
-                saveOutboundFlightData(chosenFlight);
-            } else if (requestCode == CHOOSE_INBOUND_FLIGHT_REQUEST_CODE) {
-                Flight chosenFlight = Parcels.unwrap(data.getParcelableExtra(Flight.class.getSimpleName()));
-                saveInboundFlightData(chosenFlight);
+            if (requestCode == CHOOSE_ONE_WAY_FLIGHT_REQUEST_CODE) {
+                if (data.hasExtra(getString(R.string.outbound))) {
+                    Flight chosenOutFlight = Parcels.unwrap(data.getParcelableExtra(getString(R.string.outbound)));
+                    saveOutboundFlightData(chosenOutFlight);
+                }
+                if (data.hasExtra(getString(R.string.inbound))) {
+                    Flight chosenInFlight = Parcels.unwrap(data.getParcelableExtra(getString(R.string.inbound)));
+                    saveInboundFlightData(chosenInFlight);
+                }
+
+            } else if (requestCode == CHOOSE_ROUND_FLIGHT_REQUEST_CODE) {
+                Toast.makeText(this, "from roundtrip", Toast.LENGTH_SHORT).show();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -203,6 +206,10 @@ public class FlightsActivity extends AppCompatActivity {
         thisDestination.setCost(chosenFlight.getFlightCost());
         thisDestination.setCarrier(chosenFlight.getCarrier());
         thisDestination.setDate(chosenFlight.getDate());
+        if (thisDestination.isRoundtrip() != null && thisDestination.isRoundtrip() && !chosenFlight.isRoundtrip()) {
+            clearInboundFlightData();
+        }
+        thisDestination.setIsRoundtrip(chosenFlight.isRoundtrip());
         thisDestination.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -210,10 +217,21 @@ public class FlightsActivity extends AppCompatActivity {
                     Log.e(TAG, "Error while saving flight: ", e);
                     Toast.makeText(FlightsActivity.this, "Error while saving flight", Toast.LENGTH_SHORT).show();
                 } else {
+                    loadChosenFlights();
                     Toast.makeText(FlightsActivity.this, "flight chosen!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    private void clearInboundFlightData() {
+        thisDestination.setInboundDepartCode(null);
+        thisDestination.setInboundDepartName(null);
+        thisDestination.setInboundArriveCode(null);
+        thisDestination.setInboundArriveName(null);
+        thisDestination.setInboundCost(null);
+        thisDestination.setInboundCarrier(null);
+        thisDestination.setInboundDate(null);
     }
 
     private void saveInboundFlightData(Flight chosenFlight) {
@@ -224,6 +242,10 @@ public class FlightsActivity extends AppCompatActivity {
         thisDestination.setInboundCost(chosenFlight.getFlightCost());
         thisDestination.setInboundCarrier(chosenFlight.getCarrier());
         thisDestination.setInboundDate(chosenFlight.getDate());
+        if (thisDestination.isRoundtrip() != null && thisDestination.isRoundtrip() && !chosenFlight.isRoundtrip()) {
+            clearOutboundFlightData();
+        }
+        thisDestination.setIsRoundtrip(chosenFlight.isRoundtrip());
         thisDestination.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -236,6 +258,16 @@ public class FlightsActivity extends AppCompatActivity {
                 Toast.makeText(FlightsActivity.this, "flight chosen!", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void clearOutboundFlightData() {
+        thisDestination.setDepartAirportCode(null);
+        thisDestination.setDepartAirportName(null);
+        thisDestination.setArriveAirportCode(null);
+        thisDestination.setArriveAirportName(null);
+        thisDestination.setCost(null);
+        thisDestination.setCarrier(null);
+        thisDestination.setInboundDate(null);
     }
 
     @Override

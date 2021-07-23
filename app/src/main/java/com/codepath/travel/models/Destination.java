@@ -37,6 +37,7 @@ public class Destination extends ParseObject {
     public static final String KEY_INBOUND_COST = "inboundFlightCost";
     public static final String KEY_INBOUND_CARRIER = "inboundCarrier";
     public static final String KEY_INBOUND_DATE = "inboundDate";
+    public static final String KEY_IS_ROUNDTRIP = "isRoundtrip";
 
     public ParseUser getUser() {
         return getParseUser(KEY_USER);
@@ -268,6 +269,14 @@ public class Destination extends ParseObject {
 
     public void setInboundDate(String date) {
         put(KEY_INBOUND_DATE, date);
+    }
+
+    public Boolean isRoundtrip() {
+        return getBoolean(KEY_IS_ROUNDTRIP);
+    }
+
+    public void setIsRoundtrip(Boolean isRoundtrip) {
+        put(KEY_IS_ROUNDTRIP, isRoundtrip);
     }
 
     public LatLng getCoords() {
