@@ -4,7 +4,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +24,7 @@ import com.codepath.travel.models.Flight;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -29,7 +33,7 @@ import java.util.Hashtable;
  * This fragment contains a list of the one-way plane tickets between the selected airports going to the destination. The tourist
  * can choose the plane ticket here. Confirming the ticket selection occurs in InboundFragment.
  */
-public class OutboundFragment extends Fragment {
+public class OutboundFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "OutboundFragment";
     private ProgressBar pbFlights;
@@ -40,6 +44,7 @@ public class OutboundFragment extends Fragment {
     private RecyclerView rvFlights;
     private FlightsAdapter adapter;
     private View ticket;
+    private Spinner spinnerSortBy;
 
     public OutboundFragment() {
         // Required empty public constructor
@@ -68,6 +73,7 @@ public class OutboundFragment extends Fragment {
 
         ticket = view.findViewById(R.id.card_view);
         pbFlights = view.findViewById(R.id.pbFlights);
+        spinnerSortBy = view.findViewById(R.id.spinnerSortBy);
 
         placesCode = new Hashtable<>();
         placesName = new Hashtable<>();
@@ -86,5 +92,31 @@ public class OutboundFragment extends Fragment {
                         pbFlights, adapter, TAG, getContext(), placesCode, placesName, carriers, flights);
             }
         }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, Ticket.sortMethods);
+        spinnerSortBy.setAdapter(adapter);
+        spinnerSortBy.setOnItemSelectedListener(this);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (Ticket.sortMethods[position]) {
+            case "Cost":
+                Collections.sort(flights, Ticket.compareCost);
+                break;
+            case "Departure Date":
+                Collections.sort(flights, Ticket.compareDate);
+                break;
+            case "Airline":
+                Collections.sort(flights, Ticket.compareAirline);
+                break;
+        }
+        adapter.notifyDataSetChanged();
+        rvFlights.smoothScrollToPosition(0);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

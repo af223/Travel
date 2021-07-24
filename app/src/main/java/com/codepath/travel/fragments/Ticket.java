@@ -15,6 +15,7 @@ import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.codepath.travel.CalendarUtils;
 import com.codepath.travel.R;
 import com.codepath.travel.adapters.FlightsAdapter;
 import com.codepath.travel.adapters.RoundtripsAdapter;
@@ -24,7 +25,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Dictionary;
 
 import okhttp3.Headers;
@@ -34,9 +37,45 @@ public class Ticket {
     private static final String getRoutesURLBase = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/US/USD/en-US/%1$s/%2$s/anytime?inboundpartialdate=anytime";
     private static final String getRoundtripURLBase = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/US/USD/en/%1$s/%2$s/anytime/anytime";
     private static final String rapidapiHostURL = "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com";
+    public static final String[] sortMethods = {"", "Cost", "Departure Date", "Airline"};
     public static Button btnConfirm;
     public static Flight chosenOutboundFlight;
     public static Flight chosenInboundFlight;
+
+    public static final Comparator<Flight> compareCost = new Comparator<Flight>() {
+        @Override
+        public int compare(Flight o1, Flight o2) {
+            if (Integer.parseInt(o1.getFlightCost()) < Integer.parseInt(o2.getFlightCost())) {
+                return -1;
+            } else if (Integer.parseInt(o1.getFlightCost()) > Integer.parseInt(o2.getFlightCost())) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    };
+
+    public static final Comparator<Flight> compareDate = new Comparator<Flight>() {
+        @Override
+        public int compare(Flight o1, Flight o2) {
+            LocalDate date1 = CalendarUtils.getLocalDate(o1.getDate());
+            LocalDate date2 = CalendarUtils.getLocalDate(o2.getDate());
+            if (date1.isBefore(date2)) {
+                return -1;
+            } else if (date1.isAfter(date2)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    };
+
+    public static final Comparator<Flight> compareAirline = new Comparator<Flight>() {
+        @Override
+        public int compare(Flight o1, Flight o2) {
+            return o1.getCarrier().compareTo(o2.getCarrier());
+        }
+    };
 
     // User has selected a ticket, but not clicked confirm button yet
     public static void choose(Flight flight, View ticket, Boolean outbound, Context context) {

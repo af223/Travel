@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,12 +25,15 @@ import com.codepath.travel.models.Flight;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-public class RoundtripFlightsActivity extends AppCompatActivity {
+public class RoundtripFlightsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "RoundtripFlightsActivity";
+    private static final String[] sortMethods = {"", "Cost", "Departure Date", "Return Date", "Outbound Airline", "Inbound Airline"};
     private static CardView cvChosenFlight;
     private static Button btnConfirm;
     private static Flight chosenOutboundFlight;
@@ -40,6 +46,7 @@ public class RoundtripFlightsActivity extends AppCompatActivity {
     private Dictionary<Integer, String> placesName;
     private Dictionary<Integer, String> carriers;
     private ArrayList<Pair<Flight, Flight>> flights;
+    private Spinner spinnerSortBy;
 
     public static void chooseRoundtrip(Pair<Flight, Flight> flightPair) {
         chosenOutboundFlight = flightPair.first;
@@ -76,6 +83,7 @@ public class RoundtripFlightsActivity extends AppCompatActivity {
 
         cvChosenFlight = findViewById(R.id.cvChosenFlight);
         pbFlights = findViewById(R.id.pbFlights);
+        spinnerSortBy = findViewById(R.id.spinnerSortBy);
         btnConfirm = findViewById(R.id.btnConfirm);
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,5 +113,62 @@ public class RoundtripFlightsActivity extends AppCompatActivity {
                         adapter, TAG, this, placesCode, placesName, carriers, flights);
             }
         }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, sortMethods);
+        spinnerSortBy.setAdapter(adapter);
+        spinnerSortBy.setOnItemSelectedListener(this);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (sortMethods[position]) {
+            case "Cost":
+                Collections.sort(flights, new Comparator<Pair<Flight, Flight>>() {
+                    @Override
+                    public int compare(Pair<Flight, Flight> o1, Pair<Flight, Flight> o2) {
+                        return Ticket.compareCost.compare(o1.first, o2.first);
+                    }
+                });
+                break;
+            case "Departure Date":
+                Collections.sort(flights, new Comparator<Pair<Flight, Flight>>() {
+                    @Override
+                    public int compare(Pair<Flight, Flight> o1, Pair<Flight, Flight> o2) {
+                        return Ticket.compareDate.compare(o1.first, o2.first);
+                    }
+                });
+                break;
+            case "Return Date":
+                Collections.sort(flights, new Comparator<Pair<Flight, Flight>>() {
+                    @Override
+                    public int compare(Pair<Flight, Flight> o1, Pair<Flight, Flight> o2) {
+                        return Ticket.compareDate.compare(o1.second, o2.second);
+                    }
+                });
+                break;
+            case "Outbound Airline":
+                Collections.sort(flights, new Comparator<Pair<Flight, Flight>>() {
+                    @Override
+                    public int compare(Pair<Flight, Flight> o1, Pair<Flight, Flight> o2) {
+                        return Ticket.compareAirline.compare(o1.first, o2.first);
+                    }
+                });
+                break;
+            case "Inbound Airline":
+                Collections.sort(flights, new Comparator<Pair<Flight, Flight>>() {
+                    @Override
+                    public int compare(Pair<Flight, Flight> o1, Pair<Flight, Flight> o2) {
+                        return Ticket.compareAirline.compare(o1.second, o2.second);
+                    }
+                });
+                break;
+        }
+        adapter.notifyDataSetChanged();
+        rvFlights.smoothScrollToPosition(0);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

@@ -16,8 +16,27 @@
         android:id="@+id/rvFlights"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/btnConfirm"
+        android:layout_below="@+id/spinnerSortBy"
         android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvSortBy"
+        android:text="Sort by:"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:layout_below="@+id/btnConfirm"
+        android:layout_toStartOf="@+id/spinnerSortBy"
+        android:layout_marginTop="3dp"/>
+
+    <Spinner
+        android:id="@+id/spinnerSortBy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnConfirm"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="2dp" />
 
     <TextView
         android:id="@+id/tvDirections"
