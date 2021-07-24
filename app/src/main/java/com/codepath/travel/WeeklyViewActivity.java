@@ -3,11 +3,11 @@ package com.codepath.travel;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +16,7 @@ import com.codepath.travel.adapters.CalendarAdapter;
 import com.codepath.travel.adapters.EventsAdapter;
 import com.codepath.travel.adapters.OnItemListener;
 import com.codepath.travel.models.Event;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class WeeklyViewActivity extends AppCompatActivity implements OnItemListe
     private ImageButton btnNextWeek;
     private RecyclerView rvCalendar;
     private CalendarAdapter calendarAdapter;
-    private Button btnCreateEvent;
+    private FloatingActionButton fabCreateEvent;
     private RecyclerView rvEventsList;
     private EventsAdapter eventsAdapter;
     private ArrayList<Event> events;
@@ -51,7 +52,7 @@ public class WeeklyViewActivity extends AppCompatActivity implements OnItemListe
         btnPreviousWeek = findViewById(R.id.btnPreviousWeek);
         btnNextWeek = findViewById(R.id.btnNextWeek);
         rvCalendar = findViewById(R.id.rvCalendar);
-        btnCreateEvent = findViewById(R.id.btnCreateEvent);
+        fabCreateEvent = findViewById(R.id.fabCreateEvent);
         rvEventsList = findViewById(R.id.rvEventsList);
 
         btnPreviousWeek.setOnClickListener(new View.OnClickListener() {
@@ -70,11 +71,12 @@ public class WeeklyViewActivity extends AppCompatActivity implements OnItemListe
             }
         });
 
-        btnCreateEvent.setOnClickListener(new View.OnClickListener() {
+        fabCreateEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(WeeklyViewActivity.this, CreateEventActivity.class);
-                startActivity(i);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(WeeklyViewActivity.this, (View) fabCreateEvent, "to_create_event_transition");
+                startActivity(i, options.toBundle());
             }
         });
 

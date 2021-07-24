@@ -56,4 +56,9 @@ public class CreateEventActivity extends AppCompatActivity {
         tvEventDate.setText("Date: " + formatDateForEvent(selectedDate));
         tvEventTime.setText("Time: " + formatTime(time));
     }
+
+    @Override
+    public void onBackPressed() {
+        supportFinishAfterTransition();
+    }
 }

@@ -126,24 +126,40 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCalendar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="100dp"
         android:layout_weight="1"/>
 
-    <Button
-        android:id="@+id/btnCreateEvent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create Event"
-        android:textColor="@color/blue"
-        android:background="@android:color/transparent"
-        android:textStyle="bold"
-        android:layout_gravity="center"
-        android:textSize="20sp" />
-
-    <androidx.recyclerview.widget.RecyclerView
+    <View
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"
-        android:id="@+id/rvEventsList" />
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="5" >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/rvEventsList"
+            android:paddingBottom="45dp"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabCreateEvent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_baseline_add_24"
+            android:transitionName="to_create_event_transition"
+            app:rippleColor="@color/medium_green" />
+
+
+    </RelativeLayout>
+
 
 </LinearLayout>
