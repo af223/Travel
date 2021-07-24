@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".WeeklyViewActivity">
 
@@ -14,16 +14,17 @@
         android:layout_marginBottom="20dp"
         android:layout_marginTop="20dp">
 
-        <Button
+        <ImageButton
             android:id="@+id/btnPreviousWeek"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:layout_weight="1"
-            android:text="@string/prev_month_arrow"
-            android:textColor="@color/blue"
             android:background="@android:color/transparent"
+            android:src="@drawable/quantum_ic_arrow_back_grey600_24"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textSize="20sp" />
+            app:tint="@color/brown" />
 
         <TextView
             android:id="@+id/tvMonthYear"
@@ -31,20 +32,24 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:text="July 2021"
+            android:transitionName="to_week_transition"
             android:textSize="20sp"
-            android:textAlignment="center"
-            android:textColor="@color/black" />
-
-        <Button
-            android:id="@+id/btnNextWeek"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/next_month_arrow"
-            android:textColor="@color/blue"
-            android:background="@android:color/transparent"
             android:textStyle="bold"
-            android:textSize="20sp" />
+            android:textAlignment="center"
+            android:textColor="@color/brown" />
+
+        <ImageButton
+            android:id="@+id/btnNextWeek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:rotation="180"
+            android:src="@drawable/quantum_ic_arrow_back_grey600_24"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:tint="@color/brown" />
 
 
     </LinearLayout>

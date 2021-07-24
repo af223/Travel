@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.codepath.travel.MainActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.WeeklyViewActivity;
 import com.codepath.travel.adapters.CalendarAdapter;
@@ -119,7 +121,8 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getContext(), WeeklyViewActivity.class);
-                startActivity(i);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), (View)tvMonthYear, "to_week_transition");
+                startActivity(i, options.toBundle());
             }
         });
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,8 +33,8 @@ import static com.codepath.travel.CalendarUtils.selectedDate;
 public class WeeklyViewActivity extends AppCompatActivity implements OnItemListener {
 
     private TextView tvMonthYear;
-    private Button btnPreviousWeek;
-    private Button btnNextWeek;
+    private ImageButton btnPreviousWeek;
+    private ImageButton btnNextWeek;
     private RecyclerView rvCalendar;
     private CalendarAdapter calendarAdapter;
     private Button btnCreateEvent;
@@ -114,5 +115,10 @@ public class WeeklyViewActivity extends AppCompatActivity implements OnItemListe
     public void onItemClick(int position, LocalDate date) {
         selectedDate = date;
         setWeekView();
+    }
+
+    @Override
+    public void onBackPressed() {
+        supportFinishAfterTransition();
     }
 }
