@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,41 +9,59 @@
     android:background="@color/white"
     tools:context=".fragments.ItineraryFragment">
 
-    <Button
-        android:id="@+id/btnWeeklyView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Weekly"
-        android:textColor="@color/blue"
-        android:background="@android:color/transparent"
-        android:textStyle="bold"
-        android:textSize="20sp" />
-
-    <Spinner
-        android:id="@+id/destination_spinner"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp" />
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="right"
+        android:orientation="horizontal" >
+
+        <Spinner
+            android:id="@+id/destination_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="10dp" />
+
+        <Button
+            android:id="@+id/btnWeeklyView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:text="Week View" />
+
+        <ImageButton
+            android:id="@+id/btnToday"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:backgroundTint="@color/lightest_pink"
+            android:src="@drawable/ic_baseline_today_24" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="5dp">
 
-        <Button
+        <ImageButton
             android:id="@+id/btnPreviousMonth"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:layout_weight="1"
-            android:text="@string/prev_month_arrow"
-            android:textColor="@color/blue"
             android:background="@android:color/transparent"
+            android:src="@drawable/quantum_ic_arrow_back_grey600_24"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textSize="20sp" />
+            app:tint="@color/brown" />
 
         <TextView
             android:id="@+id/tvMonthYear"
@@ -54,16 +73,18 @@
             android:textAlignment="center"
             android:textColor="@color/black" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btnNextMonth"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:layout_weight="1"
-            android:text="@string/next_month_arrow"
-            android:textColor="@color/blue"
             android:background="@android:color/transparent"
+            android:rotation="180"
+            android:src="@drawable/quantum_ic_arrow_back_grey600_24"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textSize="20sp" />
+            app:tint="@color/brown" />
 
 
     </LinearLayout>

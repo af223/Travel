@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,8 +65,9 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
     private static final String TAG = "ItineraryFragment";
     private static final String SEE_ALL_ITINERARIES = "ALL";
     private TextView tvMonthYear;
-    private Button btnPreviousMonth;
-    private Button btnNextMonth;
+    private ImageButton btnPreviousMonth;
+    private ImageButton btnNextMonth;
+    private ImageButton btnToday;
     private RecyclerView rvCalendar;
     private CalendarAdapter adapter;
     private Button btnWeeklyView;
@@ -93,6 +95,7 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
         rvCalendar = view.findViewById(R.id.rvCalendar);
         btnWeeklyView = view.findViewById(R.id.btnWeeklyView);
         destinationSpinner = view.findViewById(R.id.destination_spinner);
+        btnToday = view.findViewById(R.id.btnToday);
 
         reloadEverything();
 
@@ -120,6 +123,14 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
             }
         });
 
+        btnToday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedDate = LocalDate.now();
+                setMonthView();
+            }
+        });
+
         days = new ArrayList<>();
         if (selectedDate == null) {
             selectedDate = LocalDate.now();
@@ -131,7 +142,6 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
             scheduledEvents = new ArrayList<>();
         }
         reloadAdapter();
-
         setMonthView();
     }
 
