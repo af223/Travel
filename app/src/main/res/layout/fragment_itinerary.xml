@@ -39,7 +39,8 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:backgroundTint="@color/lightest_pink"
-            android:src="@drawable/ic_baseline_today_24" />
+            android:src="@drawable/ic_baseline_today_24"
+            app:tint="@color/brown" />
 
     </LinearLayout>
 

@@ -23,7 +23,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.codepath.travel.MainActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.WeeklyViewActivity;
 import com.codepath.travel.adapters.CalendarAdapter;
@@ -42,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.codepath.travel.CalendarUtils.busyTimeSlots;
+import static com.codepath.travel.CalendarUtils.inboundArrivalDates;
 import static com.codepath.travel.CalendarUtils.datesOfInterest;
 import static com.codepath.travel.CalendarUtils.days;
 import static com.codepath.travel.CalendarUtils.destinationColorCode;
@@ -182,9 +182,19 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                 for (Destination destination : destinations) {
                     destinationNames.add(destination.getFormattedLocationName());
                     datesOfInterest.put(destination.getDate(), destination);
-                    String arrivalName = "Arrival at " + destination.getArriveAirportName() + " Airport in " + destination.getFormattedLocationName();
-                    Event event = new Event(arrivalName, getLocalDate(destination.getDate()), LocalTime.of(12, 0, 0, 0));
-                    eventsList.add(event);
+                    inboundArrivalDates.put(destination, destination.getInboundDate());
+                    String arrivalName;
+                    Event event;
+                    if (destination.getDate() != null) {
+                        arrivalName = "Arrival at " + destination.getArriveAirportName() + " Airport in " + destination.getFormattedLocationName();
+                        event = new Event(arrivalName, getLocalDate(destination.getDate()), LocalTime.of(12, 0, 0, 0));
+                        eventsList.add(event);
+                    }
+                    if (destination.getInboundDate() != null) {
+                        arrivalName = "Arrival at " + destination.getInboundArriveName() + " Airport (Return from trip)";
+                        event = new Event(arrivalName, getLocalDate(destination.getInboundDate()), LocalTime.of(12, 0, 0, 0));
+                        eventsList.add(event);
+                    }
                 }
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(), R.layout.item_spinner_destination, destinationNames);
                 destinationSpinner.setAdapter(spinnerAdapter);

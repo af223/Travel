@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.travel.R;
+import com.codepath.travel.models.Destination;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 
 import static com.codepath.travel.CalendarUtils.datesOfInterest;
 import static com.codepath.travel.CalendarUtils.destinationColorCode;
+import static com.codepath.travel.CalendarUtils.getLocalDate;
+import static com.codepath.travel.CalendarUtils.inboundArrivalDates;
 import static com.codepath.travel.CalendarUtils.selectedDate;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHolder> {
@@ -89,7 +92,14 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
                     ivSelectedDate.setVisibility(View.GONE);
                 }
                 if (datesOfInterest.containsKey(date.toString())) {
-                    clCalendarCell.setBackgroundColor(destinationColorCode.get(datesOfInterest.get(date.toString())));
+                    Destination destination = datesOfInterest.get(date.toString());
+                    clCalendarCell.setBackgroundColor(destinationColorCode.get(destination));
+                    if (date.isEqual(getLocalDate(destination.getDate())) && inboundArrivalDates.get(destination) != null) {
+                        while(date.isBefore(getLocalDate(inboundArrivalDates.get(destination)))) {
+                            date = date.plusDays(1);
+                            datesOfInterest.put(date.toString(), destination);
+                        }
+                    }
                 } else {
                     clCalendarCell.setBackgroundColor(Color.TRANSPARENT);
                 }

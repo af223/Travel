@@ -29,6 +29,7 @@ public class CalendarUtils {
     public static Destination selectedDestination;
     public static HashMap<Destination, Integer> destinationColorCode = new HashMap<>();
     public static HashMap<String, Destination> datesOfInterest = new HashMap<>();
+    public static HashMap<Destination, String> inboundArrivalDates = new HashMap<>();
     public static HashMap<String, ArrayList<Pair<LocalTime, LocalTime>>> busyTimeSlots = new HashMap<>();
     public static HashMap<Destination, LocalDate> nextAvailableDate = new HashMap<>();
     private static final LocalTime curfew = LocalTime.of(23, 1, 0);
@@ -101,7 +102,10 @@ public class CalendarUtils {
     public static void generateDestinationColorCode(ArrayList<Destination> destinations) {
         Random rnd = new Random();
         for (Destination destination : destinations) {
-            int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+            int red = ((rnd.nextInt(256) + 255) / 2 + 10) % 256;
+            int green = (rnd.nextInt(256) + 255) / 2;
+            int blue = (rnd.nextInt(256) + 255) / 2;
+            int color = Color.argb(255, red, green, blue);
             destinationColorCode.put(destination, color);
         }
     }
