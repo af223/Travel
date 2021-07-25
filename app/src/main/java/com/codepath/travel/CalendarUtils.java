@@ -45,7 +45,7 @@ public class CalendarUtils {
     }
 
     public static String formatTime(LocalTime time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
         return time.format(formatter);
     }
 
@@ -102,8 +102,8 @@ public class CalendarUtils {
     public static void generateDestinationColorCode(ArrayList<Destination> destinations) {
         Random rnd = new Random();
         for (Destination destination : destinations) {
-            int red = ((rnd.nextInt(256) + 255) / 2 + 10) % 256;
-            int green = (rnd.nextInt(256) + 255) / 2;
+            int red = (rnd.nextInt(256) + 255) / 2;
+            int green = ((rnd.nextInt(256) + 255) / 2) % 254 + 1;
             int blue = (rnd.nextInt(256) + 255) / 2;
             int color = Color.argb(255, red, green, blue);
             destinationColorCode.put(destination, color);

@@ -49,16 +49,18 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     class ViewHolder extends RecyclerView.ViewHolder{
 
         private final TextView tvEventName;
+        private final TextView tvTime;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 
             tvEventName = itemView.findViewById(R.id.tvEventName);
+            tvTime = itemView.findViewById(R.id.tvTime);
         }
 
         public void bind(Event event) {
-            String eventTitle = CalendarUtils.formatTime(event.getTime()) + " ... " + event.getName();
-            tvEventName.setText(eventTitle);
+            tvEventName.setText(event.getName());
+            tvTime.setText(CalendarUtils.formatTime(event.getTime()));
         }
     }
 }
