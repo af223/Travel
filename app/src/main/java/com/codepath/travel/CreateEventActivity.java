@@ -5,29 +5,40 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.codepath.travel.fragments.ItineraryFragment;
+import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Event;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import static com.codepath.travel.CalendarUtils.selectedDate;
 
 /**
  * This activity allows the user to manually create an event to add to the schedule in weekly view.
- * TODO: implement popup time and date clicker
+ * <p>
+ * This activity is launched from WeeklyViewActivity when the user clicks the '+' button, and if the user
+ * clicks "save event", the user is automatically directed back to WeeklyViewActivity with the new event
+ * added on the schedule.
  */
 
-public class CreateEventActivity extends AppCompatActivity {
+public class CreateEventActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     private EditText etEventName;
     private Button btnSelectDate;
@@ -42,6 +53,9 @@ public class CreateEventActivity extends AppCompatActivity {
     private Button btnSelectTime;
     private Button btnSelectEndTime;
     private LocalDate chosenEventDate;
+    private Spinner destinationSpinner;
+    private CheckBox cbDestination;
+    private Destination associatedDestination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +66,27 @@ public class CreateEventActivity extends AppCompatActivity {
         createPickerDialogs();
 
         etEventName = findViewById(R.id.etEventName);
+        cbDestination = findViewById(R.id.cbDestination);
+        cbDestination.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    destinationSpinner.setVisibility(View.VISIBLE);
+                } else {
+                    destinationSpinner.setVisibility(View.GONE);
+                    associatedDestination = null;
+                }
+            }
+        });
+        destinationSpinner = findViewById(R.id.destination_spinner);
+        ArrayList<String> destinationNames = new ArrayList<>();
+        for (Destination destination : ItineraryFragment.allDestinations) {
+            destinationNames.add(destination.getFormattedLocationName());
+        }
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, R.layout.item_spinner_destination, destinationNames);
+        destinationSpinner.setAdapter(spinnerAdapter);
+        destinationSpinner.setOnItemSelectedListener(this);
+
         btnSelectDate = findViewById(R.id.btnSelectDate);
         btnSelectDate.setText(formatDateString(month, day, year));
         btnSelectDate.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +126,11 @@ public class CreateEventActivity extends AppCompatActivity {
                 String eventName = etEventName.getText().toString();
                 Event newEvent = new Event(eventName, chosenEventDate, time, endTime);
                 Event.eventsList.add(newEvent);
+                if (associatedDestination == null) {
+                    Toast.makeText(CreateEventActivity.this, "No location", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(CreateEventActivity.this, associatedDestination.getFormattedLocationName(), Toast.LENGTH_SHORT).show();
+                }
                 finish();
             }
         });
@@ -153,5 +193,15 @@ public class CreateEventActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         supportFinishAfterTransition();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        associatedDestination = ItineraryFragment.allDestinations.get(position);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

@@ -119,11 +119,32 @@
         android:text="12:00"
         android:backgroundTint="@android:color/transparent"/>
 
+    <CheckBox
+        android:id="@+id/cbDestination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvEventEndTime"
+        android:layout_marginTop="36dp"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:text="Associate with destination" />
+
+    <Spinner
+        android:id="@+id/destination_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cbDestination"
+        android:layout_marginTop="13dp"
+        android:visibility="gone"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
+
     <Button
         android:id="@+id/btnCreateEvent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnSelectEndTime"
+        android:layout_below="@+id/destination_spinner"
         android:layout_marginTop="20dp"
         android:text="Save"
         android:layout_centerHorizontal="true"

@@ -24,6 +24,7 @@ import static com.codepath.travel.models.Event.eventsList;
 
 public class CalendarUtils {
 
+    private static final LocalTime curfew = LocalTime.of(23, 1, 0);
     public static LocalDate selectedDate;
     public static ArrayList<LocalDate> days;
     public static Destination selectedDestination;
@@ -32,7 +33,6 @@ public class CalendarUtils {
     public static HashMap<Destination, String> inboundArrivalDates = new HashMap<>();
     public static HashMap<String, ArrayList<Pair<LocalTime, LocalTime>>> busyTimeSlots = new HashMap<>();
     public static HashMap<Destination, LocalDate> nextAvailableDate = new HashMap<>();
-    private static final LocalTime curfew = LocalTime.of(23, 1, 0);
 
     public static String formatDate(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");

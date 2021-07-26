@@ -2,15 +2,6 @@ package com.codepath.travel.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +13,14 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.travel.R;
 import com.codepath.travel.WeeklyViewActivity;
@@ -41,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.codepath.travel.CalendarUtils.busyTimeSlots;
-import static com.codepath.travel.CalendarUtils.inboundArrivalDates;
 import static com.codepath.travel.CalendarUtils.datesOfInterest;
 import static com.codepath.travel.CalendarUtils.days;
 import static com.codepath.travel.CalendarUtils.destinationColorCode;
@@ -49,6 +47,7 @@ import static com.codepath.travel.CalendarUtils.formatDate;
 import static com.codepath.travel.CalendarUtils.generateDestinationColorCode;
 import static com.codepath.travel.CalendarUtils.getDaysInMonth;
 import static com.codepath.travel.CalendarUtils.getLocalDate;
+import static com.codepath.travel.CalendarUtils.inboundArrivalDates;
 import static com.codepath.travel.CalendarUtils.nextAvailableDate;
 import static com.codepath.travel.CalendarUtils.scheduleTheseEvents;
 import static com.codepath.travel.CalendarUtils.selectedDate;
@@ -74,7 +73,7 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
     private CalendarAdapter adapter;
     private Button btnWeeklyView;
     private Spinner destinationSpinner;
-    private ArrayList<Destination> allDestinations;
+    public static ArrayList<Destination> allDestinations;
     private ArrayList<TouristDestination> unscheduledEvents;
     private ArrayList<TouristDestination> scheduledEvents;
 
@@ -88,8 +87,8 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Itinerary");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Itinerary");
 
         tvMonthYear = view.findViewById(R.id.tvMonthYear);
         btnPreviousMonth = view.findViewById(R.id.btnPreviousMonth);
@@ -121,7 +120,7 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getContext(), WeeklyViewActivity.class);
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), (View)tvMonthYear, "to_week_transition");
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), (View) tvMonthYear, "to_week_transition");
                 startActivity(i, options.toBundle());
             }
         });
@@ -254,8 +253,8 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
             selectedDate = LocalDate.now();
             selectedDestination = null;
         } else {
-            selectedDate = getLocalDate(allDestinations.get(position-1).getDate());
-            selectedDestination = allDestinations.get(position-1);
+            selectedDate = getLocalDate(allDestinations.get(position - 1).getDate());
+            selectedDestination = allDestinations.get(position - 1);
         }
         setMonthView();
     }
