@@ -46,7 +46,7 @@ import static com.codepath.travel.MainActivity.logout;
 /**
  * This activity allows the user to find suggested tourist spots/activities near the chosen destination.
  * The user can filter by selecting one or more of the suggested categories, or search by keyword.
- *
+ * <p>
  * This activity appears when the user chooses "find activity" from ResourcesFragment.java. The intent passed in
  * contains the objectId for the selected destination.
  */
@@ -56,20 +56,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
     private static final String TAG = "TouristSpotsActivity";
     private static final String YELP_BUSINESS_SEARCH_URL = "https://api.yelp.com/v3/businesses/search";
     private static final int NUM_LOAD_BUSINESSES = 20;
-    private TextView tvActivityType;
-    private ProgressBar pbTouristLoad;
-    private Toolbar toolbar;
-    private boolean[] selectedType;
-    private ArrayList<Integer> typeList = new ArrayList<>();
-    private String[] typeArray = {"Amusement Parks", "Art Galleries", "Beaches", "Gardens", "Hiking",
-                                "Landmarks/Historical Buildings", "Museums", "Nightlife", "Shopping",
-                                "Spas", "Sports", "Tours"};
     private static String categoryParameter;
-    private RecyclerView rvTouristActivities;
-    private TouristActivitiesAdapter adapter;
-    private ArrayList<TouristSpot> touristSpots;
-    private String latitude;
-    private String longitude;
     private static String destinationID;
     private static Destination currDestination;
     private static int offset;
@@ -77,6 +64,19 @@ public class TouristSpotsActivity extends AppCompatActivity {
     private final String[] typeAlias = {"amusementparks", "galleries", "beaches", "gardens", "hiking",
             "landmarks", "museums", "nightlife", "shopping",
             "spas", "active", "tours"};
+    private TextView tvActivityType;
+    private ProgressBar pbTouristLoad;
+    private Toolbar toolbar;
+    private boolean[] selectedType;
+    private final ArrayList<Integer> typeList = new ArrayList<>();
+    private final String[] typeArray = {"Amusement Parks", "Art Galleries", "Beaches", "Gardens", "Hiking",
+            "Landmarks/Historical Buildings", "Museums", "Nightlife", "Shopping",
+            "Spas", "Sports", "Tours"};
+    private RecyclerView rvTouristActivities;
+    private TouristActivitiesAdapter adapter;
+    private ArrayList<TouristSpot> touristSpots;
+    private String latitude;
+    private String longitude;
     private EndlessRecyclerViewScrollListener scrollListener;
     private EditText etQueryActivity;
     private Button btnQueryActivity;
@@ -189,7 +189,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
                     stringBuilder.append(typeArray[typeList.get(i)]);
                     categoryParameter += typeAlias[typeList.get(i)];
 
-                    if (i != typeList.size()-1) {
+                    if (i != typeList.size() - 1) {
                         stringBuilder.append(", ");
                         categoryParameter += ",";
                     }
@@ -256,15 +256,14 @@ public class TouristSpotsActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 pbTouristLoad.setVisibility(View.GONE);
                 offset += NUM_LOAD_BUSINESSES;
-                rvTouristActivities.smoothScrollToPosition(0);
-                    }
+            }
 
-                    @Override
-                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                        Log.e(TAG, "Tourist activities request failed: ", throwable);
-                        Toast.makeText(TouristSpotsActivity.this, "Unable to find tourist activities", Toast.LENGTH_SHORT).show();
-                    }
-                });
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e(TAG, "Tourist activities request failed: ", throwable);
+                Toast.makeText(TouristSpotsActivity.this, "Unable to find tourist activities", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void processYelpResults(JSONObject jsonObject) {
