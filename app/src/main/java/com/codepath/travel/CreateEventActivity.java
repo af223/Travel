@@ -2,12 +2,13 @@ package com.codepath.travel;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,10 +31,13 @@ public class CreateEventActivity extends AppCompatActivity {
 
     private EditText etEventName;
     private Button btnSelectDate;
+    private int hour, minute;
     private LocalTime time;
     private Button btnCreateEvent;
     private Calendar calendar;
     private DatePickerDialog datePickerDialog;
+    private Button btnSelectTime;
+    private TimePickerDialog timePickerDialog;
     private LocalDate chosenEventDate;
 
     @Override
@@ -43,6 +47,9 @@ public class CreateEventActivity extends AppCompatActivity {
 
         chosenEventDate = selectedDate;
         calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -51,10 +58,17 @@ public class CreateEventActivity extends AppCompatActivity {
                 chosenEventDate = LocalDate.of(year, month, dayOfMonth);
             }
         };
-
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        datePickerDialog = new DatePickerDialog(this, AlertDialog.THEME_HOLO_LIGHT, dateSetListener, year, month, dayOfMonth);
+        TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfDay) {
+                hour = hourOfDay;
+                minute = minuteOfDay;
+                time = LocalTime.of(hour, minute);
+                btnSelectTime.setText(CalendarUtils.formatTime(time));
+            }
+        };
+        timePickerDialog = new TimePickerDialog(this, AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener, hour, minute, true);
 
         time = LocalTime.now();
         etEventName = findViewById(R.id.etEventName);
@@ -64,6 +78,14 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 datePickerDialog.show();
+            }
+        });
+        btnSelectTime = findViewById(R.id.btnSelectTime);
+        btnSelectTime.setText(CalendarUtils.formatTime(time));
+        btnSelectTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timePickerDialog.show();
             }
         });
         btnCreateEvent = findViewById(R.id.btnCreateEvent);
@@ -80,8 +102,6 @@ public class CreateEventActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-        datePickerDialog = new DatePickerDialog(this, AlertDialog.THEME_HOLO_LIGHT, dateSetListener, year, month, dayOfMonth);
     }
 
     private String formatDateString(int month, int dayOfMonth, int year) {
