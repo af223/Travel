@@ -39,11 +39,6 @@ public class CalendarUtils {
         return date.format(formatter);
     }
 
-    public static String formatDateForEvent(LocalDate date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");
-        return date.format(formatter);
-    }
-
     public static String formatTime(LocalTime time) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
         return time.format(formatter);
@@ -77,7 +72,7 @@ public class CalendarUtils {
         }
     }
 
-    public static void getDaysInWeek(LocalDate date) {
+    public static void getDaysInWeek() {
         days.clear();
         LocalDate current = sundayForDate(selectedDate);
         LocalDate endDate = current.plusWeeks(1);

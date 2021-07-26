@@ -108,7 +108,7 @@ public class WeeklyViewActivity extends AppCompatActivity implements OnItemListe
 
     private void setWeekView() {
         tvMonthYear.setText(formatDate(selectedDate));
-        getDaysInWeek(selectedDate);
+        getDaysInWeek();
         calendarAdapter.notifyDataSetChanged();
         refreshEventsAdapter();
     }

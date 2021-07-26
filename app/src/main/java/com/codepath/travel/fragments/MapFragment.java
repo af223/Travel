@@ -136,7 +136,6 @@ public class MapFragment extends Fragment implements LocationListener {
         bottomNavigationView = getActivity().findViewById(R.id.bottom_navigation);
         bottomNavigationView.setVisibility(View.GONE);
 
-
         locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         int permissionCheck = ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION);
@@ -145,7 +144,6 @@ public class MapFragment extends Fragment implements LocationListener {
         } else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         }
-
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
