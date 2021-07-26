@@ -108,7 +108,7 @@ public class InboundFragment extends Fragment implements AdapterView.OnItemSelec
         for (Airport originAirport : FlightsActivity.departureAirports) {
             for (Airport destinationAirport : FlightsActivity.arrivalAirports) {
                 Ticket.getFlights(destinationAirport.getIATACode(), originAirport.getIATACode(), getActivity(),
-                        pbFlights, adapter, TAG, getContext(), placesCode, placesName, carriers, flights);
+                        pbFlights, adapter, TAG, placesCode, placesName, carriers, flights);
             }
         }
 

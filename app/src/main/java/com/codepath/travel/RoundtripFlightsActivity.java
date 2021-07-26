@@ -110,7 +110,7 @@ public class RoundtripFlightsActivity extends AppCompatActivity implements Adapt
         for (Airport originAirport : FlightsActivity.departureAirports) {
             for (Airport destinationAirport : FlightsActivity.arrivalAirports) {
                 Ticket.getRoundtripFlights(originAirport.getIATACode(), destinationAirport.getIATACode(), this, pbFlights,
-                        adapter, TAG, this, placesCode, placesName, carriers, flights);
+                        adapter, TAG, placesCode, placesName, carriers, flights);
             }
         }
 

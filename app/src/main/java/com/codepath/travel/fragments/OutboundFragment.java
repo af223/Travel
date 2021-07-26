@@ -89,7 +89,7 @@ public class OutboundFragment extends Fragment implements AdapterView.OnItemSele
         for (Airport originAirport : FlightsActivity.departureAirports) {
             for (Airport destinationAirport : FlightsActivity.arrivalAirports) {
                 Ticket.getFlights(originAirport.getIATACode(), destinationAirport.getIATACode(), getActivity(),
-                        pbFlights, adapter, TAG, getContext(), placesCode, placesName, carriers, flights);
+                        pbFlights, adapter, TAG, placesCode, placesName, carriers, flights);
             }
         }
 

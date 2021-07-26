@@ -106,7 +106,7 @@ public class Ticket {
     }
 
     public static void getFlights(String originCode, String destinationCode, Activity activity, ProgressBar pbFlights,
-                                  FlightsAdapter adapter, String TAG, Context context,
+                                  FlightsAdapter adapter, String TAG,
                                   Dictionary<Integer, String> placesCode, Dictionary<Integer, String> placesName,
                                   Dictionary<Integer, String> carriers, ArrayList<Flight> flights) {
         AsyncHttpClient client = new AsyncHttpClient();
@@ -134,13 +134,13 @@ public class Ticket {
                     @Override
                     public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                         Log.e(TAG, "Flights request failed: ", throwable);
-                        Toast.makeText(context, "Unable to get flights", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "Unable to get flights", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     public static void getRoundtripFlights(String originCode, String destinationCode, Activity activity, ProgressBar pbFlights,
-                                           RoundtripsAdapter adapter, String TAG, Context context,
+                                           RoundtripsAdapter adapter, String TAG,
                                            Dictionary<Integer, String> placesCode, Dictionary<Integer, String> placesName,
                                            Dictionary<Integer, String> carriers, ArrayList<Pair<Flight, Flight>> flights) {
         AsyncHttpClient client = new AsyncHttpClient();
@@ -168,7 +168,7 @@ public class Ticket {
                     @Override
                     public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                         Log.e(TAG, "Flights request failed: ", throwable);
-                        Toast.makeText(context, "Unable to get flights", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "Unable to get flights", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
