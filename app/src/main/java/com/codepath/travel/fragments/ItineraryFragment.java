@@ -187,12 +187,12 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                     Event event;
                     if (destination.getDate() != null) {
                         arrivalName = "Arrival at " + destination.getArriveAirportName() + " Airport in " + destination.getFormattedLocationName();
-                        event = new Event(arrivalName, getLocalDate(destination.getDate()), LocalTime.of(12, 0, 0, 0));
+                        event = new Event(arrivalName, getLocalDate(destination.getDate()), LocalTime.of(12, 0, 0, 0), LocalTime.of(20, 0, 0, 0));
                         eventsList.add(event);
                     }
                     if (destination.getInboundDate() != null) {
                         arrivalName = "Arrival at " + destination.getInboundArriveName() + " Airport (Return from trip)";
-                        event = new Event(arrivalName, getLocalDate(destination.getInboundDate()), LocalTime.of(12, 0, 0, 0));
+                        event = new Event(arrivalName, getLocalDate(destination.getInboundDate()), LocalTime.of(12, 0, 0, 0), LocalTime.of(20, 0, 0, 0));
                         eventsList.add(event);
                     }
                 }

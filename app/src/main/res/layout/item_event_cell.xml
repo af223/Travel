@@ -24,18 +24,30 @@
         android:layout_marginEnd="16dp"
         android:layout_toEndOf="@+id/tvTime">
 
-        <TextView
-            android:id="@+id/tvEventName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Event"
-            android:padding="8dp"
-            android:textColor="@color/brown"
-            android:textSize="20sp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/tvEventName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="Event"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:textColor="@color/brown"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvTimeRange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvEventName"
+                android:paddingStart="8dp"
+                android:paddingBottom="8dp"
+                android:text="Time Range" />
+
+        </RelativeLayout>
     </androidx.cardview.widget.CardView>
-
-
-
 </RelativeLayout>

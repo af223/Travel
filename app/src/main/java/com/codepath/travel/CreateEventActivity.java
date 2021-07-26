@@ -46,7 +46,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     return;
                 }
                 String eventName = etEventName.getText().toString();
-                Event newEvent = new Event(eventName, selectedDate, time);
+                Event newEvent = new Event(eventName, selectedDate, time, time.plusHours(2));
                 Event.eventsList.add(newEvent);
                 finish();
             }

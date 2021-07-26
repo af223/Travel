@@ -117,9 +117,10 @@ public class CalendarUtils {
                 busyTimeSlots.put(dateOfVisit, new ArrayList<>());
             }
             LocalTime timeOfVisit = getLocalTime(touristDestination.getTimeVisited());
-            Pair block = new Pair(timeOfVisit, timeOfVisit.plusHours(Integer.parseInt(touristDestination.getVisitLength())));
+            LocalTime endVisitTime = timeOfVisit.plusHours(Integer.parseInt(touristDestination.getVisitLength()));
+            Pair block = new Pair(timeOfVisit, endVisitTime);
             busyTimeSlots.get(dateOfVisit).add(block);
-            Event event = new Event(touristDestination.getName(), getLocalDate(touristDestination.getDateVisited()), timeOfVisit);
+            Event event = new Event(touristDestination.getName(), getLocalDate(touristDestination.getDateVisited()), timeOfVisit, endVisitTime);
             eventsList.add(event);
         }
         Iterator it = busyTimeSlots.entrySet().iterator();
@@ -177,7 +178,7 @@ public class CalendarUtils {
     }
 
     private static void addEventToSchedule(TouristDestination touristDestination, LocalDate dateOfVisit, LocalTime timeOfVisit, int index) {
-        Event event = new Event(touristDestination.getName(), dateOfVisit, timeOfVisit);
+        Event event = new Event(touristDestination.getName(), dateOfVisit, timeOfVisit, timeOfVisit.plusHours(2));
         eventsList.add(event);
         Pair block = new Pair(timeOfVisit, timeOfVisit.plusHours(2));
         busyTimeSlots.get(dateOfVisit.toString()).add(index, block);

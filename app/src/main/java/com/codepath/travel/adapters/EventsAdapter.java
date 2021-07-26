@@ -50,17 +50,21 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
         private final TextView tvEventName;
         private final TextView tvTime;
+        private final TextView tvTimeRange;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 
             tvEventName = itemView.findViewById(R.id.tvEventName);
             tvTime = itemView.findViewById(R.id.tvTime);
+            tvTimeRange = itemView.findViewById(R.id.tvTimeRange);
         }
 
         public void bind(Event event) {
             tvEventName.setText(event.getName());
             tvTime.setText(CalendarUtils.formatTime(event.getTime()));
+            String timeRange = CalendarUtils.formatTime(event.getTime()) + " - " + CalendarUtils.formatTime(event.getEndTime());
+            tvTimeRange.setText(timeRange);
         }
     }
 }
