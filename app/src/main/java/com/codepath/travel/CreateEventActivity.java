@@ -43,15 +43,16 @@ import static com.codepath.travel.CalendarUtils.selectedDate;
  * added on the schedule.
  */
 
-public class CreateEventActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+public class CreateEventActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    private static final String TAG = "CreateEventActivity";
+    private static final Calendar calendar = Calendar.getInstance();
+    private static int hourStart, minuteStart, hourEnd, minuteEnd, year, month, day;
     private EditText etEventName;
     private Button btnSelectDate;
-    private static int hourStart, minuteStart, hourEnd, minuteEnd, year, month, day;
     private LocalTime time;
     private LocalTime endTime;
     private Button btnCreateEvent;
-    private static final Calendar calendar = Calendar.getInstance();;
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialogStart;
     private TimePickerDialog timePickerDialogEnd;
@@ -158,7 +159,7 @@ public class CreateEventActivity extends AppCompatActivity implements AdapterVie
                 day = pickedDay;
                 String date = formatDateString(month, day, year);
                 btnSelectDate.setText(date);
-                chosenEventDate = LocalDate.of(year, month+1, day);
+                chosenEventDate = LocalDate.of(year, month + 1, day);
             }
         };
         datePickerDialog = new DatePickerDialog(this, AlertDialog.THEME_HOLO_LIGHT, dateSetListener, year, month, day);
@@ -201,8 +202,8 @@ public class CreateEventActivity extends AppCompatActivity implements AdapterVie
             @Override
             public void done(ParseException e) {
                 if (e != null) {
-                    Toast.makeText(CreateEventActivity.this, "Unable to save location", Toast.LENGTH_SHORT).show();
-                    Log.e("CreateEvent", e.toString());
+                    Toast.makeText(CreateEventActivity.this, "Unable to save event", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, e.toString());
                     return;
                 }
                 Toast.makeText(CreateEventActivity.this, "Event saved!", Toast.LENGTH_SHORT).show();
