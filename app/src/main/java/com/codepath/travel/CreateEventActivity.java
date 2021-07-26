@@ -1,8 +1,11 @@
 package com.codepath.travel;
 
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,10 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.codepath.travel.models.Event;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Calendar;
 
-import static com.codepath.travel.CalendarUtils.formatDateForEvent;
-import static com.codepath.travel.CalendarUtils.formatTime;
 import static com.codepath.travel.CalendarUtils.selectedDate;
 
 /**
@@ -25,18 +29,43 @@ import static com.codepath.travel.CalendarUtils.selectedDate;
 public class CreateEventActivity extends AppCompatActivity {
 
     private EditText etEventName;
-    private TextView tvEventDate, tvEventTime;
+    private Button btnSelectDate;
     private LocalTime time;
     private Button btnCreateEvent;
+    private Calendar calendar;
+    private DatePickerDialog datePickerDialog;
+    private LocalDate chosenEventDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
+        chosenEventDate = selectedDate;
+        calendar = Calendar.getInstance();
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                String date = formatDateString(month, dayOfMonth, year);
+                btnSelectDate.setText(date);
+                chosenEventDate = LocalDate.of(year, month, dayOfMonth);
+            }
+        };
+
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+        time = LocalTime.now();
         etEventName = findViewById(R.id.etEventName);
-        tvEventDate = findViewById(R.id.tvEventDate);
-        tvEventTime = findViewById(R.id.tvEventTime);
+        btnSelectDate = findViewById(R.id.btnSelectDate);
+        btnSelectDate.setText(formatDateString(month, dayOfMonth, year));
+        btnSelectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePickerDialog.show();
+            }
+        });
         btnCreateEvent = findViewById(R.id.btnCreateEvent);
         btnCreateEvent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,15 +75,19 @@ public class CreateEventActivity extends AppCompatActivity {
                     return;
                 }
                 String eventName = etEventName.getText().toString();
-                Event newEvent = new Event(eventName, selectedDate, time, time.plusHours(2));
+                Event newEvent = new Event(eventName, chosenEventDate, time, time.plusHours(2));
                 Event.eventsList.add(newEvent);
                 finish();
             }
         });
 
-        time = LocalTime.now();
-        tvEventDate.setText("Date: " + formatDateForEvent(selectedDate));
-        tvEventTime.setText("Time: " + formatTime(time));
+        datePickerDialog = new DatePickerDialog(this, AlertDialog.THEME_HOLO_LIGHT, dateSetListener, year, month, dayOfMonth);
+    }
+
+    private String formatDateString(int month, int dayOfMonth, int year) {
+        calendar.set(year, month, dayOfMonth);
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy");
+        return formatter.format(calendar.getTime());
     }
 
     @Override

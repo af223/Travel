@@ -6,7 +6,7 @@
         android:id="@+id/action_locations"
         android:enabled="true"
         android:icon="@android:drawable/ic_dialog_map"
-        android:title="@string/map_view"
+        android:title="@string/destinations"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_itinerary"

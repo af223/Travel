@@ -4,8 +4,6 @@
     <string name="login_password">Password</string>
     <string name="login">Login</string>
     <string name="signup">Singup</string>
-    <string name="map_view">Map</string>
-    <string name="destinations">Destinations</string>
     <string name="costs">Costs</string>
     <string name="map_view_confirm">Would you like to travel to the following location?</string>
     <string name="no_airport">No flight chosen</string>
@@ -30,4 +28,5 @@
     <string name="is_one_way">One-way tickets:</string>
     <string name="no_tickets_selected">No tickets selected:</string>
     <string name="search_by_keyword">Search by keyword</string>
+    <string name="destinations">Destinations</string>
 </resources>
