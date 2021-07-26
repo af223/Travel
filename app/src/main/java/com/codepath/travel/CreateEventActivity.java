@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,6 +22,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.codepath.travel.fragments.ItineraryFragment;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Event;
+import com.codepath.travel.models.TouristDestination;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -126,12 +131,7 @@ public class CreateEventActivity extends AppCompatActivity implements AdapterVie
                 String eventName = etEventName.getText().toString();
                 Event newEvent = new Event(eventName, chosenEventDate, time, endTime);
                 Event.eventsList.add(newEvent);
-                if (associatedDestination == null) {
-                    Toast.makeText(CreateEventActivity.this, "No location", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(CreateEventActivity.this, associatedDestination.getFormattedLocationName(), Toast.LENGTH_SHORT).show();
-                }
-                finish();
+                saveCreatedEvent();
             }
         });
     }
@@ -190,6 +190,27 @@ public class CreateEventActivity extends AppCompatActivity implements AdapterVie
         return formatter.format(calendar.getTime());
     }
 
+    private void saveCreatedEvent() {
+        TouristDestination createdEvent = new TouristDestination();
+        createdEvent.setUser(ParseUser.getCurrentUser());
+        if (associatedDestination != null) {
+            createdEvent.setDestination(associatedDestination);
+        }
+        createdEvent.setPlaceId("N/A");
+        createdEvent.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Toast.makeText(CreateEventActivity.this, "Unable to save location", Toast.LENGTH_SHORT).show();
+                    Log.e("CreateEvent", e.toString());
+                    return;
+                }
+                Toast.makeText(CreateEventActivity.this, "Event saved!", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+    }
+
     @Override
     public void onBackPressed() {
         supportFinishAfterTransition();
@@ -202,6 +223,6 @@ public class CreateEventActivity extends AppCompatActivity implements AdapterVie
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
+        associatedDestination = null;
     }
 }
