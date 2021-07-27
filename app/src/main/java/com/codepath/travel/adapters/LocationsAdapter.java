@@ -15,6 +15,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.codepath.travel.AllPlansActivity;
 import com.codepath.travel.FlightsActivity;
 import com.codepath.travel.HotelsActivity;
 import com.codepath.travel.R;
@@ -76,6 +77,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
         private final LinearLayout llHotel;
         private final LinearLayout llTouristSpot;
         private final LinearLayout llTransportation;
+        private final LinearLayout llAllPlans;
         private final ImageView ivArrow;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
@@ -95,6 +97,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
             llHotel = itemView.findViewById(R.id.llHotel);
             llTouristSpot = itemView.findViewById(R.id.llTouristSpot);
             llTransportation = itemView.findViewById(R.id.llTransportation);
+            llAllPlans = itemView.findViewById(R.id.llAllPlans);
             ivArrow = itemView.findViewById(R.id.ivArrow);
         }
 
@@ -137,6 +140,12 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
                 @Override
                 public void onClick(View v) {
                     startResourceActivity(TransportationActivity.class, destination);
+                }
+            });
+            llAllPlans.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startResourceActivity(AllPlansActivity.class, destination);
                 }
             });
         }

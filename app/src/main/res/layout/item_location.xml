@@ -159,7 +159,6 @@
                             android:padding="12dp"
                             android:text="Flights"
                             android:textColor="#000000"
-                            android:transitionName="to_flights_transition"
                             android:textSize="14sp">
                         </TextView>
                     </LinearLayout>
@@ -190,7 +189,6 @@
                             android:layout_height="wrap_content"
                             android:text="Hotels"
                             android:textColor="#000000"
-                            android:transitionName="to_hotels_transition"
                             android:textSize="14sp">
                         </TextView>
                     </LinearLayout>
@@ -219,7 +217,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Find Activities"
-                            android:transitionName="to_tourist_spots_transition"
                             android:textColor="#000000"
                             android:textSize="14sp">
                         </TextView>
@@ -251,11 +248,39 @@
                             android:layout_height="wrap_content"
                             android:text="Transportation"
                             android:textColor="#000000"
-                            android:transitionName="to_hotels_transition"
                             android:textSize="14sp">
                         </TextView>
                     </LinearLayout>
 
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/llAllPlans">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/ivAllPlans"
+                            android:src="@drawable/ic_baseline_list_alt_24"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="16dp"/>
+
+                        <TextView
+                            android:id="@+id/tvAllPlans"
+                            android:padding="12dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="See All Plans"
+                            android:textColor="#000000"
+                            android:textSize="14sp">
+                        </TextView>
+                    </LinearLayout>
                 </LinearLayout>
             </net.cachapa.expandablelayout.ExpandableLayout>
         </RelativeLayout>
