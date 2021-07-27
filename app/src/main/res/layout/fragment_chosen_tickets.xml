@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.ChosenTicketsFragment">
+
+    <TextView
+        android:id="@+id/tvFlightType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textSize="20sp"
+        android:text="@string/no_tickets_selected"
+        android:textColor="@color/brown"
+        android:textStyle="bold" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_no_outbound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/chosenOutboundFlight"
+        android:layout_alignTop="@+id/chosenOutboundFlight"
+        android:layout_alignEnd="@+id/chosenOutboundFlight"
+        android:layout_alignBottom="@+id/chosenOutboundFlight"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        card_view:cardCornerRadius="10dp">
+
+        <TextView
+            android:id="@+id/tvNoOutbound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:background="@color/white"
+            android:text="No Outbound Flight Chosen"
+            android:textColor="@color/black" />
+    </androidx.cardview.widget.CardView>
+
+    <include
+        layout="@layout/item_flight"
+        android:id="@+id/chosenOutboundFlight"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@+id/tvFlightType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_no_inbound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/chosenInboundFlight"
+        android:layout_alignTop="@+id/chosenInboundFlight"
+        android:layout_alignEnd="@+id/chosenInboundFlight"
+        android:layout_alignBottom="@+id/chosenInboundFlight"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        card_view:cardCornerRadius="10dp">
+
+        <TextView
+            android:id="@+id/tvNoInbound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:text="No Inbound Flight Chosen"
+            android:textColor="@color/black" />
+    </androidx.cardview.widget.CardView>
+
+    <include
+        android:id="@+id/chosenInboundFlight"
+        layout="@layout/item_flight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/chosenOutboundFlight"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp" />
+
+</RelativeLayout>

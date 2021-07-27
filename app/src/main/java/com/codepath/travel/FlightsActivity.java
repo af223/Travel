@@ -7,14 +7,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
+import com.codepath.travel.fragments.ChosenTicketsFragment;
 import com.codepath.travel.models.Airport;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Flight;
@@ -41,6 +43,7 @@ public class FlightsActivity extends AppCompatActivity {
     private static final int CHOOSE_ONE_WAY_FLIGHT_REQUEST_CODE = 13;
     private static final int CHOOSE_ROUND_FLIGHT_REQUEST_CODE = 9;
     private static final String TAG = "FlightsActivity";
+    private static FragmentManager fragmentManager;
     public static ArrayList<Airport> departureAirports = new ArrayList<>();
     public static ArrayList<Airport> arrivalAirports = new ArrayList<>();
     private Button btnDepart;
@@ -49,9 +52,7 @@ public class FlightsActivity extends AppCompatActivity {
     private Button btnToRoundTrips;
     private Toolbar toolbar;
     private Destination thisDestination;
-    private View chosenOutboundFlight;
-    private View chosenInboundFlight;
-    private TextView tvFlightType;
+    private Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,13 +64,11 @@ public class FlightsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Flights");
 
-        chosenOutboundFlight = findViewById(R.id.chosenOutboundFlight);
-        chosenInboundFlight = findViewById(R.id.chosenInboundFlight);
+        fragmentManager = getSupportFragmentManager();
         btnDepart = findViewById(R.id.btnDepart);
         btnArrive = findViewById(R.id.btnArrive);
         btnToOneWay = findViewById(R.id.btnToOneWay);
         btnToRoundTrips = findViewById(R.id.btnToRoundTrips);
-        tvFlightType = findViewById(R.id.tvFlightType);
 
         departureAirports.clear();
         arrivalAirports.clear();
@@ -121,7 +120,7 @@ public class FlightsActivity extends AppCompatActivity {
                     return;
                 }
                 thisDestination = destination;
-                loadChosenFlights();
+                loadChosenTickets();
                 btnDepart.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -143,41 +142,6 @@ public class FlightsActivity extends AppCompatActivity {
                 });
             }
         });
-    }
-
-    private void loadChosenFlights() {
-        if (thisDestination.getDate() == null) {
-            chosenOutboundFlight.setVisibility(View.INVISIBLE);
-        } else {
-            setFlightType();
-            chosenOutboundFlight.setVisibility(View.VISIBLE);
-            ((TextView) chosenOutboundFlight.findViewById(R.id.tvDepartAirport)).setText(thisDestination.getDepartAirportName());
-            ((TextView) chosenOutboundFlight.findViewById(R.id.tvArriveAirport)).setText(thisDestination.getArriveAirportName());
-            ((TextView) chosenOutboundFlight.findViewById(R.id.tvCost)).setText("$" + thisDestination.getCost());
-            ((TextView) chosenOutboundFlight.findViewById(R.id.tvAirline)).setText(thisDestination.getCarrier());
-            ((TextView) chosenOutboundFlight.findViewById(R.id.tvDate)).setText(thisDestination.getDate());
-        }
-        if (thisDestination.getInboundDate() == null) {
-            chosenInboundFlight.setVisibility(View.INVISIBLE);
-        } else {
-            setFlightType();
-            chosenInboundFlight.setVisibility(View.VISIBLE);
-            ((TextView) chosenInboundFlight.findViewById(R.id.tvDepartAirport)).setText(thisDestination.getInboundDepartName());
-            ((TextView) chosenInboundFlight.findViewById(R.id.tvArriveAirport)).setText(thisDestination.getInboundArriveName());
-            ((TextView) chosenInboundFlight.findViewById(R.id.tvCost)).setText("$" + thisDestination.getInboundCost());
-            ((TextView) chosenInboundFlight.findViewById(R.id.tvAirline)).setText(thisDestination.getInboundCarrier());
-            ((TextView) chosenInboundFlight.findViewById(R.id.tvDate)).setText(thisDestination.getInboundDate());
-        }
-    }
-
-    private void setFlightType() {
-        if (thisDestination.isRoundtrip()) {
-            tvFlightType.setText(R.string.is_roundtrip);
-            chosenInboundFlight.findViewById(R.id.tvCost).setVisibility(View.INVISIBLE);
-        } else {
-            tvFlightType.setText(R.string.is_one_way);
-            chosenInboundFlight.findViewById(R.id.tvCost).setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -222,7 +186,7 @@ public class FlightsActivity extends AppCompatActivity {
                     Log.e(TAG, "Error while saving flight: ", e);
                     Toast.makeText(FlightsActivity.this, "Error while saving flight", Toast.LENGTH_SHORT).show();
                 } else {
-                    loadChosenFlights();
+                    loadChosenTickets();
                     Toast.makeText(FlightsActivity.this, "flight chosen!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -259,10 +223,15 @@ public class FlightsActivity extends AppCompatActivity {
                     Toast.makeText(FlightsActivity.this, "Error while saving flight", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                loadChosenFlights();
+                loadChosenTickets();
                 Toast.makeText(FlightsActivity.this, "flight chosen!", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void loadChosenTickets() {
+        fragment = new ChosenTicketsFragment(thisDestination);
+        fragmentManager.beginTransaction().replace(R.id.flTickets, fragment).commit();
     }
 
     private void clearOutboundFlightData() {
