@@ -19,6 +19,7 @@ import com.codepath.travel.FlightsActivity;
 import com.codepath.travel.HotelsActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.TouristSpotsActivity;
+import com.codepath.travel.TransportationActivity;
 import com.codepath.travel.models.Destination;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
@@ -74,6 +75,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
         private final LinearLayout llFlight;
         private final LinearLayout llHotel;
         private final LinearLayout llTouristSpot;
+        private final LinearLayout llTransportation;
         private final ImageView ivArrow;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
@@ -92,6 +94,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
             llFlight = itemView.findViewById(R.id.llFlight);
             llHotel = itemView.findViewById(R.id.llHotel);
             llTouristSpot = itemView.findViewById(R.id.llTouristSpot);
+            llTransportation = itemView.findViewById(R.id.llTransportation);
             ivArrow = itemView.findViewById(R.id.ivArrow);
         }
 
@@ -128,6 +131,12 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
                 @Override
                 public void onClick(View v) {
                     startResourceActivity(TouristSpotsActivity.class, destination);
+                }
+            });
+            llTransportation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startResourceActivity(TransportationActivity.class, destination);
                 }
             });
         }

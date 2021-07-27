@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/ivTransport"
+        android:scaleType="centerInside"
+        tools:srcCompat="@tools:sample/avatars"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvTransportName"
+        android:layout_toEndOf="@+id/ivTransport"
+        android:layout_marginStart="8dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:text="Transportation"/>
+
+    <ImageView
+        android:id="@+id/ivYelpRating"
+        android:layout_width="70dp"
+        android:layout_height="26dp"
+        android:layout_below="@id/tvTransportName"
+        android:layout_toEndOf="@+id/ivTransport"
+        android:layout_marginStart="8dp"
+        android:layout_alignParentEnd="false"
+        tools:srcCompat="@drawable/stars_extra_large_0" />
+
+    <TextView
+        android:id="@+id/tvTransportPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTransportName"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@+id/ivYelpRating"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <ImageButton
+        android:id="@+id/ibYelpPage"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_below="@id/tvTransportName"
+        android:layout_toEndOf="@+id/tvTransportPhone"
+        android:background="#00000000"
+        android:scaleType="centerInside"
+        tools:srcCompat="@drawable/logo_rgb" />
+
+    <TextView
+        android:id="@+id/tvTransportAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ibYelpPage"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_toEndOf="@+id/ivTransport"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+</RelativeLayout>

@@ -129,7 +129,7 @@
                 android:layout_below="@+id/ivGotHotel"
                 android:layout_marginTop="5dp"
                 app:el_duration="500"
-                app:el_expanded="false"
+                app:el_expanded="true"
                 app:el_parallax="1" >
 
                 <LinearLayout
@@ -234,7 +234,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:id="@+id/llCar">
+                        android:id="@+id/llTransportation">
 
                         <ImageView
                             android:layout_width="wrap_content"
