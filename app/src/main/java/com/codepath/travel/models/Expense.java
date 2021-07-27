@@ -1,7 +1,5 @@
 package com.codepath.travel.models;
 
-import android.text.BoringLayout;
-
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseUser;

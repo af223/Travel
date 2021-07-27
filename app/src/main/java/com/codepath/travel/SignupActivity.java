@@ -14,6 +14,13 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
+/**
+ * This activity allows the user to create an account to start planning trips.
+ *
+ * This activity is started when the user clicks "sign up" from LoginActivity.java. Once a user creates
+ * an account, they are automatically logged in and MainActivity.java starts.
+ */
+
 public class SignupActivity extends AppCompatActivity {
 
     private static final String TAG = "SignupActivity";

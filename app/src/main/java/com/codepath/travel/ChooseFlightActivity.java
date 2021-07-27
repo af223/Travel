@@ -11,11 +11,11 @@ import com.google.android.material.tabs.TabLayout;
 
 
 /**
- * This activity is a container for the fragments displaying one-way tickets between the chosen airports.
+ * This activity is a container for the fragments displaying one-way tickets (inbound/outbound) between the chosen airports.
  * The user can choose a ticket by clicking on it, then clicking the confirm
  * button, at which point they're directed back to FlightsActivity.java and the data is stored on Parse.
  * <p>
- * This activity appears when the user clicks the "see one-way flights" buttons from FlightsActivity.java.
+ * This activity appears when the user clicks the "see one-way tickets" buttons from FlightsActivity.java.
  */
 
 public class ChooseFlightActivity extends AppCompatActivity {

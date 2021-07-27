@@ -30,6 +30,13 @@ import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+/**
+ * This activity displays a list of roundtrip flight tickets for the chosen airports, and allows the user
+ * to select one.
+ * <p>
+ * This activity appears when the user clicks the "see roundtrip tickets" buttons from FlightsActivity.java.
+ */
+
 public class RoundtripFlightsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "RoundtripFlightsActivity";
@@ -168,7 +175,5 @@ public class RoundtripFlightsActivity extends AppCompatActivity implements Adapt
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
+    public void onNothingSelected(AdapterView<?> parent) {}
 }
