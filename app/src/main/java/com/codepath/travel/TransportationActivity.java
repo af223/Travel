@@ -20,6 +20,13 @@ import java.util.ArrayList;
 
 import okhttp3.Headers;
 
+/**
+ * This activity allows the user to find modes of transportation at the chosen destination.
+ * <p>
+ * This activity appears when the user chooses "transportation" from the expanded item in LocationsFragment.java. The intent passed in
+ * contains the objectId for the selected destination.
+ */
+
 public class TransportationActivity extends AppCompatActivity {
 
     private static final String TAG = "TransportationActivity";

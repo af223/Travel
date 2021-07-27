@@ -20,10 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 /**
- * This activity allows the user to find modes of transportation at the chosen destination.
- * <p>
- * This activity appears when the user chooses "transportation" from the expanded item in LocationsFragment.java. The intent passed in
- * contains the objectId for the selected destination.
+ * This adapter is for the RecyclerView in TransportationActivity that displays the popular modes
+ * of transportation in the chosen location.
  */
 
 public class TransportationsAdapter extends RecyclerView.Adapter<TransportationsAdapter.ViewHolder> {
@@ -63,6 +61,7 @@ public class TransportationsAdapter extends RecyclerView.Adapter<Transportations
         private final TextView tvTransportPhone;
         private final ImageButton ibYelpPage;
         private final TextView tvTransportAddress;
+        private final ImageView ivPhone;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
@@ -71,19 +70,26 @@ public class TransportationsAdapter extends RecyclerView.Adapter<Transportations
             tvTransportName = itemView.findViewById(R.id.tvTransportName);
             ivYelpRating = itemView.findViewById(R.id.ivYelpRating);
             tvTransportPhone = itemView.findViewById(R.id.tvTransportPhone);
-            ibYelpPage = itemView.findViewById(R.id.ibYelpPage);
+            ibYelpPage = itemView.findViewById(R.id.ibToYelp);
             tvTransportAddress = itemView.findViewById(R.id.tvTransportAddress);
+            ivPhone = itemView.findViewById(R.id.ivPhone);
         }
 
         public void bind(YelpData transport) {
             tvTransportName.setText(transport.getBusinessName());
-            tvTransportPhone.setText(transport.getPhone());
+            if (transport.getPhone().isEmpty()) {
+                tvTransportPhone.setVisibility(View.GONE);
+                ivPhone.setVisibility(View.GONE);
+            } else {
+                tvTransportPhone.setVisibility(View.VISIBLE);
+                tvTransportPhone.setText(transport.getPhone());
+                ivPhone.setVisibility(View.VISIBLE);
+            }
             tvTransportAddress.setText(transport.getAddress());
             YelpData.displayRatingBar(ivYelpRating, transport.getRating(), context);
             Glide.with(context).load(transport.getImageURL()).placeholder(R.drawable.no_photo_placeholder)
                     .error(R.drawable.no_photo_placeholder).into(ivTransport);
             YelpData.linkToYelp(transport.getYelpURL(), ibYelpPage, context);
-
         }
     }
 }

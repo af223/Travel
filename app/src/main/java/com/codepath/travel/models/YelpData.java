@@ -112,17 +112,17 @@ public class YelpData {
     private static String formatBusinessAddress(JSONObject location) {
         String address = "";
         try {
-            address += location.getString("address1");
-            if (!location.getString("address2").isEmpty())
-                address += ", " + location.getString("address2");
-            if (!location.getString("address3").isEmpty())
-                address += ", " + location.getString("address3");
-            if (!location.getString("state").isEmpty())
-                address += ", " + location.getString("state");
-            if (!location.getString("city").isEmpty())
-                address += ", " + location.getString("city");
-            if (!location.getString("country").isEmpty())
-                address += ", " + location.getString("country");
+            if (!location.getString("address1").isEmpty() && !location.getString("address1").equals("null"))
+                address += location.getString("address1") + ", ";
+            if (!location.getString("address2").isEmpty() && !location.getString("address2").equals("null"))
+                address += location.getString("address2") + ", ";
+            if (!location.getString("address3").isEmpty() && !location.getString("address3").equals("null"))
+                address += location.getString("address3") + ", ";
+            if (!location.getString("state").isEmpty() && !location.getString("state").equals("null"))
+                address += location.getString("state") + ", ";
+            if (!location.getString("city").isEmpty() && !location.getString("city").equals("null"))
+                address += location.getString("city") + ", ";
+            address += location.getString("country");
             address += " " + location.getString("zip_code");
         } catch (JSONException e) {
             e.printStackTrace();

@@ -16,5 +16,6 @@
     <color name="pastel_green">#cbfef2</color>
     <color name="medium_green">#adffeb</color>
     <color name="dark_green">#78e0c0</color>
+    <color name="darkest_green">#10E1AD</color>
     <color name="brown">#442C2E</color>
 </resources>
