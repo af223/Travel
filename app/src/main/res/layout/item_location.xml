@@ -105,12 +105,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvName"
-                android:layout_alignParentBottom="false"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="0dp"
                 android:layout_toEndOf="@id/ivGotPlaneTicket"
                 card_view:srcCompat="@drawable/ic_baseline_hotel_24"
+                card_view:tint="@color/gray" />
+
+            <ImageView
+                android:id="@+id/ivGotCar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_directions_car_24"
+                android:layout_toEndOf="@+id/ivGotHotel"
+                android:layout_below="@id/tvName"
+                android:layout_marginStart="11dp"
+                android:layout_marginTop="5dp"
                 card_view:tint="@color/gray" />
 
             <net.cachapa.expandablelayout.ExpandableLayout
@@ -215,6 +224,38 @@
                             android:textSize="14sp">
                         </TextView>
                     </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/llCar">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/ivCarExpanded"
+                            android:src="@drawable/ic_baseline_directions_car_24"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="16dp"/>
+
+                        <TextView
+                            android:id="@+id/tvCars"
+                            android:padding="12dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Transportation"
+                            android:textColor="#000000"
+                            android:transitionName="to_hotels_transition"
+                            android:textSize="14sp">
+                        </TextView>
+                    </LinearLayout>
+
                 </LinearLayout>
             </net.cachapa.expandablelayout.ExpandableLayout>
         </RelativeLayout>

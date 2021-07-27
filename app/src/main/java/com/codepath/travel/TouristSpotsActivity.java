@@ -25,16 +25,10 @@ import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.adapters.TouristActivitiesAdapter;
 import com.codepath.travel.models.Destination;
-import com.codepath.travel.models.TouristDestination;
-import com.codepath.travel.models.TouristSpot;
+import com.codepath.travel.models.YelpData;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,36 +68,12 @@ public class TouristSpotsActivity extends AppCompatActivity {
             "Spas", "Sports", "Tours"};
     private RecyclerView rvTouristActivities;
     private TouristActivitiesAdapter adapter;
-    private ArrayList<TouristSpot> touristSpots;
+    private ArrayList<YelpData> touristSpots;
     private String latitude;
     private String longitude;
     private EndlessRecyclerViewScrollListener scrollListener;
     private EditText etQueryActivity;
     private Button btnQueryActivity;
-
-    public static void saveTouristDestination(TouristSpot touristSpot) {
-        TouristDestination touristDestination = new TouristDestination();
-        touristDestination.setUser(ParseUser.getCurrentUser());
-        touristDestination.setPlaceId(touristSpot.getPlaceId());
-        touristDestination.setName(touristSpot.getBusinessName());
-        if (currDestination != null) {
-            touristDestination.setDestination(currDestination);
-            touristDestination.saveInBackground();
-        } else {
-            ParseQuery<Destination> query = ParseQuery.getQuery(Destination.class);
-            query.getInBackground(destinationID, new GetCallback<Destination>() {
-                @Override
-                public void done(Destination object, ParseException e) {
-                    if (e != null) {
-                        Log.e(TAG, "Unable to save tourist destination");
-                    }
-                    currDestination = object;
-                    touristDestination.setDestination(currDestination);
-                    touristDestination.saveInBackground();
-                }
-            });
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,44 +92,55 @@ public class TouristSpotsActivity extends AppCompatActivity {
         btnQueryActivity = findViewById(R.id.btnQueryActivity);
 
         touristSpots = new ArrayList<>();
-        adapter = new TouristActivitiesAdapter(this, touristSpots);
-        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
-        rvTouristActivities.setLayoutManager(gridLayoutManager);
-        rvTouristActivities.setAdapter(adapter);
-        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                loadTouristResults();
-            }
-        };
-        rvTouristActivities.addOnScrollListener(scrollListener);
+        loadDestination();
 
         selectedType = new boolean[typeArray.length];
         latitude = getIntent().getStringExtra(Destination.KEY_LAT);
         longitude = getIntent().getStringExtra(Destination.KEY_LONG);
         destinationID = getIntent().getStringExtra(Destination.KEY_OBJECT_ID);
         offset = 0;
+    }
 
-        btnQueryActivity.setOnClickListener(new View.OnClickListener() {
+    private void loadDestination() {
+        ParseQuery<Destination> query = ParseQuery.getQuery(Destination.class);
+        query.getInBackground(destinationID, new GetCallback<Destination>() {
             @Override
-            public void onClick(View v) {
-                if (etQueryActivity.getText().toString().isEmpty()) {
-                    Toast.makeText(TouristSpotsActivity.this, "No keywords entered", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                setUpToLoadResults();
-                resetCategoryFilter();
-                keywordQuery = etQueryActivity.getText().toString();
-                etQueryActivity.setText("");
-                loadTouristResults();
-            }
-        });
+            public void done(Destination object, ParseException e) {
+                currDestination = object;
+                adapter = new TouristActivitiesAdapter(TouristSpotsActivity.this, touristSpots, currDestination);
+                StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
+                rvTouristActivities.setLayoutManager(gridLayoutManager);
+                rvTouristActivities.setAdapter(adapter);
+                scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+                    @Override
+                    public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                        loadTouristResults();
+                    }
+                };
+                rvTouristActivities.addOnScrollListener(scrollListener);
 
-        tvActivityType.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showCategorySelecter();
+                btnQueryActivity.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (etQueryActivity.getText().toString().isEmpty()) {
+                            Toast.makeText(TouristSpotsActivity.this, "No keywords entered", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        setUpToLoadResults();
+                        resetCategoryFilter();
+                        keywordQuery = etQueryActivity.getText().toString();
+                        etQueryActivity.setText("");
+                        loadTouristResults();
+                    }
+                });
+
+                tvActivityType.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showCategorySelecter();
+                    }
+                });
             }
         });
     }
@@ -252,7 +233,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
         client.get(YELP_BUSINESS_SEARCH_URL, headers, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                processYelpResults(json.jsonObject);
+                YelpData.processYelpResults(touristSpots, json.jsonObject, TouristSpotsActivity.this);
                 adapter.notifyDataSetChanged();
                 pbTouristLoad.setVisibility(View.GONE);
                 offset += NUM_LOAD_BUSINESSES;
@@ -264,28 +245,6 @@ public class TouristSpotsActivity extends AppCompatActivity {
                 Toast.makeText(TouristSpotsActivity.this, "Unable to find tourist activities", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void processYelpResults(JSONObject jsonObject) {
-        try {
-            JSONArray businesses = jsonObject.getJSONArray("businesses");
-            for (int i = 0; i < businesses.length(); i++) {
-                JSONObject business = businesses.getJSONObject(i);
-                String name = business.getString("name");
-                String rating = String.valueOf(business.getDouble("rating"));
-                String imageURL = "";
-                if (business.has("image_url")) {
-                    imageURL = business.getString("image_url");
-                }
-                String yelpURL = business.getString("url");
-                String placeId = business.getString("id");
-                Integer reviewCount = business.getInt("review_count");
-                touristSpots.add(new TouristSpot(name, rating, imageURL, yelpURL, placeId, reviewCount));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(TouristSpotsActivity.this, "Unable to process Yelp results", Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.codepath.travel.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.travel.R;
-import com.codepath.travel.TouristSpotsActivity;
-import com.codepath.travel.models.TouristSpot;
+import com.codepath.travel.models.Destination;
+import com.codepath.travel.models.YelpData;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -25,11 +23,13 @@ import java.util.List;
 public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivitiesAdapter.ViewHolder> {
 
     private final Context context;
-    private final List<TouristSpot> touristSpots;
+    private final List<YelpData> touristSpots;
+    private final Destination destination;
 
-    public TouristActivitiesAdapter(Context context, List<TouristSpot> touristSpots) {
+    public TouristActivitiesAdapter(Context context, List<YelpData> touristSpots, Destination destination) {
         this.context = context;
         this.touristSpots = touristSpots;
+        this.destination = destination;
     }
 
     @NonNull
@@ -42,7 +42,7 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull TouristActivitiesAdapter.ViewHolder holder, int position) {
-        TouristSpot touristSpot = touristSpots.get(position);
+        YelpData touristSpot = touristSpots.get(position);
         holder.bind(touristSpot);
     }
 
@@ -53,12 +53,12 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView ivBusinessPicture;
-        private TextView tvBusinessName;
-        private ImageView ivYelpRating;
-        private ImageButton ibAddTouristDest;
-        private ImageButton ibYelpPage;
-        private TextView tvCommentCount;
+        private final ImageView ivBusinessPicture;
+        private final TextView tvBusinessName;
+        private final ImageView ivYelpRating;
+        private final ImageButton ibAddTouristDest;
+        private final ImageButton ibYelpPage;
+        private final TextView tvCommentCount;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
@@ -71,10 +71,10 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
             tvCommentCount = itemView.findViewById(R.id.tvReviewCount);
         }
 
-        public void bind(TouristSpot touristSpot) {
+        public void bind(YelpData touristSpot) {
             tvBusinessName.setText(touristSpot.getBusinessName());
-            String numReivews = String.valueOf(touristSpot.getReviewCount()) + " reviews";
-            tvCommentCount.setText(numReivews);
+            String numReviews = touristSpot.getReviewCount() + " reviews";
+            tvCommentCount.setText(numReviews);
             if (touristSpot.isChosen()) {
                 ibAddTouristDest.setClickable(false);
                 ibAddTouristDest.setImageResource(R.drawable.ic_baseline_check_24);
@@ -87,52 +87,18 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
                         ibAddTouristDest.setClickable(false);
                         ibAddTouristDest.setImageResource(R.drawable.ic_baseline_check_24);
                         touristSpot.flipChosen();
-                        TouristSpotsActivity.saveTouristDestination(touristSpot);
+                        YelpData.saveTouristDestination(touristSpot, destination);
                     }
                 });
             }
-            ibYelpPage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(touristSpot.getYelpURL()));
-                    context.startActivity(i);
-                }
-            });
             if (!touristSpot.getImageURL().isEmpty()) {
+                // prevents item reordering when scrolling up in staggeredgridlayout
                 Glide.with(context).load(R.drawable.no_photo_placeholder).into(ivBusinessPicture);
-                ivBusinessPicture.layout(0,0,0,0);
+                ivBusinessPicture.layout(0, 0, 0, 0);
                 Glide.with(context).load(touristSpot.getImageURL()).into(ivBusinessPicture);
             }
-            switch (touristSpot.getRating()) {
-                case "1.0":
-                    Glide.with(context).load(R.drawable.stars_extra_large_1).into(ivYelpRating);
-                    break;
-                case "1.5":
-                    Glide.with(context).load(R.drawable.stars_extra_large_1_half).into(ivYelpRating);
-                    break;
-                case "2.0":
-                    Glide.with(context).load(R.drawable.stars_extra_large_2).into(ivYelpRating);
-                    break;
-                case "2.5":
-                    Glide.with(context).load(R.drawable.stars_extra_large_2_half).into(ivYelpRating);
-                    break;
-                case "3.0":
-                    Glide.with(context).load(R.drawable.stars_extra_large_3).into(ivYelpRating);
-                    break;
-                case "3.5":
-                    Glide.with(context).load(R.drawable.stars_extra_large_3_half).into(ivYelpRating);
-                    break;
-                case "4.0":
-                    Glide.with(context).load(R.drawable.stars_extra_large_4).into(ivYelpRating);
-                    break;
-                case "4.5":
-                    Glide.with(context).load(R.drawable.stars_extra_large_4_half).into(ivYelpRating);
-                    break;
-                case "5.0":
-                    Glide.with(context).load(R.drawable.stars_extra_large_5).into(ivYelpRating);
-                    break;
-            }
+            YelpData.linkToYelp(touristSpot.getYelpURL(), ibYelpPage, context);
+            YelpData.displayRatingBar(ivYelpRating, touristSpot.getRating(), context);
         }
     }
 }
