@@ -82,7 +82,7 @@
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
+                android:layout_alignBottom="@+id/tvName"
                 android:layout_marginEnd="5dp"
                 android:rotation="270"
                 card_view:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
@@ -112,70 +112,111 @@
                 android:layout_toEndOf="@id/ivGotPlaneTicket"
                 card_view:srcCompat="@drawable/ic_baseline_hotel_24"
                 card_view:tint="@color/gray" />
+
+            <net.cachapa.expandablelayout.ExpandableLayout
+                android:id="@+id/expandable_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ivGotHotel"
+                android:layout_marginTop="5dp"
+                app:el_duration="500"
+                app:el_expanded="false"
+                app:el_parallax="1" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/llFlight">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/ivFlightExpanded"
+                            android:src="@drawable/ic_baseline_airplanemode_active_24"
+                            android:rotation="90"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="16dp" />
+
+                        <TextView
+                            android:id="@+id/tvFlights"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="12dp"
+                            android:text="Flights"
+                            android:textColor="#000000"
+                            android:transitionName="to_flights_transition"
+                            android:textSize="14sp">
+                        </TextView>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/llHotel">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/ivHotelExpanded"
+                            android:src="@drawable/ic_baseline_hotel_24"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="16dp"/>
+
+                        <TextView
+                            android:id="@+id/tvHotels"
+                            android:padding="12dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Hotels"
+                            android:textColor="#000000"
+                            android:transitionName="to_hotels_transition"
+                            android:textSize="14sp">
+                        </TextView>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/llTouristSpot">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_baseline_search_24"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="16dp"/>
+
+                        <TextView
+                            android:id="@+id/tvTouristSpots"
+                            android:padding="12dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Find Activities"
+                            android:transitionName="to_tourist_spots_transition"
+                            android:textColor="#000000"
+                            android:textSize="14sp">
+                        </TextView>
+                    </LinearLayout>
+                </LinearLayout>
+            </net.cachapa.expandablelayout.ExpandableLayout>
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
-
-    <net.cachapa.expandablelayout.ExpandableLayout
-        android:id="@+id/expandable_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/cvLocation"
-        app:el_duration="500"
-        app:el_expanded="false"
-        app:el_parallax="1" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tvFlights"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="19dp"
-                android:text="Flights"
-                android:textColor="#000000"
-                android:transitionName="to_flights_transition"
-                android:textSize="20sp">
-            </TextView>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
-
-            <TextView
-                android:id="@+id/tvHotels"
-                android:padding="19dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Hotels"
-                android:textColor="#000000"
-                android:transitionName="to_hotels_transition"
-                android:textSize="20sp">
-            </TextView>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
-
-            <TextView
-                android:id="@+id/tvTouristSpots"
-                android:padding="19dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Find Activities"
-                android:transitionName="to_tourist_spots_transition"
-                android:textColor="#000000"
-                android:textSize="20sp">
-            </TextView>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
-        </LinearLayout>
-    </net.cachapa.expandablelayout.ExpandableLayout>
 </RelativeLayout>

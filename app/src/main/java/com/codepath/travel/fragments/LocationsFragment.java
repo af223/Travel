@@ -5,13 +5,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,7 +19,6 @@ import com.codepath.travel.R;
 import com.codepath.travel.adapters.LocationsAdapter;
 import com.codepath.travel.adapters.RecyclerTouchListener;
 import com.codepath.travel.models.Destination;
-import com.codepath.travel.models.Expense;
 import com.codepath.travel.models.TouristDestination;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.DeleteCallback;
@@ -45,11 +41,11 @@ public class LocationsFragment extends Fragment {
 
     private static final String TAG = "LocationsFragment";
     public static FragmentManager locationsFragManager;
+    public static List<Destination> locations;
+    private static LocationsAdapter adapter;
     private RecyclerView rvLocations;
     private FloatingActionButton fabAddLocation;
     private ProgressBar pbLoadDestinations;
-    public static List<Destination> locations;
-    private static LocationsAdapter adapter;
     private RecyclerTouchListener rvTouchListener;
 
     public LocationsFragment() {
@@ -58,7 +54,7 @@ public class LocationsFragment extends Fragment {
 
     public static void addLocation(Destination destination) {
         locations.add(destination);
-        adapter.notifyItemInserted(locations.size()-1);
+        adapter.notifyItemInserted(locations.size() - 1);
     }
 
     @Override
@@ -71,8 +67,8 @@ public class LocationsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Choose a location");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Choose a location");
 
         pbLoadDestinations = view.findViewById(R.id.pbLoadDestinations);
         pbLoadDestinations.setVisibility(View.VISIBLE);
@@ -92,7 +88,7 @@ public class LocationsFragment extends Fragment {
         rvLocations.setLayoutManager(new LinearLayoutManager(getContext()));
         rvLocations.setAdapter(adapter);
         rvTouchListener = new RecyclerTouchListener(getActivity(), rvLocations);
-        rvTouchListener.setSwipeOptionViews(R.id.delete_task,R.id.edit_entry).setSwipeable(R.id.cvLocation, R.id.swipeMenuLayout, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
+        rvTouchListener.setSwipeOptionViews(R.id.delete_task, R.id.edit_entry).setSwipeable(R.id.cvLocation, R.id.swipeMenuLayout, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
             @Override
             public void onSwipeOptionClicked(int viewID, int position) {
                 if (viewID == R.id.delete_task) {

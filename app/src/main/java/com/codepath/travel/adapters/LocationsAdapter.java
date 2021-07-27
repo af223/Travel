@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,7 +20,6 @@ import com.codepath.travel.HotelsActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.TouristSpotsActivity;
 import com.codepath.travel.models.Destination;
-import com.codepath.travel.models.Expense;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
@@ -68,10 +68,12 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
         private final TextView tvName;
         private final ImageView ivGotPlaneTicket;
         private final ImageView ivGotHotel;
+        private final ImageView ivFlightExpanded;
+        private final ImageView ivHotelExpanded;
         private final ExpandableLayout expandableLayout;
-        private final TextView tvFlights;
-        private final TextView tvHotels;
-        private final TextView tvTouristSpots;
+        private final LinearLayout llFlight;
+        private final LinearLayout llHotel;
+        private final LinearLayout llTouristSpot;
         private final ImageView ivArrow;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
@@ -82,12 +84,14 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
             tvName = itemView.findViewById(R.id.tvName);
             ivGotPlaneTicket = itemView.findViewById(R.id.ivGotPlaneTicket);
             ivGotHotel = itemView.findViewById(R.id.ivGotHotel);
+            ivFlightExpanded = itemView.findViewById(R.id.ivFlightExpanded);
+            ivHotelExpanded = itemView.findViewById(R.id.ivHotelExpanded);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
             expandableLayout.setInterpolator(new OvershootInterpolator());
             expandableLayout.setOnExpansionUpdateListener(this);
-            tvFlights = itemView.findViewById(R.id.tvFlights);
-            tvHotels = itemView.findViewById(R.id.tvHotels);
-            tvTouristSpots = itemView.findViewById(R.id.tvTouristSpots);
+            llFlight = itemView.findViewById(R.id.llFlight);
+            llHotel = itemView.findViewById(R.id.llHotel);
+            llTouristSpot = itemView.findViewById(R.id.llTouristSpot);
             ivArrow = itemView.findViewById(R.id.ivArrow);
         }
 
@@ -95,28 +99,32 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
             tvName.setText(destination.getFormattedLocationName());
             if (destination.getDate() != null && destination.getInboundDate() != null) {
                 DrawableCompat.setTint(DrawableCompat.wrap(ivGotPlaneTicket.getDrawable()), context.getResources().getColor(R.color.dark_green));
+                DrawableCompat.setTint(DrawableCompat.wrap(ivFlightExpanded.getDrawable()), context.getResources().getColor(R.color.dark_green));
             } else {
                 DrawableCompat.setTint(DrawableCompat.wrap(ivGotPlaneTicket.getDrawable()), context.getResources().getColor(R.color.gray));
+                DrawableCompat.setTint(DrawableCompat.wrap(ivFlightExpanded.getDrawable()), context.getResources().getColor(R.color.gray));
             }
             if (destination.getHotelName() != null) {
                 DrawableCompat.setTint(DrawableCompat.wrap(ivGotHotel.getDrawable()), context.getResources().getColor(R.color.dark_green));
+                DrawableCompat.setTint(DrawableCompat.wrap(ivHotelExpanded.getDrawable()), context.getResources().getColor(R.color.dark_green));
             } else {
                 DrawableCompat.setTint(DrawableCompat.wrap(ivGotHotel.getDrawable()), context.getResources().getColor(R.color.gray));
+                DrawableCompat.setTint(DrawableCompat.wrap(ivHotelExpanded.getDrawable()), context.getResources().getColor(R.color.gray));
             }
             expandableLayout.setExpanded(false);
-            tvFlights.setOnClickListener(new View.OnClickListener() {
+            llFlight.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startResourceActivity(FlightsActivity.class, destination);
                 }
             });
-            tvHotels.setOnClickListener(new View.OnClickListener() {
+            llHotel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startResourceActivity(HotelsActivity.class, destination);
                 }
             });
-            tvTouristSpots.setOnClickListener(new View.OnClickListener() {
+            llTouristSpot.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startResourceActivity(TouristSpotsActivity.class, destination);
