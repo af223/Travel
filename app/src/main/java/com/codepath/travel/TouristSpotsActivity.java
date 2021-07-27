@@ -47,7 +47,7 @@ import static com.codepath.travel.MainActivity.logout;
  * This activity allows the user to find suggested tourist spots/activities near the chosen destination.
  * The user can filter by selecting one or more of the suggested categories, or search by keyword.
  * <p>
- * This activity appears when the user chooses "find activity" from ResourcesFragment.java. The intent passed in
+ * This activity appears when the user chooses "find activity" from the expanded item in LocationsFragment.java. The intent passed in
  * contains the objectId for the selected destination.
  */
 

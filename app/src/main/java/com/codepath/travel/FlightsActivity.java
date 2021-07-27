@@ -33,7 +33,7 @@ import static com.codepath.travel.MainActivity.logout;
  * This activity allows the user navigate to find and select departure and arrival airports and to see
  * and select the flight. The user can choose to see a roundtrip or one-way tickets.
  * <p>
- * This activity is started when the user chooses "Flights" in ResourcesFragment.java.
+ * This activity is started when the user chooses "Flights" in from the expanded item in LocationsFragment.java.
  */
 
 public class FlightsActivity extends AppCompatActivity {

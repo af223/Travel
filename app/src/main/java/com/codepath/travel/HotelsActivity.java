@@ -54,7 +54,7 @@ import static com.codepath.travel.MainActivity.okHttpClient;
  * This activity allows the user to see and select suggested hotels near the destination pinned on a map.
  * The user can see details about the hotel and its room offerings by clicking on its pin on the map.
  *
- * This activity appears when the user chooses hotel from the ResourcesFragment.java. The intent passed in
+ * This activity appears when the user chooses hotel from the expanded item in LocationsFragment.java. The intent passed in
  * contains the objectId for the selected destination.
  */
 

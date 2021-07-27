@@ -72,9 +72,10 @@ import static com.codepath.travel.fragments.LocationsFragment.locations;
 
 /**
  * A simple {@link Fragment} subclass.
- * This fragment displays a map and search bar. This is the fragment the user first sees when opening the app.
- * The user can select a location by long clicking on the map, or by searching for a location and choosing
- * one of the autocomplete results.
+ * This fragment displays a map and search bar.The user can select a location by long clicking on the map,
+ * or by searching for a location and choosing one of the autocomplete results.
+ *
+ * The user can reach this fragment by clicking on the '+' floating action button in LocationsFragment.java.
  */
 
 public class MapFragment extends Fragment implements LocationListener {

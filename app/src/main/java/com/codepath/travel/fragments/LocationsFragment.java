@@ -37,8 +37,9 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  * This fragment displays the list of locations that the user plans to visit. The user navigates to this
- * fragment by clicking on the pin/marker icon in the bottom navigation. Clicking on a location here
- * takes the user to the ResourcesFragment for that location.
+ * fragment by clicking on the pin/marker icon in the bottom navigation, and it is the automatic starting fragment
+ * when the app is first opened. Clicking on a location here expands into a list of resources that start
+ * the activities for the respective resource.
  */
 public class LocationsFragment extends Fragment {
 
@@ -91,7 +92,7 @@ public class LocationsFragment extends Fragment {
         rvLocations.setLayoutManager(new LinearLayoutManager(getContext()));
         rvLocations.setAdapter(adapter);
         rvTouchListener = new RecyclerTouchListener(getActivity(), rvLocations);
-        rvTouchListener.setSwipeOptionViews(R.id.delete_task,R.id.edit_entry).setSwipeable(R.id.card_view, R.id.swipeMenuLayout, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
+        rvTouchListener.setSwipeOptionViews(R.id.delete_task,R.id.edit_entry).setSwipeable(R.id.cvLocation, R.id.swipeMenuLayout, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
             @Override
             public void onSwipeOptionClicked(int viewID, int position) {
                 if (viewID == R.id.delete_task) {
