@@ -38,13 +38,13 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
     List<Integer> optionViews;
     Set<Integer> ignoredViewTypes;
     // Cached ViewConfiguration and system-wide constant values
-    private int touchSlop;
-    private int minFlingVel;
-    private int maxFlingVel;
-    private long ANIMATION_STANDARD = 300;
-    private long ANIMATION_CLOSE = 150;
+    private final int touchSlop;
+    private final int minFlingVel;
+    private final int maxFlingVel;
+    private final long ANIMATION_STANDARD = 300;
+    private final long ANIMATION_CLOSE = 150;
     // Fixed properties
-    private RecyclerView rView;
+    private final RecyclerView rView;
     private int bgWidth = 1; // 1 and not 0 to prevent dividing by zero
     private float touchedX;
     private float touchedY;
@@ -67,13 +67,11 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
     //view ID
     private int fgViewID;
     private int bgViewID;
-    private ArrayList<Integer> fadeViews;
+    private final ArrayList<Integer> fadeViews;
     private OnSwipeOptionsClickListener mBgClickListener;
     // user choices
-    private boolean clickable = false;
-    private boolean longClickable = false;
-    private boolean swipeable = false;
-    private int LONG_CLICK_DELAY = 800;
+    private final boolean clickable = false;
+    private final boolean longClickable = false;
     Runnable mLongPressed = new Runnable() {
         public void run() {
             if (!longClickable)
@@ -82,6 +80,8 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
             mLongClickPerformed = true;
         }
     };
+    private boolean swipeable = false;
+    private final int LONG_CLICK_DELAY = 800;
 
     public RecyclerTouchListener(Activity a, RecyclerView recyclerView) {
         this.act = a;

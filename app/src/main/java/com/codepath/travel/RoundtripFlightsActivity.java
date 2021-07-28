@@ -27,8 +27,6 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Dictionary;
-import java.util.Hashtable;
 
 /**
  * This activity displays a list of roundtrip flight tickets for the chosen airports, and allows the user
@@ -49,9 +47,6 @@ public class RoundtripFlightsActivity extends AppCompatActivity implements Adapt
     private RecyclerView rvFlights;
     private ProgressBar pbFlights;
     private RoundtripsAdapter adapter;
-    private Dictionary<Integer, String> placesCode;
-    private Dictionary<Integer, String> placesName;
-    private Dictionary<Integer, String> carriers;
     private ArrayList<Pair<Flight, Flight>> flights;
     private Spinner spinnerSortBy;
 
@@ -69,13 +64,7 @@ public class RoundtripFlightsActivity extends AppCompatActivity implements Adapt
         Flight flightOut = flightPair.first;
         Flight flightIn = flightPair.second;
 
-        ((TextView) view.findViewById(R.id.tvDepartAirport)).setText(flightOut.getDepartAirportName());
-        ((TextView) view.findViewById(R.id.tvArriveAirport)).setText(flightOut.getArriveAirportName());
-        String formattedCost = "$" + flightOut.getFlightCost();
-        ((TextView) view.findViewById(R.id.tvCost)).setText(formattedCost);
-        ((TextView) view.findViewById(R.id.tvAirline)).setText(flightOut.getCarrier());
-        ((TextView) view.findViewById(R.id.tvDate)).setText(flightOut.getDate());
-
+        Ticket.displayTicket(flightOut, view);
         ((TextView) view.findViewById(R.id.tvReturnDepartAirport)).setText(flightIn.getDepartAirportName());
         ((TextView) view.findViewById(R.id.tvReturnArriveAirport)).setText(flightIn.getArriveAirportName());
         ((TextView) view.findViewById(R.id.tvReturnAirline)).setText(flightIn.getCarrier());
@@ -105,21 +94,18 @@ public class RoundtripFlightsActivity extends AppCompatActivity implements Adapt
             }
         });
 
-        placesCode = new Hashtable<>();
-        placesName = new Hashtable<>();
-        carriers = new Hashtable<>();
         flights = new ArrayList<>();
-
         rvFlights = findViewById(R.id.rvFlights);
         adapter = new RoundtripsAdapter(this, flights);
         rvFlights.setLayoutManager(new LinearLayoutManager(this));
         rvFlights.setAdapter(adapter);
 
+        Ticket roundtripTicket = new Ticket(TAG, this, pbFlights);
+
         pbFlights.setVisibility(View.VISIBLE);
         for (Airport originAirport : FlightsActivity.departureAirports) {
             for (Airport destinationAirport : FlightsActivity.arrivalAirports) {
-                Ticket.getRoundtripFlights(originAirport.getIATACode(), destinationAirport.getIATACode(), this, pbFlights,
-                        adapter, TAG, placesCode, placesName, carriers, flights);
+                roundtripTicket.getRoundtripFlights(originAirport.getIATACode(), destinationAirport.getIATACode(), adapter, flights);
             }
         }
 

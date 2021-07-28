@@ -1,5 +1,6 @@
 package com.codepath.travel.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
@@ -27,8 +29,6 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Dictionary;
-import java.util.Hashtable;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -41,12 +41,10 @@ public class InboundFragment extends Fragment implements AdapterView.OnItemSelec
 
     private static final String TAG = "InboundFragment";
     private ProgressBar pbFlights;
-    private Dictionary<Integer, String> placesCode;
-    private Dictionary<Integer, String> placesName;
-    private Dictionary<Integer, String> carriers;
     private ArrayList<Flight> flights;
     private RecyclerView rvFlights;
     private FlightsAdapter adapter;
+    private static Button btnConfirm;
     private View ticket;
     private Spinner spinnerSortBy;
 
@@ -71,6 +69,19 @@ public class InboundFragment extends Fragment implements AdapterView.OnItemSelec
         return inflater.inflate(R.layout.fragment_inbound, container, false);
     }
 
+    // User has selected a ticket, but not clicked confirm button yet
+    public static void choose(Flight flight, View ticket, Boolean outbound, Context context) {
+        if (outbound) {
+            Ticket.chosenOutboundFlight = flight;
+        } else {
+            Ticket.chosenInboundFlight = flight;
+        }
+        btnConfirm.setClickable(true);
+        btnConfirm.setBackgroundColor(context.getResources().getColor(R.color.pastel_pink));
+        Ticket.displayTicket(flight, ticket);
+        ticket.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -78,8 +89,8 @@ public class InboundFragment extends Fragment implements AdapterView.OnItemSelec
         ticket = view.findViewById(R.id.card_view);
         pbFlights = view.findViewById(R.id.pbFlights);
         spinnerSortBy = view.findViewById(R.id.spinnerSortBy);
-        Ticket.btnConfirm = view.findViewById(R.id.btnConfirm);
-        Ticket.btnConfirm.setOnClickListener(new View.OnClickListener() {
+        btnConfirm = view.findViewById(R.id.btnConfirm);
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -96,21 +107,17 @@ public class InboundFragment extends Fragment implements AdapterView.OnItemSelec
             }
         });
 
-        placesCode = new Hashtable<>();
-        placesName = new Hashtable<>();
-        carriers = new Hashtable<>();
         flights = new ArrayList<>();
-
         rvFlights = view.findViewById(R.id.rvFlights);
         adapter = new FlightsAdapter(getContext(), flights, ticket, false);
         rvFlights.setLayoutManager(new LinearLayoutManager(getContext()));
         rvFlights.setAdapter(adapter);
 
+        Ticket inboundTicket = new Ticket(TAG, getActivity(), pbFlights);
         pbFlights.setVisibility(View.VISIBLE);
         for (Airport originAirport : FlightsActivity.departureAirports) {
             for (Airport destinationAirport : FlightsActivity.arrivalAirports) {
-                Ticket.getFlights(destinationAirport.getIATACode(), originAirport.getIATACode(), getActivity(),
-                        pbFlights, adapter, TAG, placesCode, placesName, carriers, flights);
+                inboundTicket.getFlights(destinationAirport.getIATACode(), originAirport.getIATACode(), adapter, flights);
             }
         }
 

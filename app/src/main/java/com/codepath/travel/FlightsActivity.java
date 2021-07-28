@@ -150,18 +150,18 @@ public class FlightsActivity extends AppCompatActivity {
             if (requestCode == CHOOSE_ONE_WAY_FLIGHT_REQUEST_CODE) {
                 Flight chosenOutFlight = null;
                 Flight chosenInFlight = null;
-                String inboundDate;
-                String outboundDate;
+                String inboundDate = null;
+                String outboundDate = null;
                 if (data.hasExtra(getString(R.string.outbound))) {
                     chosenOutFlight = Parcels.unwrap(data.getParcelableExtra(getString(R.string.outbound)));
                     outboundDate = chosenOutFlight.getDate();
-                } else {
+                } else if (thisDestination.isRoundtrip() == null || !thisDestination.isRoundtrip()) {
                     outboundDate = thisDestination.getDate();
                 }
                 if (data.hasExtra(getString(R.string.inbound))) {
                     chosenInFlight = Parcels.unwrap(data.getParcelableExtra(getString(R.string.inbound)));
                     inboundDate = chosenInFlight.getDate();
-                } else {
+                } else if (thisDestination.isRoundtrip() == null || !thisDestination.isRoundtrip()) {
                     inboundDate = thisDestination.getInboundDate();
                 }
                 if (inboundDate != null && !inboundDate.isEmpty() && outboundDate != null && !outboundDate.isEmpty() &&

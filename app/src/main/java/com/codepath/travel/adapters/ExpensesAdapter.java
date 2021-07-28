@@ -18,8 +18,8 @@ import java.util.ArrayList;
 
 public class ExpensesAdapter extends RecyclerView.Adapter<ExpensesAdapter.ViewHolder> {
 
-    private Context context;
-    private ArrayList<Expense> expenses;
+    private final Context context;
+    private final ArrayList<Expense> expenses;
 
     public ExpensesAdapter(Context context, ArrayList<Expense> expenses) {
         this.context = context;

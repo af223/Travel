@@ -25,8 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Dictionary;
-import java.util.Hashtable;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,9 +35,6 @@ public class OutboundFragment extends Fragment implements AdapterView.OnItemSele
 
     private static final String TAG = "OutboundFragment";
     private ProgressBar pbFlights;
-    private Dictionary<Integer, String> placesCode;
-    private Dictionary<Integer, String> placesName;
-    private Dictionary<Integer, String> carriers;
     private ArrayList<Flight> flights;
     private RecyclerView rvFlights;
     private FlightsAdapter adapter;
@@ -75,21 +70,17 @@ public class OutboundFragment extends Fragment implements AdapterView.OnItemSele
         pbFlights = view.findViewById(R.id.pbFlights);
         spinnerSortBy = view.findViewById(R.id.spinnerSortBy);
 
-        placesCode = new Hashtable<>();
-        placesName = new Hashtable<>();
-        carriers = new Hashtable<>();
         flights = new ArrayList<>();
-
         rvFlights = view.findViewById(R.id.rvFlights);
         adapter = new FlightsAdapter(getContext(), flights, ticket, true);
         rvFlights.setLayoutManager(new LinearLayoutManager(getContext()));
         rvFlights.setAdapter(adapter);
 
+        Ticket outboundTicket = new Ticket(TAG, getActivity(), pbFlights);
         pbFlights.setVisibility(View.VISIBLE);
         for (Airport originAirport : FlightsActivity.departureAirports) {
             for (Airport destinationAirport : FlightsActivity.arrivalAirports) {
-                Ticket.getFlights(originAirport.getIATACode(), destinationAirport.getIATACode(), getActivity(),
-                        pbFlights, adapter, TAG, placesCode, placesName, carriers, flights);
+                outboundTicket.getFlights(originAirport.getIATACode(), destinationAirport.getIATACode(), adapter, flights);
             }
         }
 

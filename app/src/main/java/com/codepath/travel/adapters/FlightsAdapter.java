@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.travel.R;
+import com.codepath.travel.fragments.InboundFragment;
 import com.codepath.travel.fragments.Ticket;
 import com.codepath.travel.models.Flight;
 
@@ -75,7 +76,7 @@ public class FlightsAdapter extends RecyclerView.Adapter<FlightsAdapter.ViewHold
         public void onClick(View v) {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
-                Ticket.choose(flights.get(position), ticket, outbound, context);
+                InboundFragment.choose(flights.get(position), ticket, outbound, context);
             }
         }
     }

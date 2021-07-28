@@ -1,10 +1,8 @@
 package com.codepath.travel.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +27,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Dictionary;
+import java.util.Hashtable;
 
 import okhttp3.Headers;
 
@@ -38,9 +37,23 @@ public class Ticket {
     private static final String getRoundtripURLBase = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/US/USD/en/%1$s/%2$s/anytime/anytime";
     private static final String rapidapiHostURL = "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com";
     public static final String[] sortMethods = {"", "Cost", "Departure Date", "Airline"};
-    public static Button btnConfirm;
     public static Flight chosenOutboundFlight;
     public static Flight chosenInboundFlight;
+    private final Dictionary<Integer, String> placesCode;
+    private final Dictionary<Integer, String> placesName;
+    private final Dictionary<Integer, String> carriers;
+    private final String TAG;
+    private final Activity activity;
+    private final ProgressBar pbFlights;
+
+    public Ticket(String TAG, Activity activity, ProgressBar pbFlights) {
+        this.placesCode = new Hashtable<>();
+        this.placesName = new Hashtable<>();
+        this.carriers = new Hashtable<>();
+        this.TAG = TAG;
+        this.activity = activity;
+        this.pbFlights = pbFlights;
+    }
 
     public static final Comparator<Flight> compareCost = new Comparator<Flight>() {
         @Override
@@ -77,19 +90,6 @@ public class Ticket {
         }
     };
 
-    // User has selected a ticket, but not clicked confirm button yet
-    public static void choose(Flight flight, View ticket, Boolean outbound, Context context) {
-        if (outbound) {
-            chosenOutboundFlight = flight;
-        } else {
-            chosenInboundFlight = flight;
-        }
-        btnConfirm.setClickable(true);
-        btnConfirm.setBackgroundColor(context.getResources().getColor(R.color.pastel_pink));
-        displayTicket(flight, ticket);
-        ticket.setVisibility(View.VISIBLE);
-    }
-
     public static void displayTicket(Flight flight, View ticket) {
         TextView tvDepartAirport = ticket.findViewById(R.id.tvDepartAirport);
         TextView tvArriveAirport = ticket.findViewById(R.id.tvArriveAirport);
@@ -105,10 +105,8 @@ public class Ticket {
         tvDate.setText(flight.getDate());
     }
 
-    public static void getFlights(String originCode, String destinationCode, Activity activity, ProgressBar pbFlights,
-                                  FlightsAdapter adapter, String TAG,
-                                  Dictionary<Integer, String> placesCode, Dictionary<Integer, String> placesName,
-                                  Dictionary<Integer, String> carriers, ArrayList<Flight> flights) {
+    public void getFlights(String originCode, String destinationCode,
+                           FlightsAdapter adapter, ArrayList<Flight> flights) {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestHeaders headers = new RequestHeaders();
         RequestParams params = new RequestParams();
@@ -119,9 +117,9 @@ public class Ticket {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
                         try {
-                            processPlaces(json.jsonObject.getJSONArray("Places"), placesCode, placesName, TAG);
-                            processCarriers(json.jsonObject.getJSONArray("Carriers"), carriers, TAG);
-                            processFlights(json.jsonObject.getJSONArray("Quotes"), carriers, placesCode, placesName, flights, TAG);
+                            processPlaces(json.jsonObject.getJSONArray("Places"));
+                            processCarriers(json.jsonObject.getJSONArray("Carriers"));
+                            processFlights(json.jsonObject.getJSONArray("Quotes"), flights);
                             pbFlights.setVisibility(View.GONE);
                             adapter.notifyDataSetChanged();
 
@@ -139,10 +137,8 @@ public class Ticket {
                 });
     }
 
-    public static void getRoundtripFlights(String originCode, String destinationCode, Activity activity, ProgressBar pbFlights,
-                                           RoundtripsAdapter adapter, String TAG,
-                                           Dictionary<Integer, String> placesCode, Dictionary<Integer, String> placesName,
-                                           Dictionary<Integer, String> carriers, ArrayList<Pair<Flight, Flight>> flights) {
+    public void getRoundtripFlights(String originCode, String destinationCode,
+                                    RoundtripsAdapter adapter, ArrayList<Pair<Flight, Flight>> flights) {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestHeaders headers = new RequestHeaders();
         RequestParams params = new RequestParams();
@@ -153,9 +149,9 @@ public class Ticket {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
                         try {
-                            processPlaces(json.jsonObject.getJSONArray("Places"), placesCode, placesName, TAG);
-                            processCarriers(json.jsonObject.getJSONArray("Carriers"), carriers, TAG);
-                            processRoundtripFlights(json.jsonObject.getJSONArray("Quotes"), carriers, placesCode, placesName, flights, TAG);
+                            processPlaces(json.jsonObject.getJSONArray("Places"));
+                            processCarriers(json.jsonObject.getJSONArray("Carriers"));
+                            processRoundtripFlights(json.jsonObject.getJSONArray("Quotes"), flights);
                             pbFlights.setVisibility(View.GONE);
                             adapter.notifyDataSetChanged();
 
@@ -173,7 +169,7 @@ public class Ticket {
                 });
     }
 
-    private static void processPlaces(JSONArray jsonArray, Dictionary<Integer, String> placesCode, Dictionary<Integer, String> placesName, String TAG) {
+    private void processPlaces(JSONArray jsonArray) {
         try {
             for (int i = 0; i < jsonArray.length(); i++) {
                 if (jsonArray.getJSONObject(i).has("IataCode")) {
@@ -189,7 +185,7 @@ public class Ticket {
         }
     }
 
-    private static void processCarriers(JSONArray jsonArray, Dictionary<Integer, String> carriers, String TAG) {
+    private void processCarriers(JSONArray jsonArray) {
         try {
             for (int i = 0; i < jsonArray.length(); i++) {
                 carriers.put(jsonArray.getJSONObject(i).getInt("CarrierId"), jsonArray.getJSONObject(i).getString("Name"));
@@ -200,14 +196,12 @@ public class Ticket {
         }
     }
 
-    private static void processFlights(JSONArray jsonArray, Dictionary<Integer, String> carriers,
-                                       Dictionary<Integer, String> placesCode, Dictionary<Integer, String> placesName,
-                                       ArrayList<Flight> flights, String TAG) {
+    private void processFlights(JSONArray jsonArray, ArrayList<Flight> flights) {
         try {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject flightObject = jsonArray.getJSONObject(i);
                 String cost = String.valueOf(flightObject.getInt("MinPrice"));
-                Flight flight = proccessOneLegOfFlight(flightObject, "OutboundLeg", cost, carriers, placesCode, placesName, false);
+                Flight flight = proccessOneLegOfFlight(flightObject, "OutboundLeg", cost, false);
                 flights.add(flight);
             }
         } catch (JSONException e) {
@@ -216,15 +210,13 @@ public class Ticket {
         }
     }
 
-    private static void processRoundtripFlights(JSONArray jsonArray, Dictionary<Integer, String> carriers,
-                                                Dictionary<Integer, String> placesCode, Dictionary<Integer, String> placesName,
-                                                ArrayList<Pair<Flight, Flight>> flights, String TAG) {
+    private void processRoundtripFlights(JSONArray jsonArray, ArrayList<Pair<Flight, Flight>> flights) {
         try {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject flightObject = jsonArray.getJSONObject(i);
                 String cost = String.valueOf(flightObject.getInt("MinPrice"));
-                Flight outbound = proccessOneLegOfFlight(flightObject, "OutboundLeg", cost, carriers, placesCode, placesName, true);
-                Flight inbound = proccessOneLegOfFlight(flightObject, "InboundLeg", cost, carriers, placesCode, placesName, true);
+                Flight outbound = proccessOneLegOfFlight(flightObject, "OutboundLeg", cost, true);
+                Flight inbound = proccessOneLegOfFlight(flightObject, "InboundLeg", cost, true);
                 Pair flightsPair = new Pair(outbound, inbound);
                 flights.add(flightsPair);
             }
@@ -234,8 +226,7 @@ public class Ticket {
         }
     }
 
-    private static Flight proccessOneLegOfFlight(JSONObject flightObject, String whichLeg, String cost, Dictionary<Integer, String> carriers,
-                                                 Dictionary<Integer, String> placesCode, Dictionary<Integer, String> placesName, Boolean isRoundtrip) throws JSONException {
+    private Flight proccessOneLegOfFlight(JSONObject flightObject, String whichLeg, String cost, Boolean isRoundtrip) throws JSONException {
         JSONArray carrierIds = flightObject.getJSONObject(whichLeg).getJSONArray("CarrierIds");
         String carrier = carriers.get(carrierIds.get(0));
         Integer originId = flightObject.getJSONObject(whichLeg).getInt("OriginId");

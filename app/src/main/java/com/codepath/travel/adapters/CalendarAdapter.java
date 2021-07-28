@@ -95,7 +95,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
                     clCalendarCell.setBackgroundColor(destinationColorCode.get(destination));
                     if (date.isEqual(getLocalDate(destination.getDate())) && destination.getInboundDate() != null) {
                         LocalDate returnDate = getLocalDate(destination.getInboundDate());
-                        while(date.isBefore(returnDate)) {
+                        while (date.isBefore(returnDate)) {
                             date = date.plusDays(1);
                             datesOfInterest.put(date.toString(), destination);
                         }

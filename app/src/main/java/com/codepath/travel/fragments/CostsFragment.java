@@ -2,13 +2,6 @@ package com.codepath.travel.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +9,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.travel.R;
 import com.codepath.travel.adapters.ExpensesAdapter;
@@ -40,17 +39,16 @@ import java.util.List;
 public class CostsFragment extends Fragment {
 
     private RecyclerView rvExpenses;
-    private ArrayList<Expense> expenses;
+    private static ArrayList<Expense> expenses;
     private ExpensesAdapter adapter;
     private RecyclerTouchListener rvTouchListener;
     private EditText etEditExpense;
     private EditText etEditCost;
-    private EditText etExpense;
-    private EditText etMoney;
-    private Button btnAddCost;
     private Double totalCost = 0.0;
+    private EditText etExpenseName;
+    private Button btnAddCost;
+    private EditText etExpenseAmount;
     private TextView tvTotalCost;
-
 
     public CostsFragment() {
         // Required empty public constructor
@@ -66,27 +64,27 @@ public class CostsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Cost Breakdown");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Cost Breakdown");
 
         tvTotalCost = view.findViewById(R.id.tvTotalCost);
-        etExpense = view.findViewById(R.id.etExpense);
-        etMoney = view.findViewById(R.id.etMoney);
+        etExpenseName = view.findViewById(R.id.etExpense);
+        etExpenseAmount = view.findViewById(R.id.etMoney);
         btnAddCost = view.findViewById(R.id.btnAddCost);
         btnAddCost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (etExpense.getText().toString().isEmpty()) {
+                if (etExpenseName.getText().toString().isEmpty()) {
                     Toast.makeText(getContext(), "Expenses must be named", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (etMoney.getText().toString().isEmpty()) {
+                if (etExpenseAmount.getText().toString().isEmpty()) {
                     Toast.makeText(getContext(), "Must enter an amount", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                saveCost(etExpense.getText().toString(), etMoney.getText().toString());
-                etExpense.setText("");
-                etMoney.setText("");
+                saveCost(etExpenseName.getText().toString(), etExpenseAmount.getText().toString());
+                etExpenseName.setText("");
+                etExpenseAmount.setText("");
             }
         });
 
@@ -98,7 +96,7 @@ public class CostsFragment extends Fragment {
         loadExpenses();
 
         rvTouchListener = new RecyclerTouchListener(getActivity(), rvExpenses);
-        rvTouchListener.setSwipeOptionViews(R.id.delete_task,R.id.edit_entry).setSwipeable(R.id.rowFG, R.id.swipeMenuLayout, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
+        rvTouchListener.setSwipeOptionViews(R.id.delete_task, R.id.edit_entry).setSwipeable(R.id.rowFG, R.id.swipeMenuLayout, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
             @Override
             public void onSwipeOptionClicked(int viewID, int position) {
                 if (expenses.get(position).isProtected()) {
@@ -244,7 +242,7 @@ public class CostsFragment extends Fragment {
                     if (destination.isRoundtrip() != null && destination.isRoundtrip()) {
                         createExpense("Roundtrip flight to " + destination.getArriveAirportName(), destination.getCost());
                     } else {
-                        if (destination.getCost()!= null) {
+                        if (destination.getCost() != null) {
                             createExpense("Flight to " + destination.getArriveAirportName(), destination.getCost());
                         }
                         if (destination.getInboundCost() != null) {
@@ -265,7 +263,7 @@ public class CostsFragment extends Fragment {
         expenses.add(expense);
         totalCost += Double.parseDouble(cost);
         tvTotalCost.setText(String.format("%.2f", totalCost));
-        adapter.notifyItemInserted(expenses.size()-1);
+        adapter.notifyItemInserted(expenses.size() - 1);
         return expense;
     }
 }
