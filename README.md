@@ -32,7 +32,8 @@ This app makes planning trips easy, allowing users to find all necessary informa
 
 - [x] User can see and click on locations in world map
 - [x] User can choose location by typing name
-- [ ] User can see generated itinerary of trip and edit it
+- [x] User can see generated itinerary of trip and edit it
+- [x] User can see calendar with trip dates marked
 - [x] User can see flight options to chosen destination
 - [x] User can find hotels
 - [x] User can see cost summary for chosen resources and add additional expenses
@@ -42,17 +43,16 @@ This app makes planning trips easy, allowing users to find all necessary informa
 
 **Optional Nice-to-have Stories**
 
-- [ ] User can upload their photos from trips.
-- [ ] User can find car rentals at destination
-- [ ] User can find popular tourist spots at destination
+- [x] User can find car rentals at destination
+- [x] User can find popular tourist spots at destination
+- [x] User can sort and filter results for tickets, tourist spots, and rentals
+- [x] User can manually create and add plans in calendar
+- [ ] Scheduling algorithm considers mealtimes
+- [ ] Scheduling algorithm considers time on road between events
 - [ ] User can find restaurants at destination
-- [ ] User can plan road-trips
-    - [ ] User can see path on map with time estimation
-    - [ ] User can see gas/rest stops along the path
-- [ ] User can enter multiple destinations and receive cost-minimizing travel plan
-- [ ] User can see ratings for resources (hotel, airline, etc.)
+- [x] User can see ratings for resources (hotel, airline, etc.)
 - [ ] User can see reviews for resources 
-- [ ] User can see photo clusters in map view.
+- [ ] User can view schedule showing when events overlap
 
 ### 2. Screen Archetypes
 
@@ -102,10 +102,6 @@ This app makes planning trips easy, allowing users to find all necessary informa
 
 ## Wireframes
 <img src="TravelApp.jpg" width=600>
-
-### [BONUS] Digital Wireframes & Mockups
-
-### [BONUS] Interactive Prototype
 
 ## Schema 
 
