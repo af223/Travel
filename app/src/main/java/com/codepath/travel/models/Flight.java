@@ -14,7 +14,8 @@ public class Flight {
     public String date;
     public Boolean isRoundtrip;
 
-    public Flight() {}
+    public Flight() {
+    }
 
     public Flight(String departAirportCode, String departAirportName, String arriveAirportCode,
                   String arriveAirportName, String flightCost, String carrier, String date, Boolean isRoundtrip) {

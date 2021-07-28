@@ -8,6 +8,16 @@ import java.util.Comparator;
 public class Event {
 
     public static ArrayList<Event> eventsList = new ArrayList<>();
+    private String name;
+    private LocalDate date;
+    private LocalTime time;
+    private LocalTime endTime;
+    public Event(String name, LocalDate date, LocalTime time, LocalTime endTime) {
+        this.name = name;
+        this.date = date;
+        this.time = time;
+        this.endTime = endTime;
+    }
 
     public static ArrayList<Event> eventsForDate(LocalDate date) {
         ArrayList<Event> events = new ArrayList<>();
@@ -29,18 +39,6 @@ public class Event {
             }
         });
         return events;
-    }
-
-    private String name;
-    private LocalDate date;
-    private LocalTime time;
-    private LocalTime endTime;
-
-    public Event(String name, LocalDate date, LocalTime time, LocalTime endTime) {
-        this.name = name;
-        this.date = date;
-        this.time = time;
-        this.endTime = endTime;
     }
 
     public String getName() {
