@@ -2,12 +2,10 @@ package com.codepath.travel.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Camera;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -28,7 +25,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.transition.Transition;
@@ -74,7 +70,7 @@ import static com.codepath.travel.fragments.LocationsFragment.locations;
  * A simple {@link Fragment} subclass.
  * This fragment displays a map and search bar.The user can select a location by long clicking on the map,
  * or by searching for a location and choosing one of the autocomplete results.
- *
+ * <p>
  * The user can reach this fragment by clicking on the '+' floating action button in LocationsFragment.java.
  */
 
@@ -87,10 +83,6 @@ public class MapFragment extends Fragment implements LocationListener {
     private TextView tvLinkImages;
     private JSONObject chosenLocation;
     private BottomNavigationView bottomNavigationView;
-    private AutocompleteSupportFragment autocompleteFragment;
-    private LocationManager locationManager;
-    private LatLng currentCoords;
-
     private final OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(GoogleMap googleMap) {
@@ -104,6 +96,18 @@ public class MapFragment extends Fragment implements LocationListener {
             });
         }
     };
+    private AutocompleteSupportFragment autocompleteFragment;
+    private LocationManager locationManager;
+    private LatLng currentCoords;
+    @SuppressLint("MissingPermission")
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                } else {
+                    Toast.makeText(getContext(), "unable to access location", Toast.LENGTH_SHORT).show();
+                }
+            });
 
     private void markChosenDestinations() {
         BitmapDescriptor defaultMarker =
@@ -140,7 +144,7 @@ public class MapFragment extends Fragment implements LocationListener {
         locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         int permissionCheck = ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION);
-        if(permissionCheck != PackageManager.PERMISSION_GRANTED) {
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         } else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
@@ -298,7 +302,7 @@ public class MapFragment extends Fragment implements LocationListener {
                 Toast.makeText(getContext(), "Location chosen!", Toast.LENGTH_SHORT).show();
                 addLocation(dest);
                 bottomNavigationView.setVisibility(View.VISIBLE);
-                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+                ((AppCompatActivity) getActivity()).getSupportActionBar().show();
                 MainActivity.fragmentManager.popBackStackImmediate();
             }
         });
@@ -317,14 +321,4 @@ public class MapFragment extends Fragment implements LocationListener {
             locationManager.removeUpdates(this);
         }
     }
-
-    @SuppressLint("MissingPermission")
-    private ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                } else {
-                    Toast.makeText(getContext(), "unable to access location", Toast.LENGTH_SHORT).show();
-                }
-            });
 }

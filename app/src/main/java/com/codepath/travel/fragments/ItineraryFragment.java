@@ -64,6 +64,7 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
 
     private static final String TAG = "ItineraryFragment";
     private static final String SEE_ALL_ITINERARIES = "ALL";
+    public static ArrayList<Destination> allDestinations;
     private TextView tvMonthYear;
     private ImageButton btnPreviousMonth;
     private ImageButton btnNextMonth;
@@ -72,7 +73,6 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
     private CalendarAdapter adapter;
     private Button btnWeeklyView;
     private Spinner destinationSpinner;
-    public static ArrayList<Destination> allDestinations;
     private ArrayList<TouristDestination> unscheduledEvents;
     private ArrayList<TouristDestination> scheduledEvents;
 

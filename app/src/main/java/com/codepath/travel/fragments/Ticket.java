@@ -33,10 +33,42 @@ import okhttp3.Headers;
 
 public class Ticket {
 
+    public static final String[] sortMethods = {"", "Cost", "Departure Date", "Airline"};
+    public static final Comparator<Flight> compareCost = new Comparator<Flight>() {
+        @Override
+        public int compare(Flight o1, Flight o2) {
+            if (Integer.parseInt(o1.getFlightCost()) < Integer.parseInt(o2.getFlightCost())) {
+                return -1;
+            } else if (Integer.parseInt(o1.getFlightCost()) > Integer.parseInt(o2.getFlightCost())) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    };
+    public static final Comparator<Flight> compareDate = new Comparator<Flight>() {
+        @Override
+        public int compare(Flight o1, Flight o2) {
+            LocalDate date1 = CalendarUtils.getLocalDate(o1.getDate());
+            LocalDate date2 = CalendarUtils.getLocalDate(o2.getDate());
+            if (date1.isBefore(date2)) {
+                return -1;
+            } else if (date1.isAfter(date2)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    };
+    public static final Comparator<Flight> compareAirline = new Comparator<Flight>() {
+        @Override
+        public int compare(Flight o1, Flight o2) {
+            return o1.getCarrier().compareTo(o2.getCarrier());
+        }
+    };
     private static final String getRoutesURLBase = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/US/USD/en-US/%1$s/%2$s/anytime?inboundpartialdate=anytime";
     private static final String getRoundtripURLBase = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/US/USD/en/%1$s/%2$s/anytime/anytime";
     private static final String rapidapiHostURL = "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com";
-    public static final String[] sortMethods = {"", "Cost", "Departure Date", "Airline"};
     public static Flight chosenOutboundFlight;
     public static Flight chosenInboundFlight;
     private final Dictionary<Integer, String> placesCode;
@@ -54,41 +86,6 @@ public class Ticket {
         this.activity = activity;
         this.pbFlights = pbFlights;
     }
-
-    public static final Comparator<Flight> compareCost = new Comparator<Flight>() {
-        @Override
-        public int compare(Flight o1, Flight o2) {
-            if (Integer.parseInt(o1.getFlightCost()) < Integer.parseInt(o2.getFlightCost())) {
-                return -1;
-            } else if (Integer.parseInt(o1.getFlightCost()) > Integer.parseInt(o2.getFlightCost())) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-    };
-
-    public static final Comparator<Flight> compareDate = new Comparator<Flight>() {
-        @Override
-        public int compare(Flight o1, Flight o2) {
-            LocalDate date1 = CalendarUtils.getLocalDate(o1.getDate());
-            LocalDate date2 = CalendarUtils.getLocalDate(o2.getDate());
-            if (date1.isBefore(date2)) {
-                return -1;
-            } else if (date1.isAfter(date2)) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-    };
-
-    public static final Comparator<Flight> compareAirline = new Comparator<Flight>() {
-        @Override
-        public int compare(Flight o1, Flight o2) {
-            return o1.getCarrier().compareTo(o2.getCarrier());
-        }
-    };
 
     public static void displayTicket(Flight flight, View ticket) {
         TextView tvDepartAirport = ticket.findViewById(R.id.tvDepartAirport);

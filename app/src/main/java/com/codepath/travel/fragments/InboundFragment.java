@@ -40,11 +40,11 @@ import static android.app.Activity.RESULT_OK;
 public class InboundFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "InboundFragment";
+    private static Button btnConfirm;
     private ProgressBar pbFlights;
     private ArrayList<Flight> flights;
     private RecyclerView rvFlights;
     private FlightsAdapter adapter;
-    private static Button btnConfirm;
     private View ticket;
     private Spinner spinnerSortBy;
 
@@ -55,18 +55,6 @@ public class InboundFragment extends Fragment implements AdapterView.OnItemSelec
     public static InboundFragment newInstance() {
         InboundFragment fragment = new InboundFragment();
         return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_inbound, container, false);
     }
 
     // User has selected a ticket, but not clicked confirm button yet
@@ -80,6 +68,18 @@ public class InboundFragment extends Fragment implements AdapterView.OnItemSelec
         btnConfirm.setBackgroundColor(context.getResources().getColor(R.color.pastel_pink));
         Ticket.displayTicket(flight, ticket);
         ticket.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_inbound, container, false);
     }
 
     @Override

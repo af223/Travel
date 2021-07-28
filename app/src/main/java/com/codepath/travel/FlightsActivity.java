@@ -53,11 +53,13 @@ public class FlightsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Destination thisDestination;
     private Fragment fragment;
+    private static Boolean isDestroyed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flights);
+        isDestroyed = false;
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -249,7 +251,9 @@ public class FlightsActivity extends AppCompatActivity {
 
     private void loadChosenTickets() {
         fragment = new ChosenTicketsFragment(thisDestination);
-        fragmentManager.beginTransaction().replace(R.id.flTickets, fragment).commit();
+        if (!isDestroyed) {
+            fragmentManager.beginTransaction().replace(R.id.flTickets, fragment).commit();
+        }
     }
 
     private void clearOutboundFlightData() {
@@ -275,9 +279,16 @@ public class FlightsActivity extends AppCompatActivity {
             return true;
         }
         if (item.getItemId() == android.R.id.home) {
+            isDestroyed = true;
             supportFinishAfterTransition();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        isDestroyed = true;
+        super.onDestroy();
     }
 }
