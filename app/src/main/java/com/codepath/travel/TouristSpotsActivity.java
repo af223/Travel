@@ -92,13 +92,13 @@ public class TouristSpotsActivity extends AppCompatActivity {
         btnQueryActivity = findViewById(R.id.btnQueryActivity);
 
         touristSpots = new ArrayList<>();
-        loadDestination();
-
         selectedType = new boolean[typeArray.length];
         latitude = getIntent().getStringExtra(Destination.KEY_LAT);
         longitude = getIntent().getStringExtra(Destination.KEY_LONG);
         destinationID = getIntent().getStringExtra(Destination.KEY_OBJECT_ID);
         offset = 0;
+
+        loadDestination();
     }
 
     private void loadDestination() {

@@ -15,12 +15,21 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.codepath.travel.adapters.TouristActivitiesAdapter;
 import com.codepath.travel.fragments.ChosenTicketsFragment;
 import com.codepath.travel.models.Destination;
+import com.codepath.travel.models.TouristDestination;
+import com.codepath.travel.models.YelpData;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.codepath.travel.MainActivity.logout;
 
@@ -45,6 +54,9 @@ public class AllPlansActivity extends AppCompatActivity {
     private TextView tvHotelEmail;
     private TextView tvHotelAddress;
     private TextView tvHotelDescription;
+    private RecyclerView rvChosenActivities;
+    private TouristActivitiesAdapter activitiesAdapter;
+    private ArrayList<YelpData> chosenActivities;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +68,16 @@ public class AllPlansActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("All Plans");
 
-        bindViews();
+        // prevents E/RecyclerView: No adapter attached; skipping layout error
+        chosenActivities = new ArrayList<>();
+        rvChosenActivities = findViewById(R.id.rvChosenActivities);
+        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
+        activitiesAdapter = new TouristActivitiesAdapter(AllPlansActivity.this, chosenActivities, null);
+        rvChosenActivities.setLayoutManager(gridLayoutManager);
+        rvChosenActivities.setAdapter(activitiesAdapter);
 
+        bindViews();
         fragmentManager = getSupportFragmentManager();
         loadDestination();
     }
@@ -84,9 +104,39 @@ public class AllPlansActivity extends AppCompatActivity {
                     Toast.makeText(AllPlansActivity.this, "Unable to load destination", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                activitiesAdapter = new TouristActivitiesAdapter(AllPlansActivity.this, chosenActivities, destination);
+                rvChosenActivities.setAdapter(activitiesAdapter);
+
+                fetchChosenActivities(destination);
                 Fragment fragment = new ChosenTicketsFragment(destination);
                 fragmentManager.beginTransaction().replace(R.id.flTickets, fragment).commit();
                 displayHotel(destination);
+            }
+        });
+    }
+
+    private void fetchChosenActivities(Destination destination) {
+        ParseQuery<TouristDestination> query = ParseQuery.getQuery(TouristDestination.class);
+        query.whereEqualTo(TouristDestination.KEY_DESTINATION, destination);
+        query.findInBackground(new FindCallback<TouristDestination>() {
+            @Override
+            public void done(List<TouristDestination> touristDestinations, ParseException e) {
+                if (e != null) {
+                    Toast.makeText(AllPlansActivity.this, "Unable to find activities", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                for (TouristDestination touristDestination : touristDestinations) {
+                    Integer numReviews = -1;
+                    if (touristDestination.getCommentCount() != null) {
+                        numReviews = Integer.parseInt(touristDestination.getCommentCount());
+                    }
+                    YelpData activity = new YelpData(touristDestination.getName(), touristDestination.getRating(),
+                            touristDestination.getImageURL(), touristDestination.getYelpURL(), "", "",
+                            touristDestination.getPlaceId(), numReviews);
+                    activity.flipChosen();
+                    chosenActivities.add(activity);
+                }
+                activitiesAdapter.notifyDataSetChanged();
             }
         });
     }

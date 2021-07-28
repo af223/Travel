@@ -117,7 +117,7 @@ public class CalendarUtils {
                 busyTimeSlots.put(dateOfVisit, new ArrayList<>());
             }
             LocalTime timeOfVisit = getLocalTime(touristDestination.getTimeVisited());
-            LocalTime endVisitTime = timeOfVisit.plusHours(Integer.parseInt(touristDestination.getVisitLength()));
+            LocalTime endVisitTime = getLocalTime(touristDestination.getVisitEnd());
             Pair block = new Pair(timeOfVisit, endVisitTime);
             busyTimeSlots.get(dateOfVisit).add(block);
             Event event = new Event(touristDestination.getName(), getLocalDate(touristDestination.getDateVisited()), timeOfVisit, endVisitTime);
@@ -182,13 +182,13 @@ public class CalendarUtils {
         eventsList.add(event);
         Pair block = new Pair(timeOfVisit, timeOfVisit.plusHours(2));
         busyTimeSlots.get(dateOfVisit.toString()).add(index, block);
-        saveEvent(touristDestination, dateOfVisit.toString(), "2", timeOfVisit.toString());
+        saveEvent(touristDestination, dateOfVisit.toString(), timeOfVisit.toString(), formatStoredTime(event.getEndTime()));
     }
 
     public static void saveEvent(TouristDestination touristDestination, String dateVisited,
-                                 String visitLength, String timeVisited) {
+                                 String timeVisited, String visitEnd) {
         touristDestination.setDateVisited(dateVisited);
-        touristDestination.setVisitLength(visitLength);
+        touristDestination.setVisitEnd(visitEnd);
         touristDestination.setTimeVisited(timeVisited);
         touristDestination.saveInBackground();
     }

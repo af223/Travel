@@ -179,6 +179,29 @@
                         android:text="N/A" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tvPickedActivities"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/card_view_hotel"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:textSize="20sp"
+                android:text="Chosen Activities:"
+                android:textColor="@color/brown"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvChosenActivities"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_below="@+id/tvPickedActivities"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="4dp"
+                android:paddingBottom="16dp"/>
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

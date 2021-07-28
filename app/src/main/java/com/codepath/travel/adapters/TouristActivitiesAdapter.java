@@ -73,8 +73,13 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
 
         public void bind(YelpData touristSpot) {
             tvBusinessName.setText(touristSpot.getBusinessName());
-            String numReviews = touristSpot.getReviewCount() + " reviews";
-            tvCommentCount.setText(numReviews);
+            if (touristSpot.getReviewCount() < 0) {
+                tvCommentCount.setVisibility(View.GONE);
+            } else {
+                String numReviews = touristSpot.getReviewCount() + " reviews";
+                tvCommentCount.setText(numReviews);
+                tvCommentCount.setVisibility(View.VISIBLE);
+            }
             if (touristSpot.isChosen()) {
                 ibAddTouristDest.setClickable(false);
                 ibAddTouristDest.setImageResource(R.drawable.ic_baseline_check_24);
@@ -91,14 +96,19 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
                     }
                 });
             }
-            if (!touristSpot.getImageURL().isEmpty()) {
+            if (touristSpot.getImageURL() != null && !touristSpot.getImageURL().isEmpty()) {
                 // prevents item reordering when scrolling up in staggeredgridlayout
                 Glide.with(context).load(R.drawable.no_photo_placeholder).into(ivBusinessPicture);
                 ivBusinessPicture.layout(0, 0, 0, 0);
                 Glide.with(context).load(touristSpot.getImageURL()).into(ivBusinessPicture);
             }
             YelpData.linkToYelp(touristSpot.getYelpURL(), ibYelpPage, context);
-            YelpData.displayRatingBar(ivYelpRating, touristSpot.getRating(), context);
+            if (touristSpot.getRating() == null) {
+                ivYelpRating.setVisibility(View.GONE);
+            } else {
+                ivYelpRating.setVisibility(View.VISIBLE);
+                YelpData.displayRatingBar(ivYelpRating, touristSpot.getRating(), context);
+            }
         }
     }
 }

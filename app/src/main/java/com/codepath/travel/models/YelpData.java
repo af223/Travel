@@ -75,6 +75,11 @@ public class YelpData {
     }
 
     public static void linkToYelp(String yelpURL, ImageButton ibYelp, Context context) {
+        if (yelpURL == null) {
+            ibYelp.setVisibility(View.GONE);
+            return;
+        }
+        ibYelp.setVisibility(View.VISIBLE);
         ibYelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,6 +141,10 @@ public class YelpData {
         touristDestination.setPlaceId(touristSpot.getBusinessID());
         touristDestination.setName(touristSpot.getBusinessName());
         touristDestination.setDestination(destination);
+        touristDestination.setImageURL(touristSpot.getImageURL());
+        touristDestination.setYelpURL(touristSpot.getYelpURL());
+        touristDestination.setRating(touristSpot.getRating());
+        touristDestination.setCommentCount(touristSpot.getReviewCount());
         touristDestination.saveInBackground();
     }
 

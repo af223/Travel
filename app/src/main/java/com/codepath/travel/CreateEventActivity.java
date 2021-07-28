@@ -203,7 +203,7 @@ public class CreateEventActivity extends AppCompatActivity implements AdapterVie
         createdEvent.setName(eventName);
         createdEvent.setDateVisited(chosenEventDate.toString());
         createdEvent.setTimeVisited(formatStoredTime(time));
-        createdEvent.setVisitLength(String.valueOf(endTime.getHour() - time.getHour()));
+        createdEvent.setVisitEnd(formatStoredTime(endTime));
         createdEvent.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {

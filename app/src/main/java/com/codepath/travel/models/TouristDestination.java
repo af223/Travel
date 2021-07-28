@@ -4,8 +4,6 @@ import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
-import java.util.Date;
-
 @ParseClassName("TouristDestination")
 public class TouristDestination extends ParseObject {
     public static final String KEY_USER = "user";
@@ -14,7 +12,11 @@ public class TouristDestination extends ParseObject {
     public static final String KEY_DATE_VISIT = "dateVisited";
     public static final String KEY_NAME = "businessName";
     public static final String KEY_TIME_VISIT = "timeVisited";
-    public static final String KEY_VISIT_LENGTH = "visitLength";
+    public static final String KEY_VISIT_END = "timeLeft";
+    public static final String KEY_IMAGE = "imageURL";
+    public static final String KEY_YELP = "yelpURL";
+    public static final String KEY_RATING = "rating";
+    public static final String KEY_COMMENT = "commentCount";
 
     public ParseUser getUser() {
         return getParseUser(KEY_USER);
@@ -64,12 +66,44 @@ public class TouristDestination extends ParseObject {
         put(KEY_TIME_VISIT, timeVisited);
     }
 
-    public String getVisitLength() {
-        return getString(KEY_VISIT_LENGTH);
+    public String getVisitEnd() {
+        return getString(KEY_VISIT_END);
     }
 
-    public void setVisitLength(String length) {
+    public void setVisitEnd(String endTime) {
         // stored in 24-hour time
-        put(KEY_VISIT_LENGTH, length);
+        put(KEY_VISIT_END, endTime);
+    }
+
+    public String getImageURL() {
+        return getString(KEY_IMAGE);
+    }
+
+    public void setImageURL(String imageURL) {
+        put(KEY_IMAGE, imageURL);
+    }
+
+    public String getYelpURL() {
+        return getString(KEY_YELP);
+    }
+
+    public void setYelpURL(String yelpURL) {
+        put(KEY_YELP, yelpURL);
+    }
+
+    public String getRating() {
+        return getString(KEY_RATING);
+    }
+
+    public void setRating(String rating) {
+        put(KEY_RATING, rating);
+    }
+
+    public String getCommentCount() {
+        return getString(KEY_COMMENT);
+    }
+
+    public void setCommentCount(Integer commentCount) {
+        put(KEY_COMMENT, String.valueOf(commentCount));
     }
 }
