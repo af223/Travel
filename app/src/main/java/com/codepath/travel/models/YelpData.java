@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.travel.R;
 import com.parse.ParseUser;
 
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 
 public class YelpData {
 
+    private static final Integer NUM_LOAD_BUSINESSES = 25;
     private final String businessName;
     private final String rating;
     private final String imageURL;
@@ -146,6 +148,25 @@ public class YelpData {
         touristDestination.setRating(touristSpot.getRating());
         touristDestination.setCommentCount(touristSpot.getReviewCount());
         touristDestination.saveInBackground();
+    }
+
+    public static RequestParams createRequestParams(String latitude, String longitude, String categoryParameter, String keywordQuery, int offset) {
+        RequestParams params = new RequestParams();
+        params.put("latitude", latitude);
+        params.put("longitude", longitude);
+        if (!categoryParameter.isEmpty()) {
+            params.put("categories", categoryParameter);
+        }
+        if (!keywordQuery.isEmpty()) {
+            params.put("term", keywordQuery);
+        }
+        params.put("limit", NUM_LOAD_BUSINESSES);
+        params.put("offset", offset);
+        return params;
+    }
+
+    public static int getNumLoadBusiness() {
+        return NUM_LOAD_BUSINESSES;
     }
 
     public String getBusinessName() {

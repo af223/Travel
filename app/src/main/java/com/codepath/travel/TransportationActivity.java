@@ -23,10 +23,10 @@ import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.adapters.TransportationsAdapter;
 import com.codepath.travel.models.Destination;
+import com.codepath.travel.models.FilterDialog;
 import com.codepath.travel.models.YelpData;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import okhttp3.Headers;
 
@@ -44,14 +44,13 @@ public class TransportationActivity extends AppCompatActivity {
     private static final String TAG = "TransportationActivity";
     private static final String YELP_BUSINESS_SEARCH_URL = "https://api.yelp.com/v3/businesses/search";
     private static final String CATEGORIES = "transport,carrental,bikerentals,motorcycle_rental,trainstations";
-    private static final Integer NUM_LOAD_BUSINESSES = 25;
     private static int offset;
     private static String categoryParameter;
     private ProgressBar progressBarTransportation;
     private final ArrayList<Integer> typeList = new ArrayList<>();
-    private final String[] typeAlias = {CATEGORIES, "carrental", "bikerentals", "taxis", "motorcycle_rental",
+    private static final String[] typeAlias = {CATEGORIES, "carrental", "bikerentals", "taxis", "motorcycle_rental",
             "trainstations", "buses"};
-    private final String[] typeArray = {"See all", "Car Rentals", "Bike Rentals", "Taxis", "Motorcycle Rental",
+    private static final String[] typeArray = {"See all", "Car Rentals", "Bike Rentals", "Taxis", "Motorcycle Rental",
             "Train Stations", "Buses"};
     private Toolbar toolbar;
     private TextView tvTransportType;
@@ -60,6 +59,7 @@ public class TransportationActivity extends AppCompatActivity {
     private TransportationsAdapter adapter;
     private ArrayList<YelpData> transportations;
     private EndlessRecyclerViewScrollListener scrollListener;
+    private FilterDialog filterDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,18 +98,17 @@ public class TransportationActivity extends AppCompatActivity {
         };
         rvTransportations.addOnScrollListener(scrollListener);
         categoryParameter = CATEGORIES;
+
+        filterDialog = new FilterDialog(selectedType, typeList, typeArray, tvTransportType);
         loadTransportation();
     }
 
     private void loadTransportation() {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestHeaders headers = new RequestHeaders();
-        RequestParams params = new RequestParams();
-        params.put("latitude", getIntent().getStringExtra(Destination.KEY_LAT));
-        params.put("longitude", getIntent().getStringExtra(Destination.KEY_LONG));
-        params.put("categories", categoryParameter);
-        params.put("limit", NUM_LOAD_BUSINESSES);
-        params.put("offset", offset);
+        String latitude = getIntent().getStringExtra(Destination.KEY_LAT);
+        String longitude = getIntent().getStringExtra(Destination.KEY_LONG);
+        RequestParams params = YelpData.createRequestParams(latitude, longitude, categoryParameter, "", offset);
         headers.put("Authorization", "Bearer " + getResources().getString(R.string.yelp_api_key));
         client.get(YELP_BUSINESS_SEARCH_URL, headers, params, new JsonHttpResponseHandler() {
             @Override
@@ -117,7 +116,7 @@ public class TransportationActivity extends AppCompatActivity {
                 YelpData.processYelpResults(transportations, json.jsonObject, TransportationActivity.this);
                 adapter.notifyDataSetChanged();
                 progressBarTransportation.setVisibility(View.GONE);
-                offset += NUM_LOAD_BUSINESSES;
+                offset += YelpData.getNumLoadBusiness();
             }
 
             @Override
@@ -130,19 +129,7 @@ public class TransportationActivity extends AppCompatActivity {
 
     private void showCategorySelecter() {
         AlertDialog.Builder builder = new AlertDialog.Builder(TransportationActivity.this, R.style.AppCompatAlertDialogStyle);
-        builder.setTitle("Select a category");
-        builder.setCancelable(false);
-        builder.setMultiChoiceItems(typeArray, selectedType, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                if (isChecked) {
-                    typeList.add(which);
-                    Collections.sort(typeList);
-                } else {
-                    typeList.remove(Integer.valueOf(which));
-                }
-            }
-        });
+        filterDialog.buildSelectorDialog(builder);
 
         builder.setPositiveButton("Filter", new DialogInterface.OnClickListener() {
             @Override
@@ -163,30 +150,7 @@ public class TransportationActivity extends AppCompatActivity {
             }
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                resetCategoryFilter();
-                builder.show();
-            }
-        });
-
         builder.show();
-    }
-
-    private void resetCategoryFilter() {
-        for (int i = 0; i < selectedType.length; i++) {
-            selectedType[i] = false;
-            typeList.clear();
-            tvTransportType.setText("");
-        }
     }
 
     private void setUpToLoadResults() {
