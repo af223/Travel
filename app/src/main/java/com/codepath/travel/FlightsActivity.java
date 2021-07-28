@@ -148,15 +148,29 @@ public class FlightsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == CHOOSE_ONE_WAY_FLIGHT_REQUEST_CODE) {
+                Flight chosenOutFlight = null;
+                Flight chosenInFlight = null;
+                String inboundDate;
+                String outboundDate;
                 if (data.hasExtra(getString(R.string.outbound))) {
-                    Flight chosenOutFlight = Parcels.unwrap(data.getParcelableExtra(getString(R.string.outbound)));
-                    saveOutboundFlightData(chosenOutFlight);
+                    chosenOutFlight = Parcels.unwrap(data.getParcelableExtra(getString(R.string.outbound)));
+                    outboundDate = chosenOutFlight.getDate();
+                } else {
+                    outboundDate = thisDestination.getDate();
                 }
                 if (data.hasExtra(getString(R.string.inbound))) {
-                    Flight chosenInFlight = Parcels.unwrap(data.getParcelableExtra(getString(R.string.inbound)));
-                    saveInboundFlightData(chosenInFlight);
+                    chosenInFlight = Parcels.unwrap(data.getParcelableExtra(getString(R.string.inbound)));
+                    inboundDate = chosenInFlight.getDate();
+                } else {
+                    inboundDate = thisDestination.getInboundDate();
                 }
-
+                if (inboundDate != null && !inboundDate.isEmpty() && outboundDate != null && !outboundDate.isEmpty() &&
+                        CalendarUtils.getLocalDate(inboundDate).isBefore(CalendarUtils.getLocalDate(outboundDate))) {
+                    Toast.makeText(FlightsActivity.this, "Unable to choose flights, inbound date must be on or after outbound date", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                saveOutboundFlightData(chosenOutFlight);
+                saveInboundFlightData(chosenInFlight);
             } else if (requestCode == CHOOSE_ROUND_FLIGHT_REQUEST_CODE) {
                 Flight chosenOutFlight = Parcels.unwrap(data.getParcelableExtra(getString(R.string.outbound)));
                 saveOutboundFlightData(chosenOutFlight);
@@ -168,29 +182,31 @@ public class FlightsActivity extends AppCompatActivity {
     }
 
     private void saveOutboundFlightData(Flight chosenFlight) {
-        thisDestination.setDepartAirportCode(chosenFlight.getDepartAirportCode());
-        thisDestination.setDepartAirportName(chosenFlight.getDepartAirportName());
-        thisDestination.setArriveAirportCode(chosenFlight.getArriveAirportCode());
-        thisDestination.setArriveAirportName(chosenFlight.getArriveAirportName());
-        thisDestination.setCost(chosenFlight.getFlightCost());
-        thisDestination.setCarrier(chosenFlight.getCarrier());
-        thisDestination.setDate(chosenFlight.getDate());
-        if (thisDestination.isRoundtrip() != null && thisDestination.isRoundtrip() && !chosenFlight.isRoundtrip()) {
-            clearInboundFlightData();
-        }
-        thisDestination.setIsRoundtrip(chosenFlight.isRoundtrip());
-        thisDestination.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null) {
-                    Log.e(TAG, "Error while saving flight: ", e);
-                    Toast.makeText(FlightsActivity.this, "Error while saving flight", Toast.LENGTH_SHORT).show();
-                } else {
-                    loadChosenTickets();
-                    Toast.makeText(FlightsActivity.this, "flight chosen!", Toast.LENGTH_SHORT).show();
-                }
+        if (chosenFlight != null) {
+            thisDestination.setDepartAirportCode(chosenFlight.getDepartAirportCode());
+            thisDestination.setDepartAirportName(chosenFlight.getDepartAirportName());
+            thisDestination.setArriveAirportCode(chosenFlight.getArriveAirportCode());
+            thisDestination.setArriveAirportName(chosenFlight.getArriveAirportName());
+            thisDestination.setCost(chosenFlight.getFlightCost());
+            thisDestination.setCarrier(chosenFlight.getCarrier());
+            thisDestination.setDate(chosenFlight.getDate());
+            if (thisDestination.isRoundtrip() != null && thisDestination.isRoundtrip() && !chosenFlight.isRoundtrip()) {
+                clearInboundFlightData();
             }
-        });
+            thisDestination.setIsRoundtrip(chosenFlight.isRoundtrip());
+            thisDestination.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {
+                        Log.e(TAG, "Error while saving flight: ", e);
+                        Toast.makeText(FlightsActivity.this, "Error while saving flight", Toast.LENGTH_SHORT).show();
+                    } else {
+                        loadChosenTickets();
+                        Toast.makeText(FlightsActivity.this, "flight chosen!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
 
     private void clearInboundFlightData() {
@@ -204,29 +220,31 @@ public class FlightsActivity extends AppCompatActivity {
     }
 
     private void saveInboundFlightData(Flight chosenFlight) {
-        thisDestination.setInboundDepartCode(chosenFlight.getDepartAirportCode());
-        thisDestination.setInboundDepartName(chosenFlight.getDepartAirportName());
-        thisDestination.setInboundArriveCode(chosenFlight.getArriveAirportCode());
-        thisDestination.setInboundArriveName(chosenFlight.getArriveAirportName());
-        thisDestination.setInboundCost(chosenFlight.getFlightCost());
-        thisDestination.setInboundCarrier(chosenFlight.getCarrier());
-        thisDestination.setInboundDate(chosenFlight.getDate());
-        if (thisDestination.isRoundtrip() != null && thisDestination.isRoundtrip() && !chosenFlight.isRoundtrip()) {
-            clearOutboundFlightData();
-        }
-        thisDestination.setIsRoundtrip(chosenFlight.isRoundtrip());
-        thisDestination.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null) {
-                    Log.e(TAG, "Error while saving flight: ", e);
-                    Toast.makeText(FlightsActivity.this, "Error while saving flight", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                loadChosenTickets();
-                Toast.makeText(FlightsActivity.this, "flight chosen!", Toast.LENGTH_SHORT).show();
+        if (chosenFlight != null) {
+            thisDestination.setInboundDepartCode(chosenFlight.getDepartAirportCode());
+            thisDestination.setInboundDepartName(chosenFlight.getDepartAirportName());
+            thisDestination.setInboundArriveCode(chosenFlight.getArriveAirportCode());
+            thisDestination.setInboundArriveName(chosenFlight.getArriveAirportName());
+            thisDestination.setInboundCost(chosenFlight.getFlightCost());
+            thisDestination.setInboundCarrier(chosenFlight.getCarrier());
+            thisDestination.setInboundDate(chosenFlight.getDate());
+            if (thisDestination.isRoundtrip() != null && thisDestination.isRoundtrip() && !chosenFlight.isRoundtrip()) {
+                clearOutboundFlightData();
             }
-        });
+            thisDestination.setIsRoundtrip(chosenFlight.isRoundtrip());
+            thisDestination.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {
+                        Log.e(TAG, "Error while saving flight: ", e);
+                        Toast.makeText(FlightsActivity.this, "Error while saving flight", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    loadChosenTickets();
+                    Toast.makeText(FlightsActivity.this, "flight chosen!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void loadChosenTickets() {

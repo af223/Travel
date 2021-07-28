@@ -30,7 +30,6 @@ public class CalendarUtils {
     public static Destination selectedDestination;
     public static HashMap<Destination, Integer> destinationColorCode = new HashMap<>();
     public static HashMap<String, Destination> datesOfInterest = new HashMap<>();
-    public static HashMap<Destination, String> inboundArrivalDates = new HashMap<>();
     public static HashMap<String, ArrayList<Pair<LocalTime, LocalTime>>> busyTimeSlots = new HashMap<>();
     public static HashMap<Destination, LocalDate> nextAvailableDate = new HashMap<>();
 

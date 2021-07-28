@@ -90,6 +90,8 @@ public class InboundFragment extends Fragment implements AdapterView.OnItemSelec
                 if (Ticket.chosenInboundFlight != null) {
                     intent.putExtra(getString(R.string.inbound), Parcels.wrap(Ticket.chosenInboundFlight));
                 }
+                Ticket.chosenInboundFlight = null;
+                Ticket.chosenOutboundFlight = null;
                 getActivity().finish();
             }
         });

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import static com.codepath.travel.CalendarUtils.datesOfInterest;
 import static com.codepath.travel.CalendarUtils.destinationColorCode;
 import static com.codepath.travel.CalendarUtils.getLocalDate;
-import static com.codepath.travel.CalendarUtils.inboundArrivalDates;
 import static com.codepath.travel.CalendarUtils.selectedDate;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHolder> {
@@ -94,8 +93,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
                 if (datesOfInterest.containsKey(date.toString())) {
                     Destination destination = datesOfInterest.get(date.toString());
                     clCalendarCell.setBackgroundColor(destinationColorCode.get(destination));
-                    if (date.isEqual(getLocalDate(destination.getDate())) && inboundArrivalDates.get(destination) != null) {
-                        while(date.isBefore(getLocalDate(inboundArrivalDates.get(destination)))) {
+                    if (date.isEqual(getLocalDate(destination.getDate())) && destination.getInboundDate() != null) {
+                        LocalDate returnDate = getLocalDate(destination.getInboundDate());
+                        while(date.isBefore(returnDate)) {
                             date = date.plusDays(1);
                             datesOfInterest.put(date.toString(), destination);
                         }

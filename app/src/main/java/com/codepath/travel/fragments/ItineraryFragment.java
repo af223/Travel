@@ -47,7 +47,6 @@ import static com.codepath.travel.CalendarUtils.formatDate;
 import static com.codepath.travel.CalendarUtils.generateDestinationColorCode;
 import static com.codepath.travel.CalendarUtils.getDaysInMonth;
 import static com.codepath.travel.CalendarUtils.getLocalDate;
-import static com.codepath.travel.CalendarUtils.inboundArrivalDates;
 import static com.codepath.travel.CalendarUtils.nextAvailableDate;
 import static com.codepath.travel.CalendarUtils.scheduleTheseEvents;
 import static com.codepath.travel.CalendarUtils.selectedDate;
@@ -181,7 +180,6 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                 for (Destination destination : destinations) {
                     destinationNames.add(destination.getFormattedLocationName());
                     datesOfInterest.put(destination.getDate(), destination);
-                    inboundArrivalDates.put(destination, destination.getInboundDate());
                     String arrivalName;
                     Event event;
                     if (destination.getDate() != null) {

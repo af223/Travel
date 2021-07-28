@@ -99,6 +99,8 @@ public class RoundtripFlightsActivity extends AppCompatActivity implements Adapt
                 setResult(RESULT_OK, intent);
                 intent.putExtra(getString(R.string.outbound), Parcels.wrap(chosenOutboundFlight));
                 intent.putExtra(getString(R.string.inbound), Parcels.wrap(chosenInboundFlight));
+                chosenInboundFlight = null;
+                chosenOutboundFlight = null;
                 finish();
             }
         });
