@@ -241,8 +241,15 @@ public class CostsFragment extends Fragment {
                     if (destination.getHotelCost() != null) {
                         createExpense(destination.getHotelName() + " (" + destination.getCountry() + ")", destination.getHotelCost());
                     }
-                    if (destination.getCost()!= null) {
-                        createExpense("Flight to " + destination.getArriveAirportName(), destination.getCost());
+                    if (destination.isRoundtrip() != null && destination.isRoundtrip()) {
+                        createExpense("Roundtrip flight to " + destination.getArriveAirportName(), destination.getCost());
+                    } else {
+                        if (destination.getCost()!= null) {
+                            createExpense("Flight to " + destination.getArriveAirportName(), destination.getCost());
+                        }
+                        if (destination.getInboundCost() != null) {
+                            createExpense("Return flight from" + destination.getFormattedLocationName(), destination.getInboundCost());
+                        }
                     }
                 }
             }
