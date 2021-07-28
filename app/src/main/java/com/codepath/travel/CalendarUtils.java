@@ -55,6 +55,11 @@ public class CalendarUtils {
         return LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
     }
 
+    public static String formatStoredTime(LocalTime time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        return time.format(formatter);
+    }
+
     public static void getDaysInMonth(LocalDate date) {
         days.clear();
         YearMonth yearMonth = YearMonth.from(date);

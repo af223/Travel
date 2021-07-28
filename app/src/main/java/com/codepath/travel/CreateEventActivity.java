@@ -33,6 +33,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static com.codepath.travel.CalendarUtils.formatStoredTime;
 import static com.codepath.travel.CalendarUtils.selectedDate;
 
 /**
@@ -62,6 +63,7 @@ public class CreateEventActivity extends AppCompatActivity implements AdapterVie
     private Spinner destinationSpinner;
     private CheckBox cbDestination;
     private Destination associatedDestination;
+    private String eventName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +131,7 @@ public class CreateEventActivity extends AppCompatActivity implements AdapterVie
                     Toast.makeText(CreateEventActivity.this, "End time must be after start time", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                String eventName = etEventName.getText().toString();
+                eventName = etEventName.getText().toString();
                 Event newEvent = new Event(eventName, chosenEventDate, time, endTime);
                 Event.eventsList.add(newEvent);
                 saveCreatedEvent();
@@ -198,6 +200,10 @@ public class CreateEventActivity extends AppCompatActivity implements AdapterVie
             createdEvent.setDestination(associatedDestination);
         }
         createdEvent.setPlaceId("N/A");
+        createdEvent.setName(eventName);
+        createdEvent.setDateVisited(chosenEventDate.toString());
+        createdEvent.setTimeVisited(formatStoredTime(time));
+        createdEvent.setVisitLength(String.valueOf(endTime.getHour() - time.getHour()));
         createdEvent.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
