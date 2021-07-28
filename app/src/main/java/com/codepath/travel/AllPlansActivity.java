@@ -57,11 +57,13 @@ public class AllPlansActivity extends AppCompatActivity {
     private RecyclerView rvChosenActivities;
     private TouristActivitiesAdapter activitiesAdapter;
     private ArrayList<YelpData> chosenActivities;
+    private Boolean isDestroyed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_plans);
+        isDestroyed = false;
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -106,11 +108,14 @@ public class AllPlansActivity extends AppCompatActivity {
                 }
                 activitiesAdapter = new TouristActivitiesAdapter(AllPlansActivity.this, chosenActivities, destination);
                 rvChosenActivities.setAdapter(activitiesAdapter);
-
-                fetchChosenActivities(destination);
+                if (!isDestroyed) {
+                    fetchChosenActivities(destination);
+                }
                 Fragment fragment = new ChosenTicketsFragment(destination);
-                fragmentManager.beginTransaction().replace(R.id.flTickets, fragment).commit();
-                displayHotel(destination);
+                if (!isDestroyed) {
+                    fragmentManager.beginTransaction().replace(R.id.flTickets, fragment).commit();
+                    displayHotel(destination);
+                }
             }
         });
     }
@@ -155,6 +160,12 @@ public class AllPlansActivity extends AppCompatActivity {
             tvHotelAddress.setText(destination.getHotelAddress());
             tvHotelDescription.setText(destination.getHotelDescription());
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        isDestroyed = true;
+        super.onDestroy();
     }
 
     @Override
