@@ -3,11 +3,14 @@ package com.codepath.travel;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -26,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import okhttp3.Headers;
+
+import static com.codepath.travel.MainActivity.logout;
 
 /**
  * This activity allows the user to find modes of transportation at the chosen destination.
@@ -190,5 +195,24 @@ public class TransportationActivity extends AppCompatActivity {
         transportations.clear();
         scrollListener.resetState();
         categoryParameter = "";
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.logout) {
+            logout(this);
+            return true;
+        }
+        if (item.getItemId() == android.R.id.home) {
+            supportFinishAfterTransition();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
