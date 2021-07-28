@@ -2,7 +2,6 @@ package com.codepath.travel;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,10 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.codepath.asynchttpclient.AsyncHttpClient;
-import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.adapters.TouristActivitiesAdapter;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.FilterDialog;
@@ -32,8 +28,6 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
-
-import okhttp3.Headers;
 
 import static com.codepath.travel.MainActivity.logout;
 
@@ -47,8 +41,6 @@ import static com.codepath.travel.MainActivity.logout;
 
 public class TouristSpotsActivity extends AppCompatActivity {
 
-    private static final String TAG = "TouristSpotsActivity";
-    private static final String YELP_BUSINESS_SEARCH_URL = "https://api.yelp.com/v3/businesses/search";
     private static String categoryParameter;
     private static String destinationID;
     private static Destination currDestination;
@@ -74,6 +66,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
     private EditText etQueryActivity;
     private Button btnQueryActivity;
     private FilterDialog filterDialog;
+    private Runnable touristSpotRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +93,15 @@ public class TouristSpotsActivity extends AppCompatActivity {
 
         filterDialog = new FilterDialog(selectedType, typeList, typeArray, tvActivityType);
 
+        touristSpotRunnable = new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+                pbTouristLoad.setVisibility(View.GONE);
+                offset += YelpData.getNumLoadBusiness();
+            }
+        };
+
         loadDestination();
     }
 
@@ -117,7 +119,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
                 scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
                     @Override
                     public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                        loadTouristResults();
+                        loadSearchResults();
                     }
                 };
                 rvTouristActivities.addOnScrollListener(scrollListener);
@@ -134,7 +136,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
                         keywordQuery = etQueryActivity.getText().toString();
                         etQueryActivity.setText("");
                         tvActivityType.setText(keywordQuery);
-                        loadTouristResults();
+                        loadSearchResults();
                     }
                 });
 
@@ -167,7 +169,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
                         categoryParameter += ",";
                     }
                 }
-                loadTouristResults();
+                loadSearchResults();
                 tvActivityType.setText(stringBuilder.toString());
             }
         });
@@ -184,26 +186,9 @@ public class TouristSpotsActivity extends AppCompatActivity {
         categoryParameter = "";
     }
 
-    private void loadTouristResults() {
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestHeaders headers = new RequestHeaders();
+    private void loadSearchResults() {
         RequestParams params = YelpData.createRequestParams(latitude, longitude, categoryParameter, keywordQuery, offset);
-        headers.put("Authorization", "Bearer " + getResources().getString(R.string.yelp_api_key));
-        client.get(YELP_BUSINESS_SEARCH_URL, headers, params, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Headers headers, JSON json) {
-                YelpData.processYelpResults(touristSpots, json.jsonObject, TouristSpotsActivity.this);
-                adapter.notifyDataSetChanged();
-                pbTouristLoad.setVisibility(View.GONE);
-                offset += YelpData.getNumLoadBusiness();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.e(TAG, "Tourist activities request failed: ", throwable);
-                Toast.makeText(TouristSpotsActivity.this, "Unable to find tourist activities", Toast.LENGTH_SHORT).show();
-            }
-        });
+        YelpData.loadDataFromYelp(params, touristSpots, TouristSpotsActivity.this, touristSpotRunnable);
     }
 
     @Override

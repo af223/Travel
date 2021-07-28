@@ -1,5 +1,6 @@
 package com.codepath.travel.models;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,7 +10,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.codepath.asynchttpclient.AsyncHttpClient;
+import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.R;
 import com.parse.ParseUser;
 
@@ -19,8 +23,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import okhttp3.Headers;
+
 public class YelpData {
 
+    private static final String YELP_BUSINESS_SEARCH_URL = "https://api.yelp.com/v3/businesses/search";
     private static final Integer NUM_LOAD_BUSINESSES = 25;
     private final String businessName;
     private final String rating;
@@ -163,6 +170,25 @@ public class YelpData {
         params.put("limit", NUM_LOAD_BUSINESSES);
         params.put("offset", offset);
         return params;
+    }
+
+    public static void loadDataFromYelp(RequestParams params, ArrayList<YelpData> transportations, Activity activity,
+                                        Runnable transportRunnable) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestHeaders headers = new RequestHeaders();
+        headers.put("Authorization", "Bearer " + activity.getResources().getString(R.string.yelp_api_key));
+        client.get(YELP_BUSINESS_SEARCH_URL, headers, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                YelpData.processYelpResults(transportations, json.jsonObject, activity);
+                activity.runOnUiThread(transportRunnable);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Toast.makeText(activity, "Unable to find tourist activities", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public static int getNumLoadBusiness() {

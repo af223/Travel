@@ -2,13 +2,11 @@ package com.codepath.travel;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -17,18 +15,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.codepath.asynchttpclient.AsyncHttpClient;
-import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.adapters.TransportationsAdapter;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.FilterDialog;
 import com.codepath.travel.models.YelpData;
 
 import java.util.ArrayList;
-
-import okhttp3.Headers;
 
 import static com.codepath.travel.MainActivity.logout;
 
@@ -41,8 +34,6 @@ import static com.codepath.travel.MainActivity.logout;
 
 public class TransportationActivity extends AppCompatActivity {
 
-    private static final String TAG = "TransportationActivity";
-    private static final String YELP_BUSINESS_SEARCH_URL = "https://api.yelp.com/v3/businesses/search";
     private static final String CATEGORIES = "transport,carrental,bikerentals,motorcycle_rental,trainstations";
     private static int offset;
     private static String categoryParameter;
@@ -60,6 +51,9 @@ public class TransportationActivity extends AppCompatActivity {
     private ArrayList<YelpData> transportations;
     private EndlessRecyclerViewScrollListener scrollListener;
     private FilterDialog filterDialog;
+    private String latitude;
+    private String longitude;
+    private Runnable transportRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,38 +87,26 @@ public class TransportationActivity extends AppCompatActivity {
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                loadTransportation();
+                loadSearchResults();
             }
         };
         rvTransportations.addOnScrollListener(scrollListener);
         categoryParameter = CATEGORIES;
 
         filterDialog = new FilterDialog(selectedType, typeList, typeArray, tvTransportType);
-        loadTransportation();
-    }
+        latitude = getIntent().getStringExtra(Destination.KEY_LAT);
+        longitude = getIntent().getStringExtra(Destination.KEY_LONG);
 
-    private void loadTransportation() {
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestHeaders headers = new RequestHeaders();
-        String latitude = getIntent().getStringExtra(Destination.KEY_LAT);
-        String longitude = getIntent().getStringExtra(Destination.KEY_LONG);
-        RequestParams params = YelpData.createRequestParams(latitude, longitude, categoryParameter, "", offset);
-        headers.put("Authorization", "Bearer " + getResources().getString(R.string.yelp_api_key));
-        client.get(YELP_BUSINESS_SEARCH_URL, headers, params, new JsonHttpResponseHandler() {
+        transportRunnable = new Runnable() {
             @Override
-            public void onSuccess(int statusCode, Headers headers, JSON json) {
-                YelpData.processYelpResults(transportations, json.jsonObject, TransportationActivity.this);
+            public void run() {
                 adapter.notifyDataSetChanged();
                 progressBarTransportation.setVisibility(View.GONE);
                 offset += YelpData.getNumLoadBusiness();
             }
+        };
 
-            @Override
-            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.e(TAG, "Tourist activities request failed: ", throwable);
-                Toast.makeText(TransportationActivity.this, "Unable to find tourist activities", Toast.LENGTH_SHORT).show();
-            }
-        });
+        loadSearchResults();
     }
 
     private void showCategorySelecter() {
@@ -145,7 +127,7 @@ public class TransportationActivity extends AppCompatActivity {
                         categoryParameter += ",";
                     }
                 }
-                loadTransportation();
+                loadSearchResults();
                 tvTransportType.setText(stringBuilder.toString());
             }
         });
@@ -159,6 +141,11 @@ public class TransportationActivity extends AppCompatActivity {
         transportations.clear();
         scrollListener.resetState();
         categoryParameter = "";
+    }
+
+    private void loadSearchResults() {
+        RequestParams params = YelpData.createRequestParams(latitude, longitude, categoryParameter, "", offset);
+        YelpData.loadDataFromYelp(params, transportations, TransportationActivity.this, transportRunnable);
     }
 
     @Override
