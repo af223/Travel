@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,11 +8,177 @@
     android:layout_height="match_parent"
     tools:context=".AllPlansActivity">
 
-    <FrameLayout
-        android:id="@+id/flTickets"
+    <include
+        layout="@layout/toolbar_main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true">
-    </FrameLayout>
+        android:layout_height="wrap_content" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/flTickets"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true">
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvPickedHotel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/flTickets"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:textSize="20sp"
+                android:text="No hotel chosen."
+                android:textColor="@color/brown"
+                android:textStyle="bold" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_view_hotel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvPickedHotel"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tvHotelName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@+id/tvHotelCost"
+                        android:text="Hotel Name"
+                        android:textColor="#000000"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvHotelCost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="12dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="5dp"
+                        android:text="Cost"
+                        android:textColor="#3D8F10" />
+
+                    <RatingBar
+                        android:id="@+id/rbRating"
+                        style="@style/Widget.AppCompat.RatingBar.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tvHotelName"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="3dp"
+                        android:indeterminateTint="#736767"
+                        android:progressBackgroundTint="#4A4343"
+                        android:progressTint="#FFC107" />
+
+                    <TextView
+                        android:id="@+id/tvHotelPhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rbRating"
+                        android:autoLink="phone"
+                        android:textColorLink="@color/darkest_green"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_toEndOf="@+id/ivHotelPhone"
+                        android:text="N/A" />
+
+                    <ImageView
+                        android:id="@+id/ivHotelPhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rbRating"
+                        android:layout_alignParentEnd="false"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        app:srcCompat="@drawable/ic_baseline_phone_24"
+                        app:tint="#000000" />
+
+                    <ImageView
+                        android:id="@+id/ivMail"
+                        android:layout_width="23dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rbRating"
+                        android:layout_toEndOf="@+id/tvHotelPhone"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="5dp"
+                        android:padding="0dp"
+                        app:srcCompat="@android:drawable/ic_dialog_email"
+                        app:tint="#000000" />
+
+                    <TextView
+                        android:id="@+id/tvHotelEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="email"
+                        android:textColorLink="@color/darkest_green"
+                        android:layout_below="@+id/rbRating"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="13dp"
+                        android:layout_toEndOf="@+id/ivMail"
+                        android:text="N/A" />
+
+                    <ImageView
+                        android:id="@+id/ivHotelAddress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tvHotelEmail"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentBottom="false"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="13dp"
+                        app:srcCompat="@drawable/ic_baseline_location_on_24"
+                        app:tint="#000000" />
+
+                    <TextView
+                        android:id="@+id/tvHotelAddress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tvHotelEmail"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="13dp"
+                        android:layout_toEndOf="@+id/ivHotelPhone"
+                        android:text="N/A" />
+
+                    <TextView
+                        android:id="@+id/tvHotelDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tvHotelAddress"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentBottom="false"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:scrollbars="vertical"
+                        android:textColor="@color/black"
+                        android:text="N/A" />
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

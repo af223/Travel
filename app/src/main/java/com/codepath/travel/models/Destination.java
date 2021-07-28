@@ -30,6 +30,8 @@ public class Destination extends ParseObject {
     public static final String KEY_HOTEL_ADDRESS = "hotelAddress";
     public static final String KEY_HOTEL_PHONE = "hotelPhone";
     public static final String KEY_HOTEL_DESCRIPTION = "hotelDescription";
+    public static final String KEY_HOTEL_EMAIL = "hotelEmail";
+    public static final String KEY_HOTEL_RATING = "hotelRating";
     public static final String KEY_INBOUND_DEPART_CODE = "inboundDepartCode";
     public static final String KEY_INBOUND_DEPART_NAME = "inboundDepartName";
     public static final String KEY_INBOUND_ARRIVE_CODE = "inboundArriveCode";
@@ -213,6 +215,22 @@ public class Destination extends ParseObject {
 
     public void setHotelDescription(String description) {
         put(KEY_HOTEL_DESCRIPTION, description);
+    }
+
+    public String getHotelEmail() {
+        return getString(KEY_HOTEL_EMAIL);
+    }
+
+    public void setHotelEmail(String email) {
+        put(KEY_HOTEL_EMAIL, email);
+    }
+
+    public String getHotelRating() {
+        return getString(KEY_HOTEL_RATING);
+    }
+
+    public void setHotelRating(String rating) {
+        put(KEY_HOTEL_RATING, rating);
     }
 
     public String getInboundDepartCode() {

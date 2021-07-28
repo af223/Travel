@@ -29,4 +29,6 @@
     <string name="no_tickets_selected">No tickets selected:</string>
     <string name="search_by_keyword">Search by keyword</string>
     <string name="destinations">Destinations</string>
+    <string name="no_hotel">No hotel chosen.</string>
+    <string name="chosen_hotel">Chosen hotel:</string>
 </resources>

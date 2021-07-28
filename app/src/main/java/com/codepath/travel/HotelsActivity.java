@@ -372,6 +372,8 @@ public class HotelsActivity extends AppCompatActivity {
         currDestination.setHotelAddress(hotel.getAddress());
         currDestination.setHotelPhone(hotel.getPhone());
         currDestination.setHotelDescription(hotel.getDescription());
+        currDestination.setHotelEmail(hotel.getEmail());
+        currDestination.setHotelRating(String.valueOf(hotel.getRating()));
         currDestination.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
