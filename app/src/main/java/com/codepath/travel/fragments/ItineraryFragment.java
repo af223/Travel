@@ -211,7 +211,9 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
             public void done(List<TouristDestination> touristDestinations, ParseException e) {
                 for (TouristDestination touristDestination : touristDestinations) {
                     if (touristDestination.getDateVisited() == null) {
-                        unscheduledEvents.add(touristDestination);
+                        if (touristDestination.getDestination().getDate() != null) {
+                            unscheduledEvents.add(touristDestination);
+                        }
                     } else {
                         scheduledEvents.add(touristDestination);
                     }
