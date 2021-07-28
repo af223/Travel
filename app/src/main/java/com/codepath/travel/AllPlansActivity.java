@@ -57,7 +57,7 @@ public class AllPlansActivity extends AppCompatActivity {
     private RecyclerView rvChosenActivities;
     private TouristActivitiesAdapter activitiesAdapter;
     private ArrayList<YelpData> chosenActivities;
-    private Boolean isDestroyed;
+    private static Boolean isDestroyed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
