@@ -26,6 +26,13 @@ public class CalendarUtils {
 
     public static final HashMap<String, Destination> datesOfInterest = new HashMap<>();
     private static final LocalTime curfew = LocalTime.of(23, 1, 0);
+    private static final LocalTime breakfastStart = LocalTime.of(8, 0, 0);
+    private static final LocalTime breakfastEnd = LocalTime.of(8, 30, 0);
+    private static final LocalTime lunchStart = LocalTime.of(12, 0, 0);
+    private static final LocalTime lunchEnd = LocalTime.of(13, 0, 0);
+    private static final LocalTime dinnerStart = LocalTime.of(18, 0, 0);
+    private static final LocalTime dinnerEnd = LocalTime.of(19, 0, 0);
+    private static final LocalTime dayStartTime = breakfastEnd.plusMinutes(30);
     private static final HashMap<Destination, Integer> destinationColorCode = new HashMap<>();
     private static final HashMap<String, ArrayList<Pair<LocalTime, LocalTime>>> busyTimeSlots = new HashMap<>();
     private static final HashMap<Destination, LocalDate> nextAvailableDate = new HashMap<>();
@@ -153,34 +160,54 @@ public class CalendarUtils {
     public static void scheduleTheseEvents(ArrayList<TouristDestination> unscheduledEvents) {
         for (TouristDestination touristDestination : unscheduledEvents) {
             LocalDate dateOfVisit = getLocalDate(touristDestination.getDestination().getDate()).plusDays(1);
-            LocalTime timeOfVisit = LocalTime.of(8, 0, 0);
+            LocalTime timeOfVisit = startOutsideMeals(dayStartTime);
+            LocalTime endOfVisit = timeOfVisit.plusHours(2);
             outer:
             while (true) {
+                // no events on this day
                 if (!busyTimeSlots.containsKey(dateOfVisit.toString())) {
                     busyTimeSlots.put(dateOfVisit.toString(), new ArrayList<>());
+                    if (isDuringMeal(endOfVisit)) {
+                        timeOfVisit = startOutsideMeals(timeOfVisit.plusHours(2));
+                    }
                     addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, 0);
                     break;
                 }
+                // before first scheduled event of the day
                 ArrayList<Pair<LocalTime, LocalTime>> blockedTimes = busyTimeSlots.get(dateOfVisit.toString());
-                if (timeOfVisit.plusHours(2).isBefore(blockedTimes.get(0).first.plusMinutes(1))) {
+                if (endOfVisit.isBefore(blockedTimes.get(0).first.plusMinutes(1))
+                        && !coincidesWithMeal(timeOfVisit, endOfVisit)) {
                     addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, 0);
                     break;
                 }
+                // between already busy blocks of time
                 timeOfVisit = blockedTimes.get(0).second.plusMinutes(15);
+                endOfVisit = timeOfVisit.plusHours(2);
                 for (int i = 1; i < blockedTimes.size(); i++) {
-                    if (timeOfVisit.isAfter(blockedTimes.get(i - 1).second) && timeOfVisit.plusHours(2).isBefore(blockedTimes.get(i).first.plusMinutes(1))) {
+                    timeOfVisit = startOutsideMeals(timeOfVisit);
+                    if (timeOfVisit.isAfter(blockedTimes.get(i - 1).second)
+                            && endOfVisit.isBefore(blockedTimes.get(i).first.plusMinutes(1))
+                            && !coincidesWithMeal(timeOfVisit, endOfVisit)) {
                         addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, i);
                         break outer;
                     } else {
                         timeOfVisit = blockedTimes.get(i).second.plusMinutes(15);
+                        endOfVisit = timeOfVisit.plusHours(2);
                     }
                 }
+                // after all busy blocks of the day
                 if (timeOfVisit.isAfter(blockedTimes.get(blockedTimes.size() - 1).second)
-                        && timeOfVisit.plusHours(2).isBefore(curfew)) {
-                    addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, blockedTimes.size());
+                        && timeOfVisit.isBefore(curfew.minusHours(2))) {
+                    if (!coincidesWithMeal(timeOfVisit, endOfVisit)) {
+                        addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, blockedTimes.size());
+                    } else {
+                        timeOfVisit = startOutsideMeals(endOfVisit);
+                        addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, blockedTimes.size());
+                    }
                     break;
                 }
-                timeOfVisit = LocalTime.of(8, 0, 0);
+                timeOfVisit = dayStartTime;
+                endOfVisit = timeOfVisit.plusHours(2);
                 dateOfVisit = dateOfVisit.plusDays(1);
             }
         }
@@ -200,5 +227,52 @@ public class CalendarUtils {
         touristDestination.setVisitEnd(visitEnd);
         touristDestination.setTimeVisited(timeVisited);
         touristDestination.saveInBackground();
+    }
+
+    private static Boolean coincidesWithMeal(LocalTime startTime, LocalTime endTime) {
+        return coincidesWithTime(startTime, endTime, breakfastStart, breakfastEnd)
+                || coincidesWithTime(startTime, endTime, lunchStart, lunchEnd)
+                || coincidesWithTime(startTime, endTime, dinnerStart, dinnerEnd);
+    }
+
+    private static Boolean coincidesWithTime(LocalTime startTime, LocalTime endTime, LocalTime busyStart, LocalTime busyEnd) {
+        return (endTime.isAfter(busyStart) && endTime.isBefore(busyEnd))
+                || (startTime.isAfter(busyStart) && startTime.isBefore(busyEnd))
+                || (startTime.isBefore(busyStart) && endTime.isAfter(busyEnd));
+    }
+
+    private static LocalTime startOutsideMeals(LocalTime time) {
+        if (isDuringBreakfast(time)) {
+            return breakfastEnd.plusMinutes(15);
+        }
+        if (isDuringLunch(time)) {
+            return lunchEnd.plusMinutes(15);
+        }
+        if (isDuringDinner(time)) {
+            return dinnerEnd.plusMinutes(15);
+        }
+        return time;
+    }
+
+    private static Boolean isDuringMeal(LocalTime time) {
+        if (isDuringBreakfast(time)) {
+            return true;
+        }
+        if (isDuringLunch(time)) {
+            return true;
+        }
+        return isDuringDinner(time);
+    }
+
+    private static Boolean isDuringBreakfast(LocalTime time) {
+        return time.isAfter(breakfastStart) && time.isBefore(breakfastEnd);
+    }
+
+    private static Boolean isDuringLunch(LocalTime time) {
+        return time.isAfter(lunchStart) && time.isBefore(lunchEnd);
+    }
+
+    private static Boolean isDuringDinner(LocalTime time) {
+        return time.isAfter(dinnerStart) && time.isBefore(dinnerEnd);
     }
 }
