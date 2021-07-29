@@ -49,7 +49,7 @@ public class FlightsActivity extends AppCompatActivity {
     private static final int CHOOSE_ROUND_FLIGHT_REQUEST_CODE = 9;
     private static final String TAG = "FlightsActivity";
     private static FragmentManager fragmentManager;
-    private static Boolean isDestroyed;
+    private Boolean isDestroyed;
     private Button btnDepart;
     private Button btnArrive;
     private Button btnToOneWay;

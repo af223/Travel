@@ -44,7 +44,7 @@ public class AllPlansActivity extends AppCompatActivity {
 
     private static final String TAG = "AllPlansActivity";
     private static FragmentManager fragmentManager;
-    private static Boolean isDestroyed;
+    private Boolean isDestroyed;
     private Toolbar toolbar;
     private CardView cvHotel;
     private TextView tvPickedHotel;
@@ -106,16 +106,15 @@ public class AllPlansActivity extends AppCompatActivity {
                     Toast.makeText(AllPlansActivity.this, "Unable to load destination", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (isDestroyed) {
+                    return;
+                }
                 activitiesAdapter = new TouristActivitiesAdapter(AllPlansActivity.this, chosenActivities, destination, false);
                 rvChosenActivities.setAdapter(activitiesAdapter);
-                if (!isDestroyed) {
-                    fetchChosenActivities(destination);
-                }
+                fetchChosenActivities(destination);
                 Fragment fragment = new ChosenTicketsFragment(destination);
-                if (!isDestroyed) {
-                    fragmentManager.beginTransaction().replace(R.id.flTickets, fragment).commit();
-                    displayHotel(destination);
-                }
+                fragmentManager.beginTransaction().replace(R.id.flTickets, fragment).commit();
+                displayHotel(destination);
             }
         });
     }

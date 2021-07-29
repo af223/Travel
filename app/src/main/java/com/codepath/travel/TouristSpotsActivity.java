@@ -119,7 +119,9 @@ public class TouristSpotsActivity extends AppCompatActivity {
             public void done(Destination object, ParseException e) {
                 currDestination = object;
                 setupRecyclerView();
-                loadSearchResults();
+                if (isRestaurant) {
+                    loadSearchResults();
+                }
                 btnQueryActivity.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
