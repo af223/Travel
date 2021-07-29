@@ -43,11 +43,11 @@ import static com.codepath.travel.MainActivity.logout;
 
 public class FlightsActivity extends AppCompatActivity {
 
+    public static final ArrayList<Airport> departureAirports = new ArrayList<>();
+    public static final ArrayList<Airport> arrivalAirports = new ArrayList<>();
     private static final int CHOOSE_ONE_WAY_FLIGHT_REQUEST_CODE = 13;
     private static final int CHOOSE_ROUND_FLIGHT_REQUEST_CODE = 9;
     private static final String TAG = "FlightsActivity";
-    public static final ArrayList<Airport> departureAirports = new ArrayList<>();
-    public static final ArrayList<Airport> arrivalAirports = new ArrayList<>();
     private static FragmentManager fragmentManager;
     private static Boolean isDestroyed;
     private Button btnDepart;
@@ -98,7 +98,6 @@ public class FlightsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (checkAirportsSelected()) {
                     Intent i = new Intent(FlightsActivity.this, ChooseFlightActivity.class);
-                    i.putExtra(getString(R.string.flight_type), CHOOSE_ONE_WAY_FLIGHT_REQUEST_CODE);
                     startActivityForResult(i, CHOOSE_ONE_WAY_FLIGHT_REQUEST_CODE);
                 }
             }
@@ -109,7 +108,6 @@ public class FlightsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (checkAirportsSelected()) {
                     Intent i = new Intent(FlightsActivity.this, RoundtripFlightsActivity.class);
-                    i.putExtra(getString(R.string.flight_type), CHOOSE_ROUND_FLIGHT_REQUEST_CODE);
                     startActivityForResult(i, CHOOSE_ROUND_FLIGHT_REQUEST_CODE);
                 }
             }
@@ -202,7 +200,7 @@ public class FlightsActivity extends AppCompatActivity {
 
     private void saveOutboundFlightData(Flight chosenFlight) {
         if (chosenFlight != null) {
-            if (!chosenFlight.getDate().equals(thisDestination.getDate())){
+            if (!chosenFlight.getDate().equals(thisDestination.getDate())) {
                 rescheduleEvents();
             }
             thisDestination.setDepartAirportCode(chosenFlight.getDepartAirportCode());

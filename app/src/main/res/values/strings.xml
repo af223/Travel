@@ -31,4 +31,6 @@
     <string name="destinations">Destinations</string>
     <string name="no_hotel">No hotel chosen.</string>
     <string name="chosen_hotel">Chosen hotel:</string>
+    <string name="filter_by_keyword">Filter by keyword</string>
+    <string name="activity_type">Restaurant/Tourist Spot</string>
 </resources>

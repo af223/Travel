@@ -25,11 +25,13 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
     private final Context context;
     private final List<YelpData> touristSpots;
     private final Destination destination;
+    private final Boolean isRestaurant;
 
-    public TouristActivitiesAdapter(Context context, List<YelpData> touristSpots, Destination destination) {
+    public TouristActivitiesAdapter(Context context, List<YelpData> touristSpots, Destination destination, Boolean isRestaurant) {
         this.context = context;
         this.touristSpots = touristSpots;
         this.destination = destination;
+        this.isRestaurant = isRestaurant;
     }
 
     @NonNull
@@ -92,7 +94,9 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
                         ibAddTouristDest.setClickable(false);
                         ibAddTouristDest.setImageResource(R.drawable.ic_baseline_check_24);
                         touristSpot.flipChosen();
-                        YelpData.saveTouristDestination(touristSpot, destination);
+                        if (!isRestaurant) {
+                            YelpData.saveTouristDestination(touristSpot, destination);
+                        }
                     }
                 });
             }

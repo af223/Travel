@@ -75,7 +75,7 @@ public class AllPlansActivity extends AppCompatActivity {
         rvChosenActivities = findViewById(R.id.rvChosenActivities);
         StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
-        activitiesAdapter = new TouristActivitiesAdapter(AllPlansActivity.this, chosenActivities, null);
+        activitiesAdapter = new TouristActivitiesAdapter(AllPlansActivity.this, chosenActivities, null, false);
         rvChosenActivities.setLayoutManager(gridLayoutManager);
         rvChosenActivities.setAdapter(activitiesAdapter);
 
@@ -106,7 +106,7 @@ public class AllPlansActivity extends AppCompatActivity {
                     Toast.makeText(AllPlansActivity.this, "Unable to load destination", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                activitiesAdapter = new TouristActivitiesAdapter(AllPlansActivity.this, chosenActivities, destination);
+                activitiesAdapter = new TouristActivitiesAdapter(AllPlansActivity.this, chosenActivities, destination, false);
                 rvChosenActivities.setAdapter(activitiesAdapter);
                 if (!isDestroyed) {
                     fetchChosenActivities(destination);

@@ -122,6 +122,17 @@
                 android:layout_marginTop="5dp"
                 card_view:tint="@color/gray" />
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ivGotFood"
+                android:src="@drawable/ic_baseline_restaurant_24"
+                android:layout_toEndOf="@id/ivGotCar"
+                android:layout_below="@id/tvName"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="9dp"
+                card_view:tint="@color/gray" />
+
             <net.cachapa.expandablelayout.ExpandableLayout
                 android:id="@+id/expandable_layout"
                 android:layout_width="match_parent"
@@ -250,6 +261,35 @@
                             android:textColor="#000000"
                             android:textSize="14sp">
                         </TextView>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/llFood">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/ivFoodExpanded"
+                            android:src="@drawable/ic_baseline_restaurant_24"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="16dp"/>
+
+                        <TextView
+                            android:id="@+id/tvFood"
+                            android:padding="12dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Restaurants"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
                     </LinearLayout>
 
                     <View

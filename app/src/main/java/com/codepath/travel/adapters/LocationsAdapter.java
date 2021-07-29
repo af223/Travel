@@ -29,6 +29,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.codepath.travel.TouristSpotsActivity.CHOOSE_RESTAURANTS_CODE;
+import static com.codepath.travel.TouristSpotsActivity.CHOOSE_TOURIST_SPOTS_CODE;
+
 /**
  * This adapter is for the RecylerView in LocationsFragment that displays the list of destinations that
  * the user wants to plan to visit. Clicking on an item (one of the locations) expands it, displaying
@@ -78,6 +81,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
         private final LinearLayout llTouristSpot;
         private final LinearLayout llTransportation;
         private final LinearLayout llAllPlans;
+        private final LinearLayout llFood;
         private final ImageView ivArrow;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
@@ -98,6 +102,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
             llTouristSpot = itemView.findViewById(R.id.llTouristSpot);
             llTransportation = itemView.findViewById(R.id.llTransportation);
             llAllPlans = itemView.findViewById(R.id.llAllPlans);
+            llFood = itemView.findViewById(R.id.llFood);
             ivArrow = itemView.findViewById(R.id.ivArrow);
         }
 
@@ -133,7 +138,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
             llTouristSpot.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startResourceActivity(TouristSpotsActivity.class, destination);
+                    startSharedActivity(TouristSpotsActivity.class, destination, CHOOSE_TOURIST_SPOTS_CODE);
                 }
             });
             llTransportation.setOnClickListener(new View.OnClickListener() {
@@ -146,6 +151,12 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
                 @Override
                 public void onClick(View v) {
                     startResourceActivity(AllPlansActivity.class, destination);
+                }
+            });
+            llFood.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startSharedActivity(TouristSpotsActivity.class, destination, CHOOSE_RESTAURANTS_CODE);
                 }
             });
         }
@@ -163,6 +174,15 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
             i.putExtra(Destination.KEY_OBJECT_ID, destination.getObjectId());
             i.putExtra(Destination.KEY_LAT, destination.getLatitude());
             i.putExtra(Destination.KEY_LONG, destination.getLongitude());
+            context.startActivity(i);
+        }
+
+        private void startSharedActivity(Class resourceName, Destination destination, int code) {
+            Intent i = new Intent(context, resourceName);
+            i.putExtra(Destination.KEY_OBJECT_ID, destination.getObjectId());
+            i.putExtra(Destination.KEY_LAT, destination.getLatitude());
+            i.putExtra(Destination.KEY_LONG, destination.getLongitude());
+            i.putExtra(context.getResources().getString(R.string.activity_type), code);
             context.startActivity(i);
         }
 

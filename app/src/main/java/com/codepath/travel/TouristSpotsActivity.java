@@ -41,6 +41,8 @@ import static com.codepath.travel.MainActivity.logout;
 
 public class TouristSpotsActivity extends AppCompatActivity {
 
+    public static final int CHOOSE_TOURIST_SPOTS_CODE = 7;
+    public static final int CHOOSE_RESTAURANTS_CODE = 12;
     private static final String[] typeAlias = {"amusementparks", "galleries", "beaches", "gardens", "hiking",
             "landmarks", "museums", "nightlife", "shopping",
             "spas", "active", "tours"};
@@ -51,7 +53,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
     private static String destinationID;
     private static Destination currDestination;
     private static int offset;
-    private static String keywordQuery;
+    private static String keywordQuery = "";
     private final ArrayList<Integer> typeList = new ArrayList<>();
     private TextView tvActivityType;
     private ProgressBar pbTouristLoad;
@@ -66,7 +68,15 @@ public class TouristSpotsActivity extends AppCompatActivity {
     private EditText etQueryActivity;
     private Button btnQueryActivity;
     private FilterDialog filterDialog;
-    private Runnable touristSpotRunnable;
+    private final Runnable touristSpotRunnable = new Runnable() {
+        @Override
+        public void run() {
+            adapter.notifyDataSetChanged();
+            pbTouristLoad.setVisibility(View.GONE);
+            offset += YelpData.getNumLoadBusiness();
+        }
+    };
+    private Boolean isRestaurant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,22 +94,20 @@ public class TouristSpotsActivity extends AppCompatActivity {
         etQueryActivity = findViewById(R.id.etQueryActivity);
         btnQueryActivity = findViewById(R.id.btnQueryActivity);
 
+        isRestaurant = getIntent().getIntExtra(getResources().getString(R.string.activity_type), CHOOSE_TOURIST_SPOTS_CODE) == CHOOSE_RESTAURANTS_CODE;
+        if (!isRestaurant) {
+            selectedType = new boolean[typeArray.length];
+            filterDialog = new FilterDialog(selectedType, typeList, typeArray, tvActivityType);
+        } else {
+            tvActivityType.setVisibility(View.GONE);
+            categoryParameter = "food,restaurants";
+        }
+
         touristSpots = new ArrayList<>();
-        selectedType = new boolean[typeArray.length];
         latitude = getIntent().getStringExtra(Destination.KEY_LAT);
         longitude = getIntent().getStringExtra(Destination.KEY_LONG);
         destinationID = getIntent().getStringExtra(Destination.KEY_OBJECT_ID);
         offset = 0;
-
-        filterDialog = new FilterDialog(selectedType, typeList, typeArray, tvActivityType);
-        touristSpotRunnable = new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyDataSetChanged();
-                pbTouristLoad.setVisibility(View.GONE);
-                offset += YelpData.getNumLoadBusiness();
-            }
-        };
 
         loadDestination();
     }
@@ -110,19 +118,8 @@ public class TouristSpotsActivity extends AppCompatActivity {
             @Override
             public void done(Destination object, ParseException e) {
                 currDestination = object;
-                adapter = new TouristActivitiesAdapter(TouristSpotsActivity.this, touristSpots, currDestination);
-                StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-                gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
-                rvTouristActivities.setLayoutManager(gridLayoutManager);
-                rvTouristActivities.setAdapter(adapter);
-                scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
-                    @Override
-                    public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                        loadSearchResults();
-                    }
-                };
-                rvTouristActivities.addOnScrollListener(scrollListener);
-
+                setupRecyclerView();
+                loadSearchResults();
                 btnQueryActivity.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -131,22 +128,41 @@ public class TouristSpotsActivity extends AppCompatActivity {
                             return;
                         }
                         setUpToLoadResults();
-                        filterDialog.resetCategoryFilter();
+                        if (!isRestaurant) {
+                            filterDialog.resetCategoryFilter();
+                            tvActivityType.setText(keywordQuery);
+                        }
                         keywordQuery = etQueryActivity.getText().toString();
                         etQueryActivity.setText("");
-                        tvActivityType.setText(keywordQuery);
                         loadSearchResults();
                     }
                 });
 
-                tvActivityType.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showCategorySelecter();
-                    }
-                });
+                if (!isRestaurant) {
+                    tvActivityType.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showCategorySelecter();
+                        }
+                    });
+                }
             }
         });
+    }
+
+    private void setupRecyclerView() {
+        adapter = new TouristActivitiesAdapter(TouristSpotsActivity.this, touristSpots, currDestination, isRestaurant);
+        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
+        rvTouristActivities.setLayoutManager(gridLayoutManager);
+        rvTouristActivities.setAdapter(adapter);
+        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadSearchResults();
+            }
+        };
+        rvTouristActivities.addOnScrollListener(scrollListener);
     }
 
     private void showCategorySelecter() {
@@ -180,7 +196,8 @@ public class TouristSpotsActivity extends AppCompatActivity {
         touristSpots.clear();
         scrollListener.resetState();
         keywordQuery = "";
-        categoryParameter = "";
+        if (!isRestaurant)
+            categoryParameter = "";
     }
 
     private void loadSearchResults() {

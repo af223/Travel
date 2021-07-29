@@ -21,7 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Travel">
-        <activity android:name=".AllPlansActivity"></activity>
+        <activity android:name=".AllPlansActivity" />
         <activity android:name=".TransportationActivity" />
         <activity android:name=".RoundtripFlightsActivity" />
         <activity android:name=".WeeklyViewActivity" />
