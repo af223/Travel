@@ -147,7 +147,7 @@
             android:id="@+id/tvReturnDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvReturnDepartAirport"
+            android:layout_below="@+id/tvReturnArriveAirport"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="false"
             android:layout_marginTop="5dp"

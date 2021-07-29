@@ -82,26 +82,26 @@ public class TouristSpotsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tourist_spots);
+        isRestaurant = getIntent().getIntExtra(getResources().getString(R.string.activity_type), CHOOSE_TOURIST_SPOTS_CODE) == CHOOSE_RESTAURANTS_CODE;
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Find Activities");
-
         tvActivityType = findViewById(R.id.tvActivityType);
+        if (isRestaurant) {
+            getSupportActionBar().setTitle("Find Restaurants");
+            tvActivityType.setVisibility(View.GONE);
+            categoryParameter = "food,restaurants";
+        } else {
+            getSupportActionBar().setTitle("Find Activities");
+            selectedType = new boolean[typeArray.length];
+            filterDialog = new FilterDialog(selectedType, typeList, typeArray, tvActivityType);
+        }
+
         rvTouristActivities = findViewById(R.id.rvTouristActivities);
         pbTouristLoad = findViewById(R.id.pbTouristLoad);
         etQueryActivity = findViewById(R.id.etQueryActivity);
         btnQueryActivity = findViewById(R.id.btnQueryActivity);
-
-        isRestaurant = getIntent().getIntExtra(getResources().getString(R.string.activity_type), CHOOSE_TOURIST_SPOTS_CODE) == CHOOSE_RESTAURANTS_CODE;
-        if (!isRestaurant) {
-            selectedType = new boolean[typeArray.length];
-            filterDialog = new FilterDialog(selectedType, typeList, typeArray, tvActivityType);
-        } else {
-            tvActivityType.setVisibility(View.GONE);
-            categoryParameter = "food,restaurants";
-        }
 
         touristSpots = new ArrayList<>();
         latitude = getIntent().getStringExtra(Destination.KEY_LAT);
