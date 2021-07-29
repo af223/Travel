@@ -20,6 +20,8 @@ import com.codepath.travel.fragments.ChosenTicketsFragment;
 import com.codepath.travel.models.Airport;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Flight;
+import com.codepath.travel.models.TouristDestination;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -28,6 +30,7 @@ import com.parse.SaveCallback;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.codepath.travel.MainActivity.logout;
 
@@ -54,6 +57,20 @@ public class FlightsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Destination thisDestination;
     private Fragment fragment;
+    private ArrayList<TouristDestination> rescheduledEvents;
+    private final Runnable scheduleRunnable = new Runnable() {
+        @Override
+        public void run() {
+            for (TouristDestination touristDestination : rescheduledEvents) {
+                if (touristDestination.getDateVisited() != null) {
+                    touristDestination.remove(TouristDestination.KEY_DATE_VISIT);
+                    touristDestination.remove(TouristDestination.KEY_TIME_VISIT);
+                    touristDestination.remove(TouristDestination.KEY_VISIT_END);
+                    touristDestination.saveInBackground();
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,6 +202,9 @@ public class FlightsActivity extends AppCompatActivity {
 
     private void saveOutboundFlightData(Flight chosenFlight) {
         if (chosenFlight != null) {
+            if (!chosenFlight.getDate().equals(thisDestination.getDate())){
+                rescheduleEvents();
+            }
             thisDestination.setDepartAirportCode(chosenFlight.getDepartAirportCode());
             thisDestination.setDepartAirportName(chosenFlight.getDepartAirportName());
             thisDestination.setArriveAirportCode(chosenFlight.getArriveAirportCode());
@@ -247,6 +267,23 @@ public class FlightsActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void rescheduleEvents() {
+        ParseQuery<TouristDestination> query = ParseQuery.getQuery(TouristDestination.class);
+        query.whereEqualTo(TouristDestination.KEY_DESTINATION, thisDestination);
+        query.findInBackground(new FindCallback<TouristDestination>() {
+            @Override
+            public void done(List<TouristDestination> touristDestinations, ParseException e) {
+                if (e != null) {
+                    Toast.makeText(FlightsActivity.this, "Unable to reschedule events", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                rescheduledEvents = (ArrayList<TouristDestination>) touristDestinations;
+                Thread scheduleEvents = new Thread(scheduleRunnable);
+                scheduleEvents.start();
+            }
+        });
     }
 
     private void loadChosenTickets() {
