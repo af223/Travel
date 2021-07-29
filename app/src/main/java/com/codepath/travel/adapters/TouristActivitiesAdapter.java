@@ -94,9 +94,7 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
                         ibAddTouristDest.setClickable(false);
                         ibAddTouristDest.setImageResource(R.drawable.ic_baseline_check_24);
                         touristSpot.flipChosen();
-                        if (!isRestaurant) {
-                            YelpData.saveTouristDestination(touristSpot, destination);
-                        }
+                        YelpData.saveTouristDestination(touristSpot, destination, isRestaurant);
                     }
                 });
             }

@@ -22,6 +22,10 @@ import com.codepath.travel.R;
 import com.codepath.travel.TouristSpotsActivity;
 import com.codepath.travel.TransportationActivity;
 import com.codepath.travel.models.Destination;
+import com.codepath.travel.models.TouristDestination;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
@@ -73,8 +77,10 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
         private final TextView tvName;
         private final ImageView ivGotPlaneTicket;
         private final ImageView ivGotHotel;
+        private final ImageView ivGotFood;
         private final ImageView ivFlightExpanded;
         private final ImageView ivHotelExpanded;
+        private final ImageView ivFoodExpanded;
         private final ExpandableLayout expandableLayout;
         private final LinearLayout llFlight;
         private final LinearLayout llHotel;
@@ -92,8 +98,10 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
             tvName = itemView.findViewById(R.id.tvName);
             ivGotPlaneTicket = itemView.findViewById(R.id.ivGotPlaneTicket);
             ivGotHotel = itemView.findViewById(R.id.ivGotHotel);
+            ivGotFood = itemView.findViewById(R.id.ivGotFood);
             ivFlightExpanded = itemView.findViewById(R.id.ivFlightExpanded);
             ivHotelExpanded = itemView.findViewById(R.id.ivHotelExpanded);
+            ivFoodExpanded = itemView.findViewById(R.id.ivFoodExpanded);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
             expandableLayout.setInterpolator(new OvershootInterpolator());
             expandableLayout.setOnExpansionUpdateListener(this);
@@ -108,20 +116,9 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
 
         public void bind(Destination destination) {
             tvName.setText(destination.getFormattedLocationName());
-            if (destination.getDate() != null && destination.getInboundDate() != null) {
-                DrawableCompat.setTint(DrawableCompat.wrap(ivGotPlaneTicket.getDrawable()), context.getResources().getColor(R.color.dark_green));
-                DrawableCompat.setTint(DrawableCompat.wrap(ivFlightExpanded.getDrawable()), context.getResources().getColor(R.color.dark_green));
-            } else {
-                DrawableCompat.setTint(DrawableCompat.wrap(ivGotPlaneTicket.getDrawable()), context.getResources().getColor(R.color.gray));
-                DrawableCompat.setTint(DrawableCompat.wrap(ivFlightExpanded.getDrawable()), context.getResources().getColor(R.color.gray));
-            }
-            if (destination.getHotelName() != null) {
-                DrawableCompat.setTint(DrawableCompat.wrap(ivGotHotel.getDrawable()), context.getResources().getColor(R.color.dark_green));
-                DrawableCompat.setTint(DrawableCompat.wrap(ivHotelExpanded.getDrawable()), context.getResources().getColor(R.color.dark_green));
-            } else {
-                DrawableCompat.setTint(DrawableCompat.wrap(ivGotHotel.getDrawable()), context.getResources().getColor(R.color.gray));
-                DrawableCompat.setTint(DrawableCompat.wrap(ivHotelExpanded.getDrawable()), context.getResources().getColor(R.color.gray));
-            }
+            colorIn(destination.getDate() != null && destination.getInboundDate() != null, ivGotPlaneTicket, ivFlightExpanded);
+            colorIn(destination.getHotelName() != null, ivGotHotel, ivHotelExpanded);
+            hasRestaurants(destination);
             expandableLayout.setExpanded(false);
             llFlight.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -192,6 +189,30 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
                 ivArrow.setRotation(90);
             } else if (state == ExpandableLayout.State.COLLAPSED) {
                 ivArrow.setRotation(270);
+            }
+        }
+
+        private void hasRestaurants(Destination destination) {
+            ParseQuery<TouristDestination> query = ParseQuery.getQuery(TouristDestination.class);
+            query.whereEqualTo(TouristDestination.KEY_DESTINATION, destination);
+            query.whereEqualTo(TouristDestination.KEY_IS_RESTAURANT, true);
+            query.findInBackground(new FindCallback<TouristDestination>() {
+                @Override
+                public void done(List<TouristDestination> objects, ParseException e) {
+                    if (e == null) {
+                        colorIn(!objects.isEmpty(), ivGotFood, ivFoodExpanded);
+                    }
+                }
+            });
+        }
+
+        private void colorIn(Boolean colored, ImageView ivCompact, ImageView ivExpanded) {
+            if (colored) {
+                DrawableCompat.setTint(DrawableCompat.wrap(ivCompact.getDrawable()), context.getResources().getColor(R.color.dark_green));
+                DrawableCompat.setTint(DrawableCompat.wrap(ivExpanded.getDrawable()), context.getResources().getColor(R.color.dark_green));
+            } else {
+                DrawableCompat.setTint(DrawableCompat.wrap(ivCompact.getDrawable()), context.getResources().getColor(R.color.gray));
+                DrawableCompat.setTint(DrawableCompat.wrap(ivExpanded.getDrawable()), context.getResources().getColor(R.color.gray));
             }
         }
     }

@@ -17,6 +17,7 @@ public class TouristDestination extends ParseObject {
     public static final String KEY_YELP = "yelpURL";
     public static final String KEY_RATING = "rating";
     public static final String KEY_COMMENT = "commentCount";
+    public static final String KEY_IS_RESTAURANT = "isRestaurant";
 
     public ParseUser getUser() {
         return getParseUser(KEY_USER);
@@ -105,5 +106,13 @@ public class TouristDestination extends ParseObject {
 
     public void setCommentCount(Integer commentCount) {
         put(KEY_COMMENT, String.valueOf(commentCount));
+    }
+
+    public Boolean getIsRestaurant() {
+        return getBoolean(KEY_IS_RESTAURANT);
+    }
+
+    public void setIsRestaurant(Boolean isRestaurant) {
+        put(KEY_IS_RESTAURANT, isRestaurant);
     }
 }

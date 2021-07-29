@@ -144,7 +144,7 @@ public class YelpData {
         return address;
     }
 
-    public static void saveTouristDestination(YelpData touristSpot, Destination destination) {
+    public static void saveTouristDestination(YelpData touristSpot, Destination destination, Boolean isRestaurant) {
         TouristDestination touristDestination = new TouristDestination();
         touristDestination.setUser(ParseUser.getCurrentUser());
         touristDestination.setPlaceId(touristSpot.getBusinessID());
@@ -154,6 +154,7 @@ public class YelpData {
         touristDestination.setYelpURL(touristSpot.getYelpURL());
         touristDestination.setRating(touristSpot.getRating());
         touristDestination.setCommentCount(touristSpot.getReviewCount());
+        touristDestination.setIsRestaurant(isRestaurant);
         touristDestination.saveInBackground();
     }
 
