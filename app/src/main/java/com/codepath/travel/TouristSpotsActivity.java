@@ -41,22 +41,22 @@ import static com.codepath.travel.MainActivity.logout;
 
 public class TouristSpotsActivity extends AppCompatActivity {
 
+    private static final String[] typeAlias = {"amusementparks", "galleries", "beaches", "gardens", "hiking",
+            "landmarks", "museums", "nightlife", "shopping",
+            "spas", "active", "tours"};
+    private static final String[] typeArray = {"Amusement Parks", "Art Galleries", "Beaches", "Gardens", "Hiking",
+            "Landmarks/Historical Buildings", "Museums", "Nightlife", "Shopping",
+            "Spas", "Sports", "Tours"};
     private static String categoryParameter;
     private static String destinationID;
     private static Destination currDestination;
     private static int offset;
     private static String keywordQuery;
-    private static final String[] typeAlias = {"amusementparks", "galleries", "beaches", "gardens", "hiking",
-            "landmarks", "museums", "nightlife", "shopping",
-            "spas", "active", "tours"};
+    private final ArrayList<Integer> typeList = new ArrayList<>();
     private TextView tvActivityType;
     private ProgressBar pbTouristLoad;
     private Toolbar toolbar;
     private boolean[] selectedType;
-    private final ArrayList<Integer> typeList = new ArrayList<>();
-    private static final String[] typeArray = {"Amusement Parks", "Art Galleries", "Beaches", "Gardens", "Hiking",
-            "Landmarks/Historical Buildings", "Museums", "Nightlife", "Shopping",
-            "Spas", "Sports", "Tours"};
     private RecyclerView rvTouristActivities;
     private TouristActivitiesAdapter adapter;
     private ArrayList<YelpData> touristSpots;
@@ -92,7 +92,6 @@ public class TouristSpotsActivity extends AppCompatActivity {
         offset = 0;
 
         filterDialog = new FilterDialog(selectedType, typeList, typeArray, tvActivityType);
-
         touristSpotRunnable = new Runnable() {
             @Override
             public void run() {
@@ -152,9 +151,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
 
     private void showCategorySelecter() {
         AlertDialog.Builder builder = new AlertDialog.Builder(TouristSpotsActivity.this, R.style.AppCompatAlertDialogStyle);
-
         filterDialog.buildSelectorDialog(builder);
-
         builder.setPositiveButton("Filter", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

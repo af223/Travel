@@ -24,14 +24,13 @@ import static com.codepath.travel.models.Event.eventsList;
 
 public class CalendarUtils {
 
+    public static final HashMap<String, Destination> datesOfInterest = new HashMap<>();
     private static final LocalTime curfew = LocalTime.of(23, 1, 0);
+    private static final HashMap<Destination, Integer> destinationColorCode = new HashMap<>();
+    private static final HashMap<String, ArrayList<Pair<LocalTime, LocalTime>>> busyTimeSlots = new HashMap<>();
+    private static final HashMap<Destination, LocalDate> nextAvailableDate = new HashMap<>();
     public static LocalDate selectedDate;
     public static ArrayList<LocalDate> days;
-    public static Destination selectedDestination;
-    public static HashMap<Destination, Integer> destinationColorCode = new HashMap<>();
-    public static HashMap<String, Destination> datesOfInterest = new HashMap<>();
-    public static HashMap<String, ArrayList<Pair<LocalTime, LocalTime>>> busyTimeSlots = new HashMap<>();
-    public static HashMap<Destination, LocalDate> nextAvailableDate = new HashMap<>();
 
     public static String formatDate(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
@@ -107,6 +106,17 @@ public class CalendarUtils {
             int color = Color.argb(255, red, green, blue);
             destinationColorCode.put(destination, color);
         }
+    }
+
+    public static int getDestinationColor(Destination destination) {
+        return destinationColorCode.get(destination);
+    }
+
+    public static void onReloadEverything() {
+        destinationColorCode.clear();
+        datesOfInterest.clear();
+        busyTimeSlots.clear();
+        nextAvailableDate.clear();
     }
 
     public static void setUpTimeSlots(ArrayList<TouristDestination> scheduledEvents) {

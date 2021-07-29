@@ -31,14 +31,13 @@ import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static FragmentManager fragmentManager;
-    private BottomNavigationView bottomNavigationView;
-    private Toolbar toolbar;
     public static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.MINUTES)
             .readTimeout(5, TimeUnit.MINUTES)
             .writeTimeout(5, TimeUnit.MINUTES).build();
-
+    public static FragmentManager fragmentManager;
+    private BottomNavigationView bottomNavigationView;
+    private Toolbar toolbar;
 
     public static void logout(Context context) {
         ParseUser.logOut();
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new CostsFragment();
                         break;
                 }
-                fragmentManager.beginTransaction().setCustomAnimations(R.anim.fade_in,R.anim.anim, R.anim.slide_in, R.anim.slide_out)
+                fragmentManager.beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.anim, R.anim.slide_in, R.anim.slide_out)
                         .replace(R.id.flContainer, fragment).commit();
                 return true;
             }

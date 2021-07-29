@@ -44,6 +44,7 @@ public class AllPlansActivity extends AppCompatActivity {
 
     private static final String TAG = "AllPlansActivity";
     private static FragmentManager fragmentManager;
+    private static Boolean isDestroyed;
     private Toolbar toolbar;
     private CardView cvHotel;
     private TextView tvPickedHotel;
@@ -57,7 +58,6 @@ public class AllPlansActivity extends AppCompatActivity {
     private RecyclerView rvChosenActivities;
     private TouristActivitiesAdapter activitiesAdapter;
     private ArrayList<YelpData> chosenActivities;
-    private static Boolean isDestroyed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

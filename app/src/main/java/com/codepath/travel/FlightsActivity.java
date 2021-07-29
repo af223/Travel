@@ -43,9 +43,10 @@ public class FlightsActivity extends AppCompatActivity {
     private static final int CHOOSE_ONE_WAY_FLIGHT_REQUEST_CODE = 13;
     private static final int CHOOSE_ROUND_FLIGHT_REQUEST_CODE = 9;
     private static final String TAG = "FlightsActivity";
+    public static final ArrayList<Airport> departureAirports = new ArrayList<>();
+    public static final ArrayList<Airport> arrivalAirports = new ArrayList<>();
     private static FragmentManager fragmentManager;
-    public static ArrayList<Airport> departureAirports = new ArrayList<>();
-    public static ArrayList<Airport> arrivalAirports = new ArrayList<>();
+    private static Boolean isDestroyed;
     private Button btnDepart;
     private Button btnArrive;
     private Button btnToOneWay;
@@ -53,7 +54,6 @@ public class FlightsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Destination thisDestination;
     private Fragment fragment;
-    private static Boolean isDestroyed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

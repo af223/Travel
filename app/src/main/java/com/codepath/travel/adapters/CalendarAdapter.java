@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.codepath.travel.CalendarUtils;
 import com.codepath.travel.R;
 import com.codepath.travel.models.Destination;
 
@@ -20,7 +21,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static com.codepath.travel.CalendarUtils.datesOfInterest;
-import static com.codepath.travel.CalendarUtils.destinationColorCode;
 import static com.codepath.travel.CalendarUtils.getLocalDate;
 import static com.codepath.travel.CalendarUtils.selectedDate;
 
@@ -92,7 +92,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
                 }
                 if (datesOfInterest.containsKey(date.toString())) {
                     Destination destination = datesOfInterest.get(date.toString());
-                    clCalendarCell.setBackgroundColor(destinationColorCode.get(destination));
+                    clCalendarCell.setBackgroundColor(CalendarUtils.getDestinationColor(destination));
                     if (date.isEqual(getLocalDate(destination.getDate())) && destination.getInboundDate() != null) {
                         LocalDate returnDate = getLocalDate(destination.getInboundDate());
                         while (date.isBefore(returnDate)) {

@@ -35,14 +35,14 @@ import static com.codepath.travel.MainActivity.logout;
 public class TransportationActivity extends AppCompatActivity {
 
     private static final String CATEGORIES = "transport,carrental,bikerentals,motorcycle_rental,trainstations";
+    private static final String[] typeAlias = {CATEGORIES, "carrental", "bikerentals", "taxis", "motorcycle_rental",
+                                                "trainstations", "buses"};
+    private static final String[] typeArray = {"See all", "Car Rentals", "Bike Rentals", "Taxis", "Motorcycle Rental",
+                                                "Train Stations", "Buses"};
     private static int offset;
     private static String categoryParameter;
-    private ProgressBar progressBarTransportation;
     private final ArrayList<Integer> typeList = new ArrayList<>();
-    private static final String[] typeAlias = {CATEGORIES, "carrental", "bikerentals", "taxis", "motorcycle_rental",
-            "trainstations", "buses"};
-    private static final String[] typeArray = {"See all", "Car Rentals", "Bike Rentals", "Taxis", "Motorcycle Rental",
-            "Train Stations", "Buses"};
+    private ProgressBar progressBarTransportation;
     private Toolbar toolbar;
     private TextView tvTransportType;
     private boolean[] selectedType;
@@ -112,7 +112,6 @@ public class TransportationActivity extends AppCompatActivity {
     private void showCategorySelecter() {
         AlertDialog.Builder builder = new AlertDialog.Builder(TransportationActivity.this, R.style.AppCompatAlertDialogStyle);
         filterDialog.buildSelectorDialog(builder);
-
         builder.setPositiveButton("Filter", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

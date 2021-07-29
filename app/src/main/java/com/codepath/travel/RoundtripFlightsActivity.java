@@ -163,5 +163,6 @@ public class RoundtripFlightsActivity extends AppCompatActivity implements Adapt
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {}
+    public void onNothingSelected(AdapterView<?> parent) {
+    }
 }

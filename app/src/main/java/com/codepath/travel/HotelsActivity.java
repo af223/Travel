@@ -53,7 +53,7 @@ import static com.codepath.travel.MainActivity.okHttpClient;
 /**
  * This activity allows the user to see and select suggested hotels near the destination pinned on a map.
  * The user can see details about the hotel and its room offerings by clicking on its pin on the map.
- *
+ * <p>
  * This activity appears when the user chooses hotel from the expanded item in LocationsFragment.java. The intent passed in
  * contains the objectId for the selected destination.
  */
@@ -63,8 +63,9 @@ public class HotelsActivity extends AppCompatActivity {
     private static final String AMADEUS_ACCESS_URL = "https://test.api.amadeus.com/v1/security/oauth2/token";
     private static final String AMADEUS_HOTEL_URL = "https://test.api.amadeus.com/v2/shopping/hotel-offers";
     private static final String TAG = "HotelsActivity";
+    private final ArrayList<MarkerOptions> markers = new ArrayList<>();
+    private final ArrayList<Hotel> hotels = new ArrayList<>();
     private String oauthToken;
-    private ArrayList<Hotel> hotels;
     private Destination currDestination;
     private GoogleMap map;
     private Hotel chosenHotel;
@@ -81,7 +82,6 @@ public class HotelsActivity extends AppCompatActivity {
     private TextView tvDescription;
     private Toolbar toolbar;
     private RelativeLayout rlProgressBar;
-    private ArrayList<MarkerOptions> markers;
 
     private final OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
@@ -114,9 +114,6 @@ public class HotelsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_hotels);
 
         requestAccessToken();
-
-        hotels = new ArrayList<>();
-        markers = new ArrayList<>();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -156,8 +153,8 @@ public class HotelsActivity extends AppCompatActivity {
         RequestHeaders headers = new RequestHeaders();
         headers.put("content-type", "application/x-www-form-urlencoded");
         String body = String.format("grant_type=client_credentials&client_id=%1$s&client_secret=%2$s",
-                                        getResources().getString(R.string.amadeus_api_key),
-                                        getResources().getString(R.string.amadeus_api_secret));
+                getResources().getString(R.string.amadeus_api_key),
+                getResources().getString(R.string.amadeus_api_secret));
         Request.Builder requestBuilder = new Request.Builder().url(AMADEUS_ACCESS_URL);
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             requestBuilder.addHeader(entry.getKey(), entry.getValue());
@@ -273,7 +270,7 @@ public class HotelsActivity extends AppCompatActivity {
                 hotels.add(newHotel);
                 markHotelOnMap(newHotel);
             }
-        }  catch (JSONException e) {
+        } catch (JSONException e) {
             Log.e(TAG, "Unable to parse hotels");
             e.printStackTrace();
         }
