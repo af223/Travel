@@ -135,7 +135,7 @@ public class CalendarUtils {
             LocalTime timeOfVisit = getLocalTime(touristDestination.getTimeVisited());
             LocalTime endVisitTime = getLocalTime(touristDestination.getVisitEnd());
             int insertIndex = busyTimeSlots.get(dateOfVisit).size();
-            addEventToSchedule(touristDestination, getLocalDate(dateOfVisit), timeOfVisit, endVisitTime, insertIndex, false);
+            addEventToSchedule(touristDestination, getLocalDate(dateOfVisit), timeOfVisit, endVisitTime, insertIndex);
         }
         Iterator it = busyTimeSlots.entrySet().iterator();
         while (it.hasNext()) {
@@ -169,14 +169,16 @@ public class CalendarUtils {
                         timeOfVisit = startOutsideMeals(endOfVisit);
                         endOfVisit = timeOfVisit.plusHours(2);
                     }
-                    addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, endOfVisit, 0, true);
+                    addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, endOfVisit, 0);
+                    saveEvent(touristDestination, dateOfVisit.toString(), timeOfVisit.toString(), formatStoredTime(endOfVisit));
                     break;
                 }
                 // before first scheduled event of the day
                 ArrayList<Pair<LocalTime, LocalTime>> blockedTimes = busyTimeSlots.get(dateOfVisit.toString());
                 if (endOfVisit.isBefore(blockedTimes.get(0).first.plusMinutes(1))
                         && !coincidesWithMeal(timeOfVisit, endOfVisit)) {
-                    addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, endOfVisit, 0, true);
+                    addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, endOfVisit, 0);
+                    saveEvent(touristDestination, dateOfVisit.toString(), timeOfVisit.toString(), formatStoredTime(endOfVisit));
                     break;
                 }
                 // between already busy blocks of time
@@ -188,7 +190,8 @@ public class CalendarUtils {
                     if (timeOfVisit.isAfter(blockedTimes.get(i - 1).second)
                             && endOfVisit.isBefore(blockedTimes.get(i).first.plusMinutes(1))
                             && !coincidesWithMeal(timeOfVisit, endOfVisit)) {
-                        addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, endOfVisit, i, true);
+                        addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, endOfVisit, i);
+                        saveEvent(touristDestination, dateOfVisit.toString(), timeOfVisit.toString(), formatStoredTime(endOfVisit));
                         break outer;
                     } else {
                         timeOfVisit = blockedTimes.get(i).second.plusMinutes(15);
@@ -202,7 +205,8 @@ public class CalendarUtils {
                         timeOfVisit = startOutsideMeals(endOfVisit);
                         endOfVisit = timeOfVisit.plusHours(2);
                     }
-                    addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, endOfVisit, blockedTimes.size(), true);
+                    addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, endOfVisit, blockedTimes.size());
+                    saveEvent(touristDestination, dateOfVisit.toString(), timeOfVisit.toString(), formatStoredTime(endOfVisit));
                     break;
                 }
                 timeOfVisit = dayStartTime;
@@ -241,7 +245,7 @@ public class CalendarUtils {
                 Pair nextMeal = new Pair(latestDateVisit, latestMeal);
                 nextAvailableDate.put(destinationID, nextMeal);
             }
-            addEventToSchedule(restaurant, dateVisited, timeVisited, endVisitTime, -1, false);
+            addEventToSchedule(restaurant, dateVisited, timeVisited, endVisitTime, -1);
         }
     }
 
@@ -256,23 +260,25 @@ public class CalendarUtils {
             int numMealsPlanned = nextAvailableDate.get(destinationID).second;
             switch (numMealsPlanned) {
                 case 0:
-                    addEventToSchedule(restaurant, nextMealDate, breakfastStart, breakfastEnd, -1, true);
+                    addEventToSchedule(restaurant, nextMealDate, breakfastStart, breakfastEnd, -1);
+                    saveEvent(restaurant, nextMealDate.toString(), formatStoredTime(breakfastStart), formatStoredTime(breakfastEnd));
                     nextAvailableDate.put(destinationID, new Pair(nextMealDate, 1));
                     break;
                 case 1:
-                    addEventToSchedule(restaurant, nextMealDate, lunchStart, lunchEnd, -1, true);
+                    addEventToSchedule(restaurant, nextMealDate, lunchStart, lunchEnd, -1);
+                    saveEvent(restaurant, nextMealDate.toString(), formatStoredTime(lunchStart), formatStoredTime(lunchEnd));
                     nextAvailableDate.put(destinationID, new Pair(nextMealDate, 2));
                     break;
                 case 2:
-                    addEventToSchedule(restaurant, nextMealDate, dinnerStart, dinnerEnd, -1, true);
+                    addEventToSchedule(restaurant, nextMealDate, dinnerStart, dinnerEnd, -1);
+                    saveEvent(restaurant, nextMealDate.toString(), formatStoredTime(dinnerStart), formatStoredTime(dinnerEnd));
                     nextAvailableDate.put(destinationID, new Pair(nextMealDate.plusDays(1), 0));
                     break;
             }
         }
     }
 
-    private static void addEventToSchedule(TouristDestination touristDestination, LocalDate dateOfVisit, LocalTime timeOfVisit, LocalTime endOfVisit,
-                                           int index, boolean storeEventInParse) {
+    private static void addEventToSchedule(TouristDestination touristDestination, LocalDate dateOfVisit, LocalTime timeOfVisit, LocalTime endOfVisit, int index) {
         String eventName = touristDestination.getName();
         if (index > -1) {
             Pair block = new Pair(timeOfVisit, endOfVisit);
@@ -282,9 +288,6 @@ public class CalendarUtils {
         }
         Event event = new Event(eventName, dateOfVisit, timeOfVisit, endOfVisit);
         eventsList.add(event);
-        if (storeEventInParse) {
-            saveEvent(touristDestination, dateOfVisit.toString(), timeOfVisit.toString(), formatStoredTime(event.getEndTime()));
-        }
     }
 
     public static void saveEvent(TouristDestination touristDestination, String dateVisited,
