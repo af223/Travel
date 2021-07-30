@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.util.Pair;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
@@ -25,6 +26,7 @@ import org.json.JSONObject;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -236,5 +238,21 @@ public class Ticket {
         Flight flight = new Flight(departAirportCode, departAirportName, arriveAirportCode,
                 arriveAirportName, cost, carrier, date, isRoundtrip);
         return flight;
+    }
+
+    public static void onSortTickets(FlightsAdapter adapter, RecyclerView rvFlights, ArrayList<Flight> flights, int position) {
+        switch (sortMethods[position]) {
+            case "Cost":
+                Collections.sort(flights, compareCost);
+                break;
+            case "Departure Date":
+                Collections.sort(flights, compareDate);
+                break;
+            case "Airline":
+                Collections.sort(flights, compareAirline);
+                break;
+        }
+        adapter.notifyDataSetChanged();
+        rvFlights.smoothScrollToPosition(0);
     }
 }

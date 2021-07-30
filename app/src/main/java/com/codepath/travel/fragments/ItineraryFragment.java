@@ -76,6 +76,7 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
     private ArrayList<TouristDestination> scheduledEvents;
     private ArrayList<TouristDestination> restaurants;
     private ArrayList<TouristDestination> scheduledRestaurants;
+    private Boolean isDestroyed;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,6 +87,7 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        isDestroyed = false;
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Itinerary");
@@ -167,6 +169,9 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                     Toast.makeText(getContext(), "Unable to load locations", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (isDestroyed) {
+                    return;
+                }
                 allDestinations = (ArrayList) destinations;
                 loadAllEvents();
                 ArrayList<String> destinationNames = new ArrayList<>();
@@ -235,6 +240,12 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
         super.onResume();
         reloadAdapter();
         setMonthView();
+    }
+
+    @Override
+    public void onDestroy() {
+        isDestroyed = true;
+        super.onDestroy();
     }
 
     private void setMonthView() {

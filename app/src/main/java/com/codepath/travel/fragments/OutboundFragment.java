@@ -24,7 +24,6 @@ import com.codepath.travel.models.Flight;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -91,19 +90,7 @@ public class OutboundFragment extends Fragment implements AdapterView.OnItemSele
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch (Ticket.sortMethods[position]) {
-            case "Cost":
-                Collections.sort(flights, Ticket.compareCost);
-                break;
-            case "Departure Date":
-                Collections.sort(flights, Ticket.compareDate);
-                break;
-            case "Airline":
-                Collections.sort(flights, Ticket.compareAirline);
-                break;
-        }
-        adapter.notifyDataSetChanged();
-        rvFlights.smoothScrollToPosition(0);
+        Ticket.onSortTickets(adapter, rvFlights, flights, position);
     }
 
     @Override
