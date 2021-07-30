@@ -42,13 +42,15 @@ import java.util.List;
 
 import static com.codepath.travel.CalendarUtils.datesOfInterest;
 import static com.codepath.travel.CalendarUtils.days;
+import static com.codepath.travel.CalendarUtils.fillScheduledMeals;
 import static com.codepath.travel.CalendarUtils.formatDate;
 import static com.codepath.travel.CalendarUtils.generateDestinationColorCode;
 import static com.codepath.travel.CalendarUtils.getDaysInMonth;
 import static com.codepath.travel.CalendarUtils.getLocalDate;
+import static com.codepath.travel.CalendarUtils.scheduleMeals;
 import static com.codepath.travel.CalendarUtils.scheduleTheseEvents;
 import static com.codepath.travel.CalendarUtils.selectedDate;
-import static com.codepath.travel.CalendarUtils.setUpTimeSlots;
+import static com.codepath.travel.CalendarUtils.setupBusyTimes;
 import static com.codepath.travel.models.Event.eventsList;
 
 /**
@@ -72,6 +74,8 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
     private Spinner destinationSpinner;
     private ArrayList<TouristDestination> unscheduledEvents;
     private ArrayList<TouristDestination> scheduledEvents;
+    private ArrayList<TouristDestination> restaurants;
+    private ArrayList<TouristDestination> scheduledRestaurants;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -140,6 +144,12 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
         if (scheduledEvents == null) {
             scheduledEvents = new ArrayList<>();
         }
+        if (restaurants == null) {
+            restaurants = new ArrayList<>();
+        }
+        if (scheduledRestaurants == null) {
+            scheduledRestaurants = new ArrayList<>();
+        }
         reloadAdapter();
         setMonthView();
     }
@@ -205,19 +215,28 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
             @Override
             public void done(List<TouristDestination> touristDestinations, ParseException e) {
                 for (TouristDestination touristDestination : touristDestinations) {
-                    if (touristDestination.getDateVisited() == null) {
-                        if (touristDestination.getDestination().getDate() != null
-                                && !touristDestination.getIsRestaurant()) {
+                    if (touristDestination.getDateVisited() == null && touristDestination.getDestination().getDate() != null) {
+                        if (!touristDestination.getIsRestaurant()) {
                             unscheduledEvents.add(touristDestination);
+                        } else {
+                            restaurants.add(touristDestination);
                         }
                     } else {
-                        scheduledEvents.add(touristDestination);
+                        if (!touristDestination.getIsRestaurant()) {
+                            scheduledEvents.add(touristDestination);
+                        } else {
+                            scheduledRestaurants.add(touristDestination);
+                        }
                     }
                 }
-                setUpTimeSlots(scheduledEvents);
+                setupBusyTimes(scheduledEvents);
                 scheduleTheseEvents(unscheduledEvents);
                 scheduledEvents.addAll(unscheduledEvents);
+                fillScheduledMeals(scheduledRestaurants);
+                scheduleMeals(restaurants);
+                scheduledRestaurants.addAll(restaurants);
                 unscheduledEvents.clear();
+                restaurants.clear();
             }
         });
     }
