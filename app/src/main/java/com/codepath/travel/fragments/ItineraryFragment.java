@@ -107,7 +107,6 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                 setMonthView();
             }
         });
-
         btnNextMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +114,6 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                 setMonthView();
             }
         });
-
         btnWeeklyView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,7 +122,6 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                 startActivity(i, options.toBundle());
             }
         });
-
         btnToday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,18 +135,10 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
         if (selectedDate == null) {
             selectedDate = LocalDate.now();
         }
-        if (unscheduledEvents == null) {
-            unscheduledEvents = new ArrayList<>();
-        }
-        if (scheduledEvents == null) {
-            scheduledEvents = new ArrayList<>();
-        }
-        if (restaurants == null) {
-            restaurants = new ArrayList<>();
-        }
-        if (scheduledRestaurants == null) {
-            scheduledRestaurants = new ArrayList<>();
-        }
+        scheduledEvents = new ArrayList<>();
+        unscheduledEvents = new ArrayList<>();
+        restaurants = new ArrayList<>();
+        scheduledRestaurants = new ArrayList<>();
         reloadAdapter();
         setMonthView();
     }
