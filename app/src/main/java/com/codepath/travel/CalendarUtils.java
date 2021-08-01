@@ -107,10 +107,11 @@ public class CalendarUtils {
     public static void generateDestinationColorCode(ArrayList<Destination> destinations) {
         Random rnd = new Random();
         for (Destination destination : destinations) {
-            int red = (rnd.nextInt(256) + 255) / 2;
-            int green = ((rnd.nextInt(256) + 255) / 2) % 254 + 1;
-            int blue = (rnd.nextInt(256) + 255) / 2;
-            int color = Color.argb(255, red, green, blue);
+            float[] hsv = new float[3];
+            hsv[0] = rnd.nextInt(360); // hue
+            hsv[1] = 80; // saturation
+            hsv[2] = 100; // value
+            int color = Color.HSVToColor(60, hsv);
             destinationColorCode.put(destination, color);
         }
     }
