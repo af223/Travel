@@ -73,7 +73,7 @@ public class AllPlansActivity extends AppCompatActivity {
         // prevents E/RecyclerView: No adapter attached; skipping layout error
         chosenActivities = new ArrayList<>();
         rvChosenActivities = findViewById(R.id.rvChosenActivities);
-        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
         activitiesAdapter = new TouristActivitiesAdapter(AllPlansActivity.this, chosenActivities, null, false);
         rvChosenActivities.setLayoutManager(gridLayoutManager);
