@@ -40,7 +40,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.codepath.travel.CalendarUtils.datesOfInterest;
+import static com.codepath.travel.CalendarUtils.DATES_OF_INTEREST;
 import static com.codepath.travel.CalendarUtils.days;
 import static com.codepath.travel.CalendarUtils.fillScheduledMeals;
 import static com.codepath.travel.CalendarUtils.formatDate;
@@ -178,10 +178,10 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                 destinationNames.add(SEE_ALL_ITINERARIES);
                 for (Destination destination : destinations) {
                     destinationNames.add(destination.getFormattedLocationName());
-                    datesOfInterest.put(destination.getDate(), destination);
                     String arrivalName;
                     Event event;
                     if (destination.getDate() != null) {
+                        DATES_OF_INTEREST.put(destination.getDate(), destination);
                         arrivalName = "Arrival at " + destination.getArriveAirportName() + " Airport in " + destination.getFormattedLocationName();
                         event = new Event(arrivalName, getLocalDate(destination.getDate()), LocalTime.of(12, 0, 0, 0), LocalTime.of(20, 0, 0, 0));
                         eventsList.add(event);
@@ -190,6 +190,14 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
                         arrivalName = "Arrival at " + destination.getInboundArriveName() + " Airport (Return from trip)";
                         event = new Event(arrivalName, getLocalDate(destination.getInboundDate()), LocalTime.of(12, 0, 0, 0), LocalTime.of(20, 0, 0, 0));
                         eventsList.add(event);
+                        if (destination.getDate() != null) {
+                            LocalDate tripStartDate = getLocalDate(destination.getDate());
+                            LocalDate returnDate = getLocalDate(destination.getInboundDate());
+                            while (tripStartDate.isBefore(returnDate)) {
+                                tripStartDate = tripStartDate.plusDays(1);
+                                DATES_OF_INTEREST.put(tripStartDate.toString(), destination);
+                            }
+                        }
                     }
                 }
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(), R.layout.item_spinner_destination, destinationNames);
@@ -250,7 +258,7 @@ public class ItineraryFragment extends Fragment implements OnItemListener, Adapt
 
     private void setMonthView() {
         tvMonthYear.setText(formatDate(selectedDate));
-        getDaysInMonth(selectedDate);
+        getDaysInMonth();
         adapter.notifyDataSetChanged();
     }
 

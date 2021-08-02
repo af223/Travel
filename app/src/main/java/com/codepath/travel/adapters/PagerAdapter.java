@@ -24,9 +24,9 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return OutboundFragment.newInstance();
+                return new OutboundFragment();
             case 1:
-                return InboundFragment.newInstance();
+                return new InboundFragment();
             default:
                 return null;
         }

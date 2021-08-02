@@ -45,8 +45,8 @@ import static com.codepath.travel.activities.MainActivity.logout;
 
 public class FlightsActivity extends AppCompatActivity {
 
-    public static final ArrayList<Airport> departureAirports = new ArrayList<>();
-    public static final ArrayList<Airport> arrivalAirports = new ArrayList<>();
+    public static final ArrayList<Airport> DEPARTURE_AIRPORTS = new ArrayList<>();
+    public static final ArrayList<Airport> ARRIVAL_AIRPORTS = new ArrayList<>();
     private static final int CHOOSE_ONE_WAY_FLIGHT_REQUEST_CODE = 13;
     private static final int CHOOSE_ROUND_FLIGHT_REQUEST_CODE = 9;
     private static final String TAG = "FlightsActivity";
@@ -91,8 +91,8 @@ public class FlightsActivity extends AppCompatActivity {
         btnToOneWay = findViewById(R.id.btnToOneWay);
         btnToRoundTrips = findViewById(R.id.btnToRoundTrips);
 
-        departureAirports.clear();
-        arrivalAirports.clear();
+        DEPARTURE_AIRPORTS.clear();
+        ARRIVAL_AIRPORTS.clear();
         getChosenDestination();
 
         btnToOneWay.setOnClickListener(new View.OnClickListener() {
@@ -117,11 +117,11 @@ public class FlightsActivity extends AppCompatActivity {
     }
 
     private boolean checkAirportsSelected() {
-        if (departureAirports.isEmpty()) {
+        if (DEPARTURE_AIRPORTS.isEmpty()) {
             Toast.makeText(FlightsActivity.this, "Need to select at least one departure airport", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (arrivalAirports.isEmpty()) {
+        if (ARRIVAL_AIRPORTS.isEmpty()) {
             Toast.makeText(FlightsActivity.this, "Need to select at least one destination airport", Toast.LENGTH_SHORT).show();
             return false;
         }

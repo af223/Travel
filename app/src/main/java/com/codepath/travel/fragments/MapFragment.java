@@ -76,7 +76,7 @@ import static com.codepath.travel.fragments.LocationsFragment.locations;
 
 public class MapFragment extends Fragment implements LocationListener {
 
-    private static final String revGeocodeURL = "https://maps.googleapis.com/maps/api/geocode/json";
+    private static final String REV_GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
     private static final String TAG = "MapsFragment";
     private static GoogleMap map;
     private TextView tvLocation;
@@ -191,7 +191,7 @@ public class MapFragment extends Fragment implements LocationListener {
         params.put("key", getResources().getString(R.string.maps_api_key));
         params.put("location_type", "APPROXIMATE"); // Retrieve an area rather than street address
         params.put("language", "en");
-        client.get(revGeocodeURL, params, new JsonHttpResponseHandler() {
+        client.get(REV_GEOCODE_URL, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONObject jsonObject = json.jsonObject;

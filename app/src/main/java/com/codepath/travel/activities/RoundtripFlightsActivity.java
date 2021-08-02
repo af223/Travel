@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.travel.R;
-import com.codepath.travel.activities.FlightsActivity;
 import com.codepath.travel.adapters.RoundtripsAdapter;
 import com.codepath.travel.fragments.Ticket;
 import com.codepath.travel.models.Airport;
@@ -40,7 +39,7 @@ import java.util.Comparator;
 public class RoundtripFlightsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "RoundtripFlightsActivity";
-    private static final String[] sortMethods = {"", "Cost", "Departure Date", "Return Date", "Outbound Airline", "Inbound Airline"};
+    private static final String[] SORT_METHODS = {"", "Cost", "Departure Date", "Return Date", "Outbound Airline", "Inbound Airline"};
     private static CardView cvChosenFlight;
     private static Button btnConfirm;
     private static Flight chosenOutboundFlight;
@@ -105,20 +104,20 @@ public class RoundtripFlightsActivity extends AppCompatActivity implements Adapt
         Ticket roundtripTicket = new Ticket(TAG, this, pbFlights);
 
         pbFlights.setVisibility(View.VISIBLE);
-        for (Airport originAirport : FlightsActivity.departureAirports) {
-            for (Airport destinationAirport : FlightsActivity.arrivalAirports) {
+        for (Airport originAirport : FlightsActivity.DEPARTURE_AIRPORTS) {
+            for (Airport destinationAirport : FlightsActivity.ARRIVAL_AIRPORTS) {
                 roundtripTicket.getRoundtripFlights(originAirport.getIATACode(), destinationAirport.getIATACode(), adapter, flights);
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, sortMethods);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, SORT_METHODS);
         spinnerSortBy.setAdapter(adapter);
         spinnerSortBy.setOnItemSelectedListener(this);
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch (sortMethods[position]) {
+        switch (SORT_METHODS[position]) {
             case "Cost":
                 Collections.sort(flights, new Comparator<Pair<Flight, Flight>>() {
                     @Override

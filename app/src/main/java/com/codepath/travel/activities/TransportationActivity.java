@@ -37,9 +37,9 @@ import static com.codepath.travel.activities.MainActivity.logout;
 public class TransportationActivity extends AppCompatActivity {
 
     private static final String CATEGORIES = "transport,carrental,bikerentals,motorcycle_rental,trainstations";
-    private static final String[] typeAlias = {CATEGORIES, "carrental", "bikerentals", "taxis", "motorcycle_rental",
+    private static final String[] TYPE_ALIAS = {CATEGORIES, "carrental", "bikerentals", "taxis", "motorcycle_rental",
                                                 "trainstations", "buses"};
-    private static final String[] typeArray = {"See all", "Car Rentals", "Bike Rentals", "Taxis", "Motorcycle Rental",
+    private static final String[] TYPE_ARRAY = {"See all", "Car Rentals", "Bike Rentals", "Taxis", "Motorcycle Rental",
                                                 "Train Stations", "Buses"};
     private static int offset;
     private static String categoryParameter;
@@ -66,7 +66,7 @@ public class TransportationActivity extends AppCompatActivity {
         progressBarTransportation = findViewById(R.id.progressBarTransportation);
         progressBarTransportation.setVisibility(View.VISIBLE);
         tvTransportType = findViewById(R.id.tvTransportType);
-        selectedType = new boolean[typeArray.length];
+        selectedType = new boolean[TYPE_ARRAY.length];
 
         tvTransportType.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +95,7 @@ public class TransportationActivity extends AppCompatActivity {
         rvTransportations.addOnScrollListener(scrollListener);
         categoryParameter = CATEGORIES;
 
-        filterDialog = new FilterDialog(selectedType, typeList, typeArray, tvTransportType);
+        filterDialog = new FilterDialog(selectedType, typeList, TYPE_ARRAY, tvTransportType);
         latitude = getIntent().getStringExtra(Destination.KEY_LAT);
         longitude = getIntent().getStringExtra(Destination.KEY_LONG);
 
@@ -120,8 +120,8 @@ public class TransportationActivity extends AppCompatActivity {
                 setUpToLoadResults();
                 StringBuilder stringBuilder = new StringBuilder();
                 for (int i = 0; i < typeList.size(); i++) {
-                    stringBuilder.append(typeArray[typeList.get(i)]);
-                    categoryParameter += typeAlias[typeList.get(i)];
+                    stringBuilder.append(TYPE_ARRAY[typeList.get(i)]);
+                    categoryParameter += TYPE_ALIAS[typeList.get(i)];
 
                     if (i != typeList.size() - 1) {
                         stringBuilder.append(", ");

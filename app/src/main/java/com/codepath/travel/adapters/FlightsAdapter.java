@@ -29,13 +29,13 @@ public class FlightsAdapter extends RecyclerView.Adapter<FlightsAdapter.ViewHold
     private final Context context;
     private final List<Flight> flights;
     private final View ticket;
-    private final Boolean outbound;
+    private final Boolean isOutbound;
 
-    public FlightsAdapter(Context context, List<Flight> flights, View ticket, Boolean outbound) {
+    public FlightsAdapter(Context context, List<Flight> flights, View ticket, Boolean isOutbound) {
         this.context = context;
         this.flights = flights;
         this.ticket = ticket;
-        this.outbound = outbound;
+        this.isOutbound = isOutbound;
     }
 
     @NonNull
@@ -76,7 +76,7 @@ public class FlightsAdapter extends RecyclerView.Adapter<FlightsAdapter.ViewHold
         public void onClick(View v) {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
-                InboundFragment.choose(flights.get(position), ticket, outbound, context);
+                InboundFragment.choose(flights.get(position), ticket, isOutbound, context);
             }
         }
     }

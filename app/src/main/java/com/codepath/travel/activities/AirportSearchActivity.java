@@ -42,7 +42,7 @@ import okhttp3.Headers;
 public class AirportSearchActivity extends AppCompatActivity {
 
     private static final String TAG = "AirportSearchActivity";
-    private static final String findQueryURL = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/autosuggest/v1.0/%1$s/%2$s/%3$s/?query=%4$s";
+    private static final String FIND_QUERY_URL = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/autosuggest/v1.0/%1$s/%2$s/%3$s/?query=%4$s";
     private static FindAirportsAdapter foundAdapter;
     private static ChosenAirportsAdapter chosenAdapter;
     private EditText etSearch;
@@ -69,9 +69,9 @@ public class AirportSearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_airport_search);
 
         if (getIntent().getBooleanExtra(getResources().getString(R.string.from_departure), true)) {
-            chosenAirportsList = FlightsActivity.departureAirports;
+            chosenAirportsList = FlightsActivity.DEPARTURE_AIRPORTS;
         } else {
-            chosenAirportsList = FlightsActivity.arrivalAirports;
+            chosenAirportsList = FlightsActivity.ARRIVAL_AIRPORTS;
         }
 
         etSearch = findViewById(R.id.etSearch);
@@ -128,7 +128,7 @@ public class AirportSearchActivity extends AppCompatActivity {
         RequestParams params = new RequestParams();
         headers.put("x-rapidapi-key", getResources().getString(R.string.rapid_api_key));
         headers.put("x-rapidapi-host", "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com");
-        String URL = String.format(findQueryURL, "US", "USD", "en", queryName);
+        String URL = String.format(FIND_QUERY_URL, "US", "USD", "en", queryName);
         client.get(URL, headers, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {

@@ -24,18 +24,18 @@ import static com.codepath.travel.models.Event.eventsList;
 
 public class CalendarUtils {
 
-    public static final HashMap<String, Destination> datesOfInterest = new HashMap<>();
-    private static final LocalTime curfew = LocalTime.of(23, 1, 0);
-    private static final LocalTime breakfastStart = LocalTime.of(8, 0, 0);
-    private static final LocalTime breakfastEnd = LocalTime.of(8, 30, 0);
-    private static final LocalTime lunchStart = LocalTime.of(12, 0, 0);
-    private static final LocalTime lunchEnd = LocalTime.of(13, 0, 0);
-    private static final LocalTime dinnerStart = LocalTime.of(18, 0, 0);
-    private static final LocalTime dinnerEnd = LocalTime.of(19, 0, 0);
-    private static final LocalTime dayStartTime = breakfastEnd.plusMinutes(30);
-    private static final HashMap<Destination, Integer> destinationColorCode = new HashMap<>();
-    private static final HashMap<String, ArrayList<Pair<LocalTime, LocalTime>>> busyTimeSlots = new HashMap<>();
-    private static final HashMap<String, Pair<LocalDate, Integer>> nextAvailableDate = new HashMap<>();
+    public static final HashMap<String, Destination> DATES_OF_INTEREST = new HashMap<>();
+    private static final LocalTime CURFEW = LocalTime.of(23, 1, 0);
+    private static final LocalTime BREAKFAST_START = LocalTime.of(8, 0, 0);
+    private static final LocalTime BREAKFAST_END = LocalTime.of(8, 30, 0);
+    private static final LocalTime LUNCH_START = LocalTime.of(12, 0, 0);
+    private static final LocalTime LUNCH_END = LocalTime.of(13, 0, 0);
+    private static final LocalTime DINNER_START = LocalTime.of(18, 0, 0);
+    private static final LocalTime DINNER_END = LocalTime.of(19, 0, 0);
+    private static final LocalTime DAY_START_TIME = BREAKFAST_END.plusMinutes(30);
+    private static final HashMap<Destination, Integer> DESTINATION_COLOR_CODE = new HashMap<>();
+    private static final HashMap<String, ArrayList<Pair<LocalTime, LocalTime>>> BUSY_TIME_SLOTS = new HashMap<>();
+    private static final HashMap<String, Pair<LocalDate, Integer>> NEXT_AVAILABLE_DATE = new HashMap<>();
     public static LocalDate selectedDate;
     public static ArrayList<LocalDate> days;
 
@@ -65,9 +65,15 @@ public class CalendarUtils {
         return time.format(formatter);
     }
 
-    public static void getDaysInMonth(LocalDate date) {
+    /**
+     * Populates the days array with the days of the month containing the selected date. "days" array
+     * contains exactly 42 elements (6 weeks/rows x 7 days a week/row) for month view. The ith element in "days" represents
+     * the ith calendar cell. If the ith calendar cell of that month should be empty (i.e. no date associated), then
+     * the ith element of "days" is null, otherwise, ith element is the LocalDate.
+     */
+    public static void getDaysInMonth() {
         days.clear();
-        YearMonth yearMonth = YearMonth.from(date);
+        YearMonth yearMonth = YearMonth.from(selectedDate);
         int numDaysInMonth = yearMonth.lengthOfMonth();
 
         LocalDate firstOfMonth = selectedDate.withDayOfMonth(1);
@@ -82,6 +88,11 @@ public class CalendarUtils {
         }
     }
 
+    /**
+     * Populates the days array with the days of the week containing the selected date. "days" array
+     * contains exactly 7 elements (7 days for selected week) for week view. The ith element in "days"
+     * represents the ith day of the week, starting with Sunday at index 0.
+     */
     public static void getDaysInWeek() {
         days.clear();
         LocalDate current = sundayForDate(selectedDate);
@@ -92,6 +103,11 @@ public class CalendarUtils {
         }
     }
 
+    /**
+     * @param current - the selected LocalDate
+     * @return current if current is a Sunday, otherwise it returns the LocalDate that is the closest
+     * Sunday prior to current
+     */
     private static LocalDate sundayForDate(LocalDate current) {
         LocalDate oneWeekAgo = current.minusWeeks(1);
 
@@ -112,33 +128,33 @@ public class CalendarUtils {
             hsv[1] = 80; // saturation
             hsv[2] = 100; // value
             int color = Color.HSVToColor(60, hsv);
-            destinationColorCode.put(destination, color);
+            DESTINATION_COLOR_CODE.put(destination, color);
         }
     }
 
     public static int getDestinationColor(Destination destination) {
-        return destinationColorCode.get(destination);
+        return DESTINATION_COLOR_CODE.get(destination);
     }
 
     public static void onReloadEverything() {
-        destinationColorCode.clear();
-        datesOfInterest.clear();
-        busyTimeSlots.clear();
-        nextAvailableDate.clear();
+        DESTINATION_COLOR_CODE.clear();
+        DATES_OF_INTEREST.clear();
+        BUSY_TIME_SLOTS.clear();
+        NEXT_AVAILABLE_DATE.clear();
     }
 
     public static void setupBusyTimes(ArrayList<TouristDestination> scheduledEvents) {
         for (TouristDestination touristDestination : scheduledEvents) {
             String dateOfVisit = touristDestination.getDateVisited();
-            if (!busyTimeSlots.containsKey(dateOfVisit)) {
-                busyTimeSlots.put(dateOfVisit, new ArrayList<>());
+            if (!BUSY_TIME_SLOTS.containsKey(dateOfVisit)) {
+                BUSY_TIME_SLOTS.put(dateOfVisit, new ArrayList<>());
             }
             LocalTime timeOfVisit = getLocalTime(touristDestination.getTimeVisited());
             LocalTime endVisitTime = getLocalTime(touristDestination.getVisitEnd());
-            int insertIndex = busyTimeSlots.get(dateOfVisit).size();
+            int insertIndex = BUSY_TIME_SLOTS.get(dateOfVisit).size();
             addEventToSchedule(touristDestination, getLocalDate(dateOfVisit), timeOfVisit, endVisitTime, insertIndex);
         }
-        Iterator it = busyTimeSlots.entrySet().iterator();
+        Iterator it = BUSY_TIME_SLOTS.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, ArrayList<Pair<LocalTime, LocalTime>>> date = (Map.Entry) it.next();
             date.getValue().sort(new Comparator<Pair<LocalTime, LocalTime>>() {
@@ -159,13 +175,13 @@ public class CalendarUtils {
     public static void scheduleTheseEvents(ArrayList<TouristDestination> unscheduledEvents) {
         for (TouristDestination touristDestination : unscheduledEvents) {
             LocalDate dateOfVisit = getLocalDate(touristDestination.getDestination().getDate()).plusDays(1);
-            LocalTime timeOfVisit = startOutsideMeals(dayStartTime);
+            LocalTime timeOfVisit = startOutsideMeals(DAY_START_TIME);
             LocalTime endOfVisit = timeOfVisit.plusHours(2);
             outer:
             while (true) {
                 // no events on this day
-                if (!busyTimeSlots.containsKey(dateOfVisit.toString())) {
-                    busyTimeSlots.put(dateOfVisit.toString(), new ArrayList<>());
+                if (!BUSY_TIME_SLOTS.containsKey(dateOfVisit.toString())) {
+                    BUSY_TIME_SLOTS.put(dateOfVisit.toString(), new ArrayList<>());
                     if (coincidesWithMeal(timeOfVisit, endOfVisit)) {
                         timeOfVisit = startOutsideMeals(endOfVisit);
                         endOfVisit = timeOfVisit.plusHours(2);
@@ -175,7 +191,7 @@ public class CalendarUtils {
                     break;
                 }
                 // before first scheduled event of the day
-                ArrayList<Pair<LocalTime, LocalTime>> blockedTimes = busyTimeSlots.get(dateOfVisit.toString());
+                ArrayList<Pair<LocalTime, LocalTime>> blockedTimes = BUSY_TIME_SLOTS.get(dateOfVisit.toString());
                 if (endOfVisit.isBefore(blockedTimes.get(0).first.plusMinutes(1))
                         && !coincidesWithMeal(timeOfVisit, endOfVisit)) {
                     addEventToSchedule(touristDestination, dateOfVisit, timeOfVisit, endOfVisit, 0);
@@ -201,7 +217,7 @@ public class CalendarUtils {
                 }
                 // after all busy blocks of the day
                 if (timeOfVisit.isAfter(blockedTimes.get(blockedTimes.size() - 1).second)
-                        && timeOfVisit.isBefore(curfew.minusHours(2))) {
+                        && timeOfVisit.isBefore(CURFEW.minusHours(2))) {
                     if (coincidesWithMeal(timeOfVisit, endOfVisit)) {
                         timeOfVisit = startOutsideMeals(endOfVisit);
                         endOfVisit = timeOfVisit.plusHours(2);
@@ -210,7 +226,7 @@ public class CalendarUtils {
                     saveEvent(touristDestination, dateOfVisit.toString(), timeOfVisit.toString(), formatStoredTime(endOfVisit));
                     break;
                 }
-                timeOfVisit = dayStartTime;
+                timeOfVisit = DAY_START_TIME;
                 endOfVisit = timeOfVisit.plusHours(2);
                 dateOfVisit = dateOfVisit.plusDays(1);
             }
@@ -225,18 +241,18 @@ public class CalendarUtils {
             LocalDate dateVisited = getLocalDate(restaurant.getDateVisited());
             LocalDate nextDate = dateVisited;
             int mealOfDay = 1;
-            if (timeVisited.equals(lunchStart)) {
+            if (timeVisited.equals(LUNCH_START)) {
                 mealOfDay = 2;
-            } else if (timeVisited.equals(dinnerStart)) {
+            } else if (timeVisited.equals(DINNER_START)) {
                 mealOfDay = 0;
                 nextDate = nextDate.plusDays(1);
             }
-            if (nextAvailableDate.get(destinationID) == null) {
+            if (NEXT_AVAILABLE_DATE.get(destinationID) == null) {
                 Pair nextMeal = new Pair(nextDate, mealOfDay);
-                nextAvailableDate.put(destinationID, nextMeal);
+                NEXT_AVAILABLE_DATE.put(destinationID, nextMeal);
             } else {
-                LocalDate latestDateVisit = nextAvailableDate.get(destinationID).first;
-                int latestMeal = nextAvailableDate.get(destinationID).second;
+                LocalDate latestDateVisit = NEXT_AVAILABLE_DATE.get(destinationID).first;
+                int latestMeal = NEXT_AVAILABLE_DATE.get(destinationID).second;
                 if (latestDateVisit.isBefore(nextDate)) {
                     latestDateVisit = nextDate;
                     latestMeal = mealOfDay;
@@ -244,7 +260,7 @@ public class CalendarUtils {
                     latestMeal = Integer.max(latestMeal, mealOfDay);
                 }
                 Pair nextMeal = new Pair(latestDateVisit, latestMeal);
-                nextAvailableDate.put(destinationID, nextMeal);
+                NEXT_AVAILABLE_DATE.put(destinationID, nextMeal);
             }
             addEventToSchedule(restaurant, dateVisited, timeVisited, endVisitTime, -1);
         }
@@ -253,27 +269,27 @@ public class CalendarUtils {
     public static void scheduleMeals(ArrayList<TouristDestination> allRestaurants) {
         for (TouristDestination restaurant : allRestaurants) {
             String destinationID = restaurant.getDestination().getObjectId();
-            if (nextAvailableDate.get(destinationID) == null) {
+            if (NEXT_AVAILABLE_DATE.get(destinationID) == null) {
                 Pair nextMeal = new Pair(getLocalDate(restaurant.getDestination().getDate()).plusDays(1), 0);
-                nextAvailableDate.put(destinationID, nextMeal);
+                NEXT_AVAILABLE_DATE.put(destinationID, nextMeal);
             }
-            LocalDate nextMealDate = nextAvailableDate.get(destinationID).first;
-            int numMealsPlanned = nextAvailableDate.get(destinationID).second;
+            LocalDate nextMealDate = NEXT_AVAILABLE_DATE.get(destinationID).first;
+            int numMealsPlanned = NEXT_AVAILABLE_DATE.get(destinationID).second;
             switch (numMealsPlanned) {
                 case 0:
-                    addEventToSchedule(restaurant, nextMealDate, breakfastStart, breakfastEnd, -1);
-                    saveEvent(restaurant, nextMealDate.toString(), formatStoredTime(breakfastStart), formatStoredTime(breakfastEnd));
-                    nextAvailableDate.put(destinationID, new Pair(nextMealDate, 1));
+                    addEventToSchedule(restaurant, nextMealDate, BREAKFAST_START, BREAKFAST_END, -1);
+                    saveEvent(restaurant, nextMealDate.toString(), formatStoredTime(BREAKFAST_START), formatStoredTime(BREAKFAST_END));
+                    NEXT_AVAILABLE_DATE.put(destinationID, new Pair(nextMealDate, 1));
                     break;
                 case 1:
-                    addEventToSchedule(restaurant, nextMealDate, lunchStart, lunchEnd, -1);
-                    saveEvent(restaurant, nextMealDate.toString(), formatStoredTime(lunchStart), formatStoredTime(lunchEnd));
-                    nextAvailableDate.put(destinationID, new Pair(nextMealDate, 2));
+                    addEventToSchedule(restaurant, nextMealDate, LUNCH_START, LUNCH_END, -1);
+                    saveEvent(restaurant, nextMealDate.toString(), formatStoredTime(LUNCH_START), formatStoredTime(LUNCH_END));
+                    NEXT_AVAILABLE_DATE.put(destinationID, new Pair(nextMealDate, 2));
                     break;
                 case 2:
-                    addEventToSchedule(restaurant, nextMealDate, dinnerStart, dinnerEnd, -1);
-                    saveEvent(restaurant, nextMealDate.toString(), formatStoredTime(dinnerStart), formatStoredTime(dinnerEnd));
-                    nextAvailableDate.put(destinationID, new Pair(nextMealDate.plusDays(1), 0));
+                    addEventToSchedule(restaurant, nextMealDate, DINNER_START, DINNER_END, -1);
+                    saveEvent(restaurant, nextMealDate.toString(), formatStoredTime(DINNER_START), formatStoredTime(DINNER_END));
+                    NEXT_AVAILABLE_DATE.put(destinationID, new Pair(nextMealDate.plusDays(1), 0));
                     break;
             }
         }
@@ -283,7 +299,7 @@ public class CalendarUtils {
         String eventName = touristDestination.getName();
         if (index > -1) {
             Pair block = new Pair(timeOfVisit, endOfVisit);
-            busyTimeSlots.get(dateOfVisit.toString()).add(index, block);
+            BUSY_TIME_SLOTS.get(dateOfVisit.toString()).add(index, block);
         } else {
             eventName = restaurantEventName(timeOfVisit, eventName);
         }
@@ -300,9 +316,9 @@ public class CalendarUtils {
     }
 
     private static String restaurantEventName(LocalTime timeOfVisit, String eventName) {
-        if (timeOfVisit.equals(breakfastStart)) {
+        if (timeOfVisit.equals(BREAKFAST_START)) {
             return "Breakfast at " + eventName;
-        } else if (timeOfVisit.equals(lunchStart)) {
+        } else if (timeOfVisit.equals(LUNCH_START)) {
             return "Lunch at " + eventName;
         } else {
             return "Dinner at " + eventName;
@@ -310,9 +326,9 @@ public class CalendarUtils {
     }
 
     private static Boolean coincidesWithMeal(LocalTime startTime, LocalTime endTime) {
-        return coincidesWithTime(startTime, endTime, breakfastStart, breakfastEnd)
-                || coincidesWithTime(startTime, endTime, lunchStart, lunchEnd)
-                || coincidesWithTime(startTime, endTime, dinnerStart, dinnerEnd);
+        return coincidesWithTime(startTime, endTime, BREAKFAST_START, BREAKFAST_END)
+                || coincidesWithTime(startTime, endTime, LUNCH_START, LUNCH_END)
+                || coincidesWithTime(startTime, endTime, DINNER_START, DINNER_END);
     }
 
     private static Boolean coincidesWithTime(LocalTime startTime, LocalTime endTime, LocalTime busyStart, LocalTime busyEnd) {
@@ -323,26 +339,26 @@ public class CalendarUtils {
 
     private static LocalTime startOutsideMeals(LocalTime time) {
         if (isDuringBreakfast(time)) {
-            return breakfastEnd.plusMinutes(15);
+            return BREAKFAST_END.plusMinutes(15);
         }
         if (isDuringLunch(time)) {
-            return lunchEnd.plusMinutes(15);
+            return LUNCH_END.plusMinutes(15);
         }
         if (isDuringDinner(time)) {
-            return dinnerEnd.plusMinutes(15);
+            return DINNER_END.plusMinutes(15);
         }
         return time;
     }
 
     private static Boolean isDuringBreakfast(LocalTime time) {
-        return time.isAfter(breakfastStart) && time.isBefore(breakfastEnd);
+        return time.isAfter(BREAKFAST_START) && time.isBefore(BREAKFAST_END);
     }
 
     private static Boolean isDuringLunch(LocalTime time) {
-        return time.isAfter(lunchStart) && time.isBefore(lunchEnd);
+        return time.isAfter(LUNCH_START) && time.isBefore(LUNCH_END);
     }
 
     private static Boolean isDuringDinner(LocalTime time) {
-        return time.isAfter(dinnerStart) && time.isBefore(dinnerEnd);
+        return time.isAfter(DINNER_START) && time.isBefore(DINNER_END);
     }
 }

@@ -167,20 +167,22 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
         }
 
         private void startResourceActivity(Class resourceName, Destination destination) {
-            Intent i = new Intent(context, resourceName);
-            i.putExtra(Destination.KEY_OBJECT_ID, destination.getObjectId());
-            i.putExtra(Destination.KEY_LAT, destination.getLatitude());
-            i.putExtra(Destination.KEY_LONG, destination.getLongitude());
+            Intent i = createIntent(resourceName, destination);
             context.startActivity(i);
         }
 
         private void startSharedActivity(Class resourceName, Destination destination, int code) {
-            Intent i = new Intent(context, resourceName);
-            i.putExtra(Destination.KEY_OBJECT_ID, destination.getObjectId());
-            i.putExtra(Destination.KEY_LAT, destination.getLatitude());
-            i.putExtra(Destination.KEY_LONG, destination.getLongitude());
+            Intent i = createIntent(resourceName, destination);
             i.putExtra(context.getResources().getString(R.string.activity_type), code);
             context.startActivity(i);
+        }
+
+        private Intent createIntent(Class resourceName, Destination destination) {
+            Intent intent = new Intent(context, resourceName);
+            intent.putExtra(Destination.KEY_OBJECT_ID, destination.getObjectId());
+            intent.putExtra(Destination.KEY_LAT, destination.getLatitude());
+            intent.putExtra(Destination.KEY_LONG, destination.getLongitude());
+            return intent;
         }
 
         @Override

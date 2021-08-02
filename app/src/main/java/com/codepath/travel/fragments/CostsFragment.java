@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class CostsFragment extends Fragment {
 
-    private static ArrayList<Expense> expenses;
+    private ArrayList<Expense> expenses;
     private RecyclerView rvExpenses;
     private ExpensesAdapter adapter;
     private RecyclerTouchListener rvTouchListener;

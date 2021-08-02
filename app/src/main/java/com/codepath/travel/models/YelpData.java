@@ -3,6 +3,7 @@ package com.codepath.travel.models;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
 import android.widget.ImageButton;
@@ -52,35 +53,37 @@ public class YelpData {
     }
 
     public static void displayRatingBar(ImageView ivRatingBar, String rate, Context context) {
+        int image = R.drawable.stars_extra_large_0;
         switch (rate) {
             case "1.0":
-                Glide.with(context).load(R.drawable.stars_extra_large_1).into(ivRatingBar);
+                image = R.drawable.stars_extra_large_1;
                 break;
             case "1.5":
-                Glide.with(context).load(R.drawable.stars_extra_large_1_half).into(ivRatingBar);
+                image = R.drawable.stars_extra_large_1_half;
                 break;
             case "2.0":
-                Glide.with(context).load(R.drawable.stars_extra_large_2).into(ivRatingBar);
+                image = R.drawable.stars_extra_large_2;
                 break;
             case "2.5":
-                Glide.with(context).load(R.drawable.stars_extra_large_2_half).into(ivRatingBar);
+                image = R.drawable.stars_extra_large_2_half;
                 break;
             case "3.0":
-                Glide.with(context).load(R.drawable.stars_extra_large_3).into(ivRatingBar);
+                image = R.drawable.stars_extra_large_3;
                 break;
             case "3.5":
-                Glide.with(context).load(R.drawable.stars_extra_large_3_half).into(ivRatingBar);
+                image = R.drawable.stars_extra_large_3_half;
                 break;
             case "4.0":
-                Glide.with(context).load(R.drawable.stars_extra_large_4).into(ivRatingBar);
+                image = R.drawable.stars_extra_large_4;
                 break;
             case "4.5":
-                Glide.with(context).load(R.drawable.stars_extra_large_4_half).into(ivRatingBar);
+                image = R.drawable.stars_extra_large_4_half;
                 break;
             case "5.0":
-                Glide.with(context).load(R.drawable.stars_extra_large_5).into(ivRatingBar);
+                image = R.drawable.stars_extra_large_5;
                 break;
         }
+        Glide.with(context).load(image).into(ivRatingBar);
     }
 
     public static void linkToYelp(String yelpURL, ImageButton ibYelp, Context context) {

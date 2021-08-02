@@ -28,24 +28,17 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import okhttp3.Headers;
 
 public class Ticket {
 
-    public static final String[] sortMethods = {"", "Cost", "Departure Date", "Airline"};
+    public static final String[] SORT_METHODS = {"", "Cost", "Departure Date", "Airline"};
     public static final Comparator<Flight> compareCost = new Comparator<Flight>() {
         @Override
         public int compare(Flight o1, Flight o2) {
-            if (Integer.parseInt(o1.getFlightCost()) < Integer.parseInt(o2.getFlightCost())) {
-                return -1;
-            } else if (Integer.parseInt(o1.getFlightCost()) > Integer.parseInt(o2.getFlightCost())) {
-                return 1;
-            } else {
-                return 0;
-            }
+            return Integer.parseInt(o1.getFlightCost()) - Integer.parseInt(o2.getFlightCost());
         }
     };
     public static final Comparator<Flight> compareDate = new Comparator<Flight>() {
@@ -68,22 +61,22 @@ public class Ticket {
             return o1.getCarrier().compareTo(o2.getCarrier());
         }
     };
-    private static final String getRoutesURLBase = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/US/USD/en-US/%1$s/%2$s/anytime?inboundpartialdate=anytime";
-    private static final String getRoundtripURLBase = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/US/USD/en/%1$s/%2$s/anytime/anytime";
-    private static final String rapidapiHostURL = "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com";
+    private static final String GET_ROUTES_URL_BASE = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/US/USD/en-US/%1$s/%2$s/anytime?inboundpartialdate=anytime";
+    private static final String GET_ROUNDTRIP_URL_BASE = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/US/USD/en/%1$s/%2$s/anytime/anytime";
+    private static final String RAPIDAPI_HOST_URL = "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com";
     public static Flight chosenOutboundFlight;
     public static Flight chosenInboundFlight;
-    private final Dictionary<Integer, String> placesCode;
-    private final Dictionary<Integer, String> placesName;
-    private final Dictionary<Integer, String> carriers;
+    private final HashMap<Integer, String> placesCode;
+    private final HashMap<Integer, String> placesName;
+    private final HashMap<Integer, String> carriers;
     private final String TAG;
     private final Activity activity;
     private final ProgressBar pbFlights;
 
     public Ticket(String TAG, Activity activity, ProgressBar pbFlights) {
-        this.placesCode = new Hashtable<>();
-        this.placesName = new Hashtable<>();
-        this.carriers = new Hashtable<>();
+        this.placesCode = new HashMap<>();
+        this.placesName = new HashMap<>();
+        this.carriers = new HashMap<>();
         this.TAG = TAG;
         this.activity = activity;
         this.pbFlights = pbFlights;
@@ -110,8 +103,8 @@ public class Ticket {
         RequestHeaders headers = new RequestHeaders();
         RequestParams params = new RequestParams();
         headers.put("x-rapidapi-key", activity.getResources().getString(R.string.rapid_api_key));
-        headers.put("x-rapidapi-host", rapidapiHostURL);
-        client.get(String.format(getRoutesURLBase, originCode, destinationCode),
+        headers.put("x-rapidapi-host", RAPIDAPI_HOST_URL);
+        client.get(String.format(GET_ROUTES_URL_BASE, originCode, destinationCode),
                 headers, params, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -142,8 +135,8 @@ public class Ticket {
         RequestHeaders headers = new RequestHeaders();
         RequestParams params = new RequestParams();
         headers.put("x-rapidapi-key", activity.getResources().getString(R.string.rapid_api_key));
-        headers.put("x-rapidapi-host", rapidapiHostURL);
-        client.get(String.format(getRoundtripURLBase, originCode, destinationCode),
+        headers.put("x-rapidapi-host", RAPIDAPI_HOST_URL);
+        client.get(String.format(GET_ROUNDTRIP_URL_BASE, originCode, destinationCode),
                 headers, params, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -241,7 +234,7 @@ public class Ticket {
     }
 
     public static void onSortTickets(FlightsAdapter adapter, RecyclerView rvFlights, ArrayList<Flight> flights, int position) {
-        switch (sortMethods[position]) {
+        switch (SORT_METHODS[position]) {
             case "Cost":
                 Collections.sort(flights, compareCost);
                 break;

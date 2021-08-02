@@ -45,10 +45,10 @@ public class TouristSpotsActivity extends AppCompatActivity {
 
     public static final int CHOOSE_TOURIST_SPOTS_CODE = 7;
     public static final int CHOOSE_RESTAURANTS_CODE = 12;
-    private static final String[] typeAlias = {"amusementparks", "galleries", "beaches", "gardens", "hiking",
+    private static final String[] TYPE_ALIAS = {"amusementparks", "galleries", "beaches", "gardens", "hiking",
             "landmarks", "museums", "nightlife", "shopping",
             "spas", "active", "tours"};
-    private static final String[] typeArray = {"Amusement Parks", "Art Galleries", "Beaches", "Gardens", "Hiking",
+    private static final String[] TYPE_ARRAY = {"Amusement Parks", "Art Galleries", "Beaches", "Gardens", "Hiking",
             "Landmarks/Historical Buildings", "Museums", "Nightlife", "Shopping",
             "Spas", "Sports", "Tours"};
     private static String categoryParameter;
@@ -96,8 +96,8 @@ public class TouristSpotsActivity extends AppCompatActivity {
             categoryParameter = "food,restaurants";
         } else {
             getSupportActionBar().setTitle("Find Activities");
-            selectedType = new boolean[typeArray.length];
-            filterDialog = new FilterDialog(selectedType, typeList, typeArray, tvActivityType);
+            selectedType = new boolean[TYPE_ARRAY.length];
+            filterDialog = new FilterDialog(selectedType, typeList, TYPE_ARRAY, tvActivityType);
         }
 
         rvTouristActivities = findViewById(R.id.rvTouristActivities);
@@ -178,8 +178,8 @@ public class TouristSpotsActivity extends AppCompatActivity {
                 setUpToLoadResults();
                 StringBuilder stringBuilder = new StringBuilder();
                 for (int i = 0; i < typeList.size(); i++) {
-                    stringBuilder.append(typeArray[typeList.get(i)]);
-                    categoryParameter += typeAlias[typeList.get(i)];
+                    stringBuilder.append(TYPE_ARRAY[typeList.get(i)]);
+                    categoryParameter += TYPE_ALIAS[typeList.get(i)];
 
                     if (i != typeList.size() - 1) {
                         stringBuilder.append(", ");

@@ -44,16 +44,6 @@ public class OutboundFragment extends Fragment implements AdapterView.OnItemSele
         // Required empty public constructor
     }
 
-    public static OutboundFragment newInstance() {
-        OutboundFragment fragment = new OutboundFragment();
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -77,13 +67,13 @@ public class OutboundFragment extends Fragment implements AdapterView.OnItemSele
 
         Ticket outboundTicket = new Ticket(TAG, getActivity(), pbFlights);
         pbFlights.setVisibility(View.VISIBLE);
-        for (Airport originAirport : FlightsActivity.departureAirports) {
-            for (Airport destinationAirport : FlightsActivity.arrivalAirports) {
+        for (Airport originAirport : FlightsActivity.DEPARTURE_AIRPORTS) {
+            for (Airport destinationAirport : FlightsActivity.ARRIVAL_AIRPORTS) {
                 outboundTicket.getFlights(originAirport.getIATACode(), destinationAirport.getIATACode(), adapter, flights);
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, Ticket.sortMethods);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, Ticket.SORT_METHODS);
         spinnerSortBy.setAdapter(adapter);
         spinnerSortBy.setOnItemSelectedListener(this);
     }

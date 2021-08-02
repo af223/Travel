@@ -20,8 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import static com.codepath.travel.CalendarUtils.datesOfInterest;
-import static com.codepath.travel.CalendarUtils.getLocalDate;
+import static com.codepath.travel.CalendarUtils.DATES_OF_INTEREST;
 import static com.codepath.travel.CalendarUtils.selectedDate;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHolder> {
@@ -90,16 +89,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
                 } else {
                     ivSelectedDate.setVisibility(View.GONE);
                 }
-                if (datesOfInterest.containsKey(date.toString())) {
-                    Destination destination = datesOfInterest.get(date.toString());
+                if (DATES_OF_INTEREST.containsKey(date.toString())) {
+                    Destination destination = DATES_OF_INTEREST.get(date.toString());
                     clCalendarCell.setBackgroundColor(CalendarUtils.getDestinationColor(destination));
-                    if (date.isEqual(getLocalDate(destination.getDate())) && destination.getInboundDate() != null) {
-                        LocalDate returnDate = getLocalDate(destination.getInboundDate());
-                        while (date.isBefore(returnDate)) {
-                            date = date.plusDays(1);
-                            datesOfInterest.put(date.toString(), destination);
-                        }
-                    }
                 } else {
                     clCalendarCell.setBackgroundColor(Color.TRANSPARENT);
                 }

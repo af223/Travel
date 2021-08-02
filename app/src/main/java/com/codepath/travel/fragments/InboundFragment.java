@@ -51,14 +51,9 @@ public class InboundFragment extends Fragment implements AdapterView.OnItemSelec
         // Required empty public constructor
     }
 
-    public static InboundFragment newInstance() {
-        InboundFragment fragment = new InboundFragment();
-        return fragment;
-    }
-
     // User has selected a ticket, but not clicked confirm button yet
-    public static void choose(Flight flight, View ticket, Boolean outbound, Context context) {
-        if (outbound) {
+    public static void choose(Flight flight, View ticket, Boolean isOutbound, Context context) {
+        if (isOutbound) {
             Ticket.chosenOutboundFlight = flight;
         } else {
             Ticket.chosenInboundFlight = flight;
@@ -67,11 +62,6 @@ public class InboundFragment extends Fragment implements AdapterView.OnItemSelec
         btnConfirm.setBackgroundColor(context.getResources().getColor(R.color.pastel_pink));
         Ticket.displayTicket(flight, ticket);
         ticket.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -114,13 +104,13 @@ public class InboundFragment extends Fragment implements AdapterView.OnItemSelec
 
         Ticket inboundTicket = new Ticket(TAG, getActivity(), pbFlights);
         pbFlights.setVisibility(View.VISIBLE);
-        for (Airport originAirport : FlightsActivity.departureAirports) {
-            for (Airport destinationAirport : FlightsActivity.arrivalAirports) {
+        for (Airport originAirport : FlightsActivity.DEPARTURE_AIRPORTS) {
+            for (Airport destinationAirport : FlightsActivity.ARRIVAL_AIRPORTS) {
                 inboundTicket.getFlights(destinationAirport.getIATACode(), originAirport.getIATACode(), adapter, flights);
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, Ticket.sortMethods);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, Ticket.SORT_METHODS);
         spinnerSortBy.setAdapter(adapter);
         spinnerSortBy.setOnItemSelectedListener(this);
     }
