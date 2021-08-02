@@ -59,7 +59,8 @@ public class ExpensesAdapter extends RecyclerView.Adapter<ExpensesAdapter.ViewHo
 
         public void bind(Expense expense) {
             tvExpense.setText(expense.getName());
-            tvExpenseCost.setText("$" + expense.getCost());
+            String cost = String.format("%.2f", Double.parseDouble(expense.getCost()));
+            tvExpenseCost.setText("$" + cost);
         }
     }
 }

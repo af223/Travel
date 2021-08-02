@@ -324,6 +324,29 @@ public class FlightsActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (DEPARTURE_AIRPORTS.isEmpty()) {
+            btnDepart.setText(getString(R.string.select_departure_airports));
+            btnArrive.setVisibility(View.GONE);
+            btnToOneWay.setVisibility(View.GONE);
+            btnToRoundTrips.setVisibility(View.GONE);
+        } else if (ARRIVAL_AIRPORTS.isEmpty()) {
+            btnDepart.setText(getString(R.string.change_depart_airport));
+            btnArrive.setText(getString(R.string.select_arrival_airports));
+            btnArrive.setVisibility(View.VISIBLE);
+            btnToOneWay.setVisibility(View.GONE);
+            btnToRoundTrips.setVisibility(View.GONE);
+        } else {
+            btnDepart.setText(getString(R.string.change_depart_airport));
+            btnArrive.setText(getString(R.string.change_arrive_airport));
+            btnArrive.setVisibility(View.VISIBLE);
+            btnToOneWay.setVisibility(View.VISIBLE);
+            btnToRoundTrips.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         isDestroyed = true;
         super.onDestroy();

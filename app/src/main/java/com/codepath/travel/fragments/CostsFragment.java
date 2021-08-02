@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +20,7 @@ import com.codepath.travel.adapters.ExpensesAdapter;
 import com.codepath.travel.adapters.RecyclerTouchListener;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Expense;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -42,13 +42,11 @@ public class CostsFragment extends Fragment {
     private RecyclerView rvExpenses;
     private ExpensesAdapter adapter;
     private RecyclerTouchListener rvTouchListener;
-    private EditText etEditExpense;
-    private EditText etEditCost;
     private Double totalCost = 0.0;
     private EditText etExpenseName;
-    private Button btnAddCost;
-    private EditText etExpenseAmount;
+    private EditText etExpenseCost;
     private TextView tvTotalCost;
+    private FloatingActionButton fabAddExpense;
 
     public CostsFragment() {
         // Required empty public constructor
@@ -68,23 +66,11 @@ public class CostsFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Cost Breakdown");
 
         tvTotalCost = view.findViewById(R.id.tvTotalCost);
-        etExpenseName = view.findViewById(R.id.etExpense);
-        etExpenseAmount = view.findViewById(R.id.etMoney);
-        btnAddCost = view.findViewById(R.id.btnAddCost);
-        btnAddCost.setOnClickListener(new View.OnClickListener() {
+        fabAddExpense = view.findViewById(R.id.fabAddExpense);
+        fabAddExpense.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (etExpenseName.getText().toString().isEmpty()) {
-                    Toast.makeText(getContext(), "Expenses must be named", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (etExpenseAmount.getText().toString().isEmpty()) {
-                    Toast.makeText(getContext(), "Must enter an amount", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                saveCost(etExpenseName.getText().toString(), etExpenseAmount.getText().toString());
-                etExpenseName.setText("");
-                etExpenseAmount.setText("");
+                showCreateExpenseAlert();
             }
         });
 
@@ -114,6 +100,40 @@ public class CostsFragment extends Fragment {
             }
         });
         rvExpenses.addOnItemTouchListener(rvTouchListener);
+    }
+
+    private void showCreateExpenseAlert() {
+        final AlertDialog alertDialog = buildBasicExpenseAlert();
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Create",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (isEmptyFields(etExpenseName, etExpenseCost)) {
+                            return;
+                        }
+                        saveCost(etExpenseName.getText().toString(), etExpenseCost.getText().toString());
+                    }
+                });
+        alertDialog.show();
+        setAlertButtonColors(alertDialog);
+    }
+
+    private void showEditAlertDialog(Expense expense, int position) {
+        final AlertDialog alertDialog = buildBasicExpenseAlert();
+        etExpenseName.setText(expense.getName());
+        etExpenseCost.setText(expense.getCost());
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Save",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (isEmptyFields(etExpenseName, etExpenseCost)) {
+                            return;
+                        }
+                        editExpense(expense, position);
+                    }
+                });
+        alertDialog.show();
+        setAlertButtonColors(alertDialog);
     }
 
     private void showProtectedAlertDialog() {
@@ -157,46 +177,10 @@ public class CostsFragment extends Fragment {
         });
     }
 
-    private void showEditAlertDialog(Expense expense, int position) {
-        View messageView = LayoutInflater.from(getContext()).inflate(R.layout.cost_message_item, null);
-        etEditExpense = messageView.findViewById(R.id.tvMapMessage);
-        etEditCost = messageView.findViewById(R.id.tvLocationName);
-
-        etEditExpense.setText(expense.getName());
-        etEditCost.setText(String.valueOf(expense.getCost()));
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-        alertDialogBuilder.setView(messageView);
-        final AlertDialog alertDialog = alertDialogBuilder.create();
-
-        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Save Changes",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (etEditExpense.getText().toString().isEmpty()) {
-                            Toast.makeText(getContext(), "Expense must be named", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        if (etEditCost.getText().toString().isEmpty()) {
-                            Toast.makeText(getContext(), "Must add a cost", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        editExpense(expense, position);
-                    }
-                });
-        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog.show();
-    }
-
     private void editExpense(Expense expense, int position) {
         totalCost -= Double.parseDouble(expense.getCost());
-        expense.setName(etEditExpense.getText().toString());
-        expense.setCost(etEditCost.getText().toString());
+        expense.setName(etExpenseName.getText().toString());
+        expense.setCost(etExpenseCost.getText().toString());
         totalCost += Double.parseDouble(expense.getCost());
         tvTotalCost.setText(String.format("%.2f", totalCost));
         expense.saveInBackground(new SaveCallback() {
@@ -210,6 +194,41 @@ public class CostsFragment extends Fragment {
                 adapter.notifyItemChanged(position);
             }
         });
+    }
+
+    private AlertDialog buildBasicExpenseAlert() {
+        View messageView = LayoutInflater.from(getContext()).inflate(R.layout.cost_message_item, null);
+        etExpenseName = messageView.findViewById(R.id.etExpenseName);
+        etExpenseCost = messageView.findViewById(R.id.etExpenseCost);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder.setView(messageView);
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        return alertDialog;
+    }
+
+    private boolean isEmptyFields(EditText etExpense, EditText etCost) {
+        if (etExpenseName.getText().toString().isEmpty()) {
+            Toast.makeText(getContext(), "Expense must be named", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if (etExpenseCost.getText().toString().isEmpty()) {
+            Toast.makeText(getContext(), "Must add a cost", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
+    }
+
+    private void setAlertButtonColors(AlertDialog alertDialog) {
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.medium_pink));
+        alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.medium_pink));
     }
 
     private void loadExpenses() {
