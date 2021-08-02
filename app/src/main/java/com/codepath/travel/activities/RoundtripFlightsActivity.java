@@ -1,4 +1,4 @@
-package com.codepath.travel;
+package com.codepath.travel.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +17,8 @@ import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.codepath.travel.R;
+import com.codepath.travel.activities.FlightsActivity;
 import com.codepath.travel.adapters.RoundtripsAdapter;
 import com.codepath.travel.fragments.Ticket;
 import com.codepath.travel.models.Airport;

@@ -96,7 +96,7 @@ public class CostsFragment extends Fragment {
         loadExpenses();
 
         rvTouchListener = new RecyclerTouchListener(getActivity(), rvExpenses);
-        rvTouchListener.setSwipeOptionViews(R.id.delete_task, R.id.edit_entry).setSwipeable(R.id.rowFG, R.id.swipeMenuLayout, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
+        rvTouchListener.setSwipeOptionViews(R.id.delete_task, R.id.edit_entry).setSwipeable(R.id.expenseForeground, R.id.swipeMenuLayout, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
             @Override
             public void onSwipeOptionClicked(int viewID, int position) {
                 if (expenses.get(position).isProtected()) {

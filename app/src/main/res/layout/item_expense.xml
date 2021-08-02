@@ -13,11 +13,10 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/rowFG"
-        android:layout_alignBottom="@+id/rowFG"
+        android:layout_alignTop="@id/expenseForeground"
+        android:layout_alignBottom="@id/expenseForeground"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
-
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="5dp"
         android:background="#E91E63"
@@ -25,62 +24,32 @@
         android:orientation="horizontal"
         android:padding="10dp">
 
-        <RelativeLayout
+        <ImageView
             android:id="@+id/edit_entry"
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="10dp"
+            android:scaleType="centerInside"
             android:clickable="true"
             android:focusable="true"
-            android:orientation="vertical">
+            app:srcCompat="@drawable/ic_baseline_edit_24"
+            app:tint="@android:color/white" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/img_edit"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/ic_baseline_edit_24"
-                    app:tint="@android:color/white" />
-            </LinearLayout>
-        </RelativeLayout>
-
-        <RelativeLayout
+        <ImageView
             android:id="@+id/delete_task"
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:scaleType="centerInside"
             android:clickable="true"
             android:focusable="true"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/img_delete"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_baseline_delete_24"
-                    app:tint="@android:color/white" />
-            </LinearLayout>
-        </RelativeLayout>
-
+            android:src="@drawable/ic_baseline_delete_24"
+            app:tint="@android:color/white" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/rowFG"
+        android:id="@+id/expenseForeground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -109,12 +78,12 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_toStartOf="@+id/tvExpenseCost"
+                android:layout_toStartOf="@id/tvExpenseCost"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="hotel" />
+                tools:text="@string/expense_name_placeholder" />
 
             <TextView
                 android:id="@+id/tvExpenseCost"
@@ -127,10 +96,8 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="8dp"
                 android:lines="1"
-                tools:text="0.00" />
+                tools:text="@string/money_placeholder" />
 
         </RelativeLayout>
-
     </LinearLayout>
-
 </RelativeLayout>

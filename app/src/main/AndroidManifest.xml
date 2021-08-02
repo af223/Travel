@@ -21,16 +21,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Travel">
-        <activity android:name=".AllPlansActivity" />
-        <activity android:name=".TransportationActivity" />
-        <activity android:name=".RoundtripFlightsActivity" />
-        <activity android:name=".WeeklyViewActivity" />
-        <activity android:name=".CreateEventActivity" />
-        <activity android:name=".TouristSpotsActivity" />
-        <activity android:name=".HotelsActivity" />
-        <activity android:name=".ChooseFlightActivity" />
-        <activity android:name=".AirportSearchActivity" />
-        <activity android:name=".FlightsActivity" />
+        <activity android:name=".activities.AllPlansActivity" />
+        <activity android:name=".activities.TransportationActivity" />
+        <activity android:name=".activities.RoundtripFlightsActivity" />
+        <activity android:name=".activities.WeeklyViewActivity" />
+        <activity android:name=".activities.CreateEventActivity" />
+        <activity android:name=".activities.TouristSpotsActivity" />
+        <activity android:name=".activities.HotelsActivity" />
+        <activity android:name=".activities.ChooseFlightActivity" />
+        <activity android:name=".activities.AirportSearchActivity" />
+        <activity android:name=".activities.FlightsActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -43,8 +43,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".SignupActivity" />
-        <activity android:name=".LoginActivity">
+        <activity android:name=".activities.SignupActivity" />
+        <activity android:name=".activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -52,7 +52,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:windowSoftInputMode="adjustPan" />
     </application>
 

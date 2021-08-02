@@ -1,4 +1,4 @@
-package com.codepath.travel;
+package com.codepath.travel.activities;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +16,7 @@ import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.codepath.travel.R;
 import com.codepath.travel.adapters.ChosenAirportsAdapter;
 import com.codepath.travel.adapters.FindAirportsAdapter;
 import com.codepath.travel.models.Airport;

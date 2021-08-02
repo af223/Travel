@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp">
 
-
         <ImageView
             android:id="@+id/ivBusinessPicture"
             android:layout_width="wrap_content"
@@ -27,8 +26,8 @@
             android:id="@+id/tvBusinessName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/ivBusinessPicture"
-            android:text="Name"
+            android:layout_below="@id/ivBusinessPicture"
+            android:text="@string/name_placeholder"
             android:textColor="#000000"
             android:textStyle="bold" />
 
@@ -65,14 +64,13 @@
             android:id="@+id/tvReviewCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvBusinessName"
+            android:layout_below="@id/tvBusinessName"
             android:layout_alignParentBottom="false"
             android:layout_marginStart="7dp"
             android:layout_marginTop="4dp"
-            android:layout_toEndOf="@+id/ivYelpRating"
-            android:text="TextView"
+            android:layout_toEndOf="@id/ivYelpRating"
+            android:text="@string/num_review_placeholder"
             android:textSize="12sp" />
 
     </RelativeLayout>
-
 </androidx.cardview.widget.CardView>

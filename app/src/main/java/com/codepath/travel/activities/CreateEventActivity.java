@@ -1,4 +1,4 @@
-package com.codepath.travel;
+package com.codepath.travel.activities;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.codepath.travel.CalendarUtils;
+import com.codepath.travel.R;
 import com.codepath.travel.fragments.ItineraryFragment;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Event;

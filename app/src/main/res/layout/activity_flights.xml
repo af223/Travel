@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FlightsActivity">
+    tools:context=".activities.FlightsActivity">
 
     <include
         layout="@layout/toolbar_main"
@@ -16,7 +15,7 @@
         android:id="@+id/flTickets"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"/>
+        android:layout_below="@id/toolbar" />
 
     <Button
         android:id="@+id/btnDepart"
@@ -27,35 +26,34 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="Select Departure Airports" />
+        android:text="@string/select_departure_airports" />
 
     <Button
         android:id="@+id/btnArrive"
         android:layout_width="185dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/flTickets"
-        android:layout_toEndOf="@+id/btnDepart"
+        android:layout_below="@id/flTickets"
+        android:layout_toEndOf="@id/btnDepart"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:text="Select Arrival Airports" />
+        android:text="@string/select_arrival_airports" />
 
     <Button
         android:id="@+id/btnToOneWay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnArrive"
+        android:layout_below="@id/btnArrive"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:text="See One-way Tickets" />
+        android:text="@string/see_one_way_tickets" />
 
     <Button
         android:id="@+id/btnToRoundTrips"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnToOneWay"
+        android:layout_below="@id/btnToOneWay"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:text="See Roundtrip Tickets" />
-
+        android:text="@string/see_roundtrip_tickets" />
 
 </RelativeLayout>

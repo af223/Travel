@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.codepath.travel.FlightsActivity;
+import com.codepath.travel.activities.FlightsActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.adapters.FlightsAdapter;
 import com.codepath.travel.models.Airport;

@@ -1,4 +1,4 @@
-package com.codepath.travel;
+package com.codepath.travel.activities;
 
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.codepath.travel.R;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Hotel;
 import com.codepath.travel.models.HotelOffer;
@@ -47,8 +48,8 @@ import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-import static com.codepath.travel.MainActivity.logout;
-import static com.codepath.travel.MainActivity.okHttpClient;
+import static com.codepath.travel.activities.MainActivity.logout;
+import static com.codepath.travel.activities.MainActivity.okHttpClient;
 
 /**
  * This activity allows the user to see and select suggested hotels near the destination pinned on a map.

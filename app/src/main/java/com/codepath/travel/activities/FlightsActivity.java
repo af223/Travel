@@ -1,4 +1,4 @@
-package com.codepath.travel;
+package com.codepath.travel.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +16,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.codepath.travel.CalendarUtils;
+import com.codepath.travel.R;
 import com.codepath.travel.fragments.ChosenTicketsFragment;
 import com.codepath.travel.models.Airport;
 import com.codepath.travel.models.Destination;
@@ -32,7 +34,7 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.codepath.travel.MainActivity.logout;
+import static com.codepath.travel.activities.MainActivity.logout;
 
 /**
  * This activity allows the user navigate to find and select departure and arrival airports and to see

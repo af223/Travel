@@ -14,7 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.codepath.travel.MainActivity;
+import com.codepath.travel.activities.MainActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.adapters.LocationsAdapter;
 import com.codepath.travel.adapters.RecyclerTouchListener;

@@ -24,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.travel.CalendarUtils;
 import com.codepath.travel.R;
-import com.codepath.travel.WeeklyViewActivity;
+import com.codepath.travel.activities.WeeklyViewActivity;
 import com.codepath.travel.adapters.CalendarAdapter;
 import com.codepath.travel.adapters.OnItemListener;
 import com.codepath.travel.models.Destination;

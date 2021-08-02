@@ -1,4 +1,4 @@
-package com.codepath.travel;
+package com.codepath.travel.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.codepath.travel.R;
 import com.codepath.travel.adapters.CalendarAdapter;
 import com.codepath.travel.adapters.EventsAdapter;
 import com.codepath.travel.adapters.OnItemListener;

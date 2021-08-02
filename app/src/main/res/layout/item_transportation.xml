@@ -2,9 +2,9 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="8dp">
 
     <ImageView
@@ -13,27 +13,27 @@
         android:layout_height="100dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignTop="@+id/tvTransportName"
-        android:layout_alignBottom="@+id/tvTransportAddress"
+        android:layout_alignTop="@id/tvTransportName"
+        android:layout_alignBottom="@id/tvTransportAddress"
         android:scaleType="centerCrop"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
+        android:id="@+id/tvTransportName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvTransportName"
-        android:layout_toEndOf="@+id/ivTransport"
+        android:layout_toEndOf="@id/ivTransport"
         android:layout_marginStart="8dp"
         android:textSize="20sp"
         android:textColor="@color/black"
-        android:text="Transportation"/>
+        android:text="@string/transportation" />
 
     <ImageView
         android:id="@+id/ivYelpRating"
         android:layout_width="70dp"
         android:layout_height="26dp"
         android:layout_below="@id/tvTransportName"
-        android:layout_toEndOf="@+id/ivTransport"
+        android:layout_toEndOf="@id/ivTransport"
         android:layout_marginStart="8dp"
         android:layout_alignParentEnd="false"
         tools:srcCompat="@drawable/stars_extra_large_0" />
@@ -42,9 +42,9 @@
         android:id="@+id/ivPhone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/ivTransport"
+        android:layout_below="@id/ibToYelp"
         android:layout_marginStart="8dp"
-        android:layout_below="@+id/ibToYelp"
+        android:layout_toEndOf="@id/ivTransport"
         app:srcCompat="@drawable/ic_baseline_phone_24"
         app:tint="@color/gray" />
 
@@ -52,10 +52,10 @@
         android:id="@+id/tvTransportPhone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ibToYelp"
+        android:layout_below="@id/ibToYelp"
         android:layout_marginStart="8dp"
-        android:layout_toEndOf="@+id/ivPhone"
-        android:text="TextView"
+        android:layout_toEndOf="@id/ivPhone"
+        android:text="@string/phone_placeholder"
         android:textColorLink="@color/darkest_green"
         android:autoLink="phone"
         android:textColor="@color/black"
@@ -66,7 +66,7 @@
         android:layout_width="100dp"
         android:layout_height="30dp"
         android:layout_below="@id/tvTransportName"
-        android:layout_toEndOf="@+id/ivYelpRating"
+        android:layout_toEndOf="@id/ivYelpRating"
         android:background="@android:color/transparent"
         android:scaleType="centerInside"
         android:src="@drawable/logo_rgb" />
@@ -75,11 +75,11 @@
         android:id="@+id/tvTransportAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvTransportPhone"
+        android:layout_below="@id/tvTransportPhone"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
-        android:layout_toEndOf="@+id/ivTransport"
-        android:text="TextView"
+        android:layout_toEndOf="@id/ivTransport"
+        android:text="@string/address_placeholder"
         android:textColor="@color/black"
         android:textSize="16sp" />
 </RelativeLayout>

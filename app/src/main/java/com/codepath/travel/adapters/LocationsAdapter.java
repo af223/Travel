@@ -15,12 +15,12 @@ import androidx.cardview.widget.CardView;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.codepath.travel.AllPlansActivity;
-import com.codepath.travel.FlightsActivity;
-import com.codepath.travel.HotelsActivity;
+import com.codepath.travel.activities.AllPlansActivity;
+import com.codepath.travel.activities.FlightsActivity;
+import com.codepath.travel.activities.HotelsActivity;
 import com.codepath.travel.R;
-import com.codepath.travel.TouristSpotsActivity;
-import com.codepath.travel.TransportationActivity;
+import com.codepath.travel.activities.TouristSpotsActivity;
+import com.codepath.travel.activities.TransportationActivity;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.TouristDestination;
 import com.parse.FindCallback;
@@ -33,8 +33,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.codepath.travel.TouristSpotsActivity.CHOOSE_RESTAURANTS_CODE;
-import static com.codepath.travel.TouristSpotsActivity.CHOOSE_TOURIST_SPOTS_CODE;
+import static com.codepath.travel.activities.TouristSpotsActivity.CHOOSE_RESTAURANTS_CODE;
+import static com.codepath.travel.activities.TouristSpotsActivity.CHOOSE_TOURIST_SPOTS_CODE;
 
 /**
  * This adapter is for the RecylerView in LocationsFragment that displays the list of destinations that

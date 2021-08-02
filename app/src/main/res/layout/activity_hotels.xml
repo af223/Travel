@@ -2,12 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:backgroundTint="#000000"
     android:foregroundTint="#000000"
-    tools:context=".HotelsActivity">
+    tools:context=".activities.HotelsActivity">
 
     <include
         layout="@layout/toolbar_main"
@@ -18,7 +17,7 @@
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="220dp"
-        android:layout_below="@+id/toolbar"
+        android:layout_below="@id/toolbar"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -35,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="3dp"
-                android:text="Select a hotel"
+                android:text="@string/select_a_hotel"
                 android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -45,7 +44,7 @@
                 style="@style/Widget.AppCompat.RatingBar.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvHotelName"
+                android:layout_below="@id/tvHotelName"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="3dp"
@@ -57,19 +56,19 @@
                 android:id="@+id/tvPhone"
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/rbRating"
-                android:autoLink="phone"
-                android:textColorLink="@color/darkest_green"
+                android:layout_below="@id/rbRating"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
-                android:layout_toEndOf="@+id/ivPhone"
-                android:text="N/A" />
+                android:layout_toEndOf="@id/ivPhone"
+                android:autoLink="phone"
+                android:textColorLink="@color/darkest_green"
+                android:text="@string/n_a" />
 
             <ImageView
                 android:id="@+id/ivPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/rbRating"
+                android:layout_below="@id/rbRating"
                 android:layout_alignParentEnd="false"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
@@ -80,7 +79,7 @@
                 android:id="@+id/ivMail"
                 android:layout_width="23dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/ivPhone"
+                android:layout_below="@id/ivPhone"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="5dp"
@@ -92,13 +91,13 @@
                 android:id="@+id/tvEmail"
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
-                android:autoLink="email"
-                android:textColorLink="@color/darkest_green"
-                android:layout_below="@+id/tvPhone"
+                android:layout_below="@id/tvPhone"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="13dp"
-                android:layout_toEndOf="@+id/ivPhone"
-                android:text="N/A" />
+                android:layout_toEndOf="@id/ivPhone"
+                android:autoLink="email"
+                android:textColorLink="@color/darkest_green"
+                android:text="@string/n_a" />
 
             <Button
                 android:id="@+id/btnSelect"
@@ -108,13 +107,13 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginEnd="8dp"
-                android:text="Select" />
+                android:text="@string/select" />
 
             <ImageView
                 android:id="@+id/ivAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvEmail"
+                android:layout_below="@id/tvEmail"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentBottom="false"
                 android:layout_marginStart="8dp"
@@ -126,21 +125,21 @@
                 android:id="@+id/tvAddress"
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvEmail"
+                android:layout_below="@id/tvEmail"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="13dp"
-                android:layout_toEndOf="@+id/ivPhone"
-                android:text="N/A" />
+                android:layout_toEndOf="@id/ivPhone"
+                android:text="@string/n_a" />
 
             <TextView
                 android:id="@+id/tvIn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvHotelName"
+                android:layout_below="@id/tvHotelName"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@+id/tvPhone"
-                android:text="Checkin:"
+                android:layout_toEndOf="@id/tvPhone"
+                android:text="@string/checkin"
                 android:textColor="#000000"
                 android:textStyle="bold" />
 
@@ -148,21 +147,21 @@
                 android:id="@+id/tvCheckInDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvHotelName"
+                android:layout_below="@id/tvHotelName"
                 android:layout_marginStart="3dp"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@+id/tvOut"
-                android:text="N/A" />
+                android:layout_toEndOf="@id/tvOut"
+                android:text="@string/n_a" />
 
             <TextView
                 android:id="@+id/tvOut"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvIn"
+                android:layout_below="@id/tvIn"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@+id/tvPhone"
-                android:text="Checkout:"
+                android:layout_toEndOf="@id/tvPhone"
+                android:text="@string/checkout"
                 android:textColor="#000000"
                 android:textStyle="bold" />
 
@@ -170,21 +169,21 @@
                 android:id="@+id/tvCheckOutDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvIn"
+                android:layout_below="@id/tvIn"
                 android:layout_marginStart="3dp"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@+id/tvOut"
-                android:text="N/A" />
+                android:layout_toEndOf="@id/tvOut"
+                android:text="@string/n_a" />
 
             <TextView
                 android:id="@+id/tvBeds"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvOut"
+                android:layout_below="@id/tvOut"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@+id/tvPhone"
-                android:text="Beds:"
+                android:layout_toEndOf="@id/tvPhone"
+                android:text="@string/beds"
                 android:textColor="#000000"
                 android:textStyle="bold" />
 
@@ -192,21 +191,21 @@
                 android:id="@+id/tvNumBeds"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvOut"
+                android:layout_below="@id/tvOut"
                 android:layout_marginStart="3dp"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@+id/tvBeds"
-                android:text="N/A" />
+                android:layout_toEndOf="@id/tvBeds"
+                android:text="@string/n_a" />
 
             <TextView
                 android:id="@+id/tvCostText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvBeds"
+                android:layout_below="@id/tvBeds"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@+id/tvPhone"
-                android:text="Cost:"
+                android:layout_toEndOf="@id/tvPhone"
+                android:text="@string/cost_label"
                 android:textColor="#000000"
                 android:textStyle="bold" />
 
@@ -214,24 +213,24 @@
                 android:id="@+id/tvCost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvBeds"
+                android:layout_below="@id/tvBeds"
                 android:layout_marginStart="3dp"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@+id/tvCostText"
-                android:text="N/A" />
+                android:layout_toEndOf="@id/tvCostText"
+                android:text="@string/n_a" />
 
             <TextView
                 android:id="@+id/tvDescription"
                 android:layout_width="275dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvAddress"
+                android:layout_below="@id/tvAddress"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentBottom="false"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:scrollbars="vertical"
-                android:text="N/A" />
+                android:text="@string/n_a" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
@@ -240,13 +239,13 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="350dp"
-        android:layout_below="@+id/card_view" />
+        android:layout_below="@id/card_view" />
 
     <RelativeLayout
         android:id="@+id/rlProgressBar"
         android:layout_width="match_parent"
         android:layout_height="350dp"
-        android:layout_below="@+id/card_view"
+        android:layout_below="@id/card_view"
         android:layout_alignParentBottom="true"
         android:alpha="0.5"
         android:background="@color/white"
@@ -270,5 +269,4 @@
             android:text="@string/finding_suggested_hotels"
             android:textColor="#000000" />
     </RelativeLayout>
-
 </RelativeLayout>

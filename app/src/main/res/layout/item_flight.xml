@@ -18,8 +18,8 @@
             android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="Origin"
             android:layout_alignParentTop="true"
+            android:text="@string/origin"
             android:gravity="center|start"
             android:textColor="#000000"
             android:textSize="18sp"
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="5dp"
-            android:layout_toEndOf="@+id/tvDepartAirport"
+            android:layout_toEndOf="@id/tvDepartAirport"
             android:rotation="90"
             card_view:srcCompat="@drawable/ic_baseline_airplanemode_active_24" />
 
@@ -41,9 +41,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_toLeftOf="@+id/tvCost"
-            android:layout_toRightOf="@+id/ivPlane"
-            android:text="Destination"
+            android:layout_toStartOf="@id/tvCost"
+            android:layout_toEndOf="@id/ivPlane"
+            android:text="@string/destination_placeholder"
             android:gravity="center|start"
             android:textColor="#000000"
             android:textSize="18sp"
@@ -57,20 +57,20 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
-            android:text="Cost"
+            android:text="@string/cost"
             android:textColor="#3D8F10" />
 
         <TextView
             android:id="@+id/tvAirline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvDepartAirport"
+            android:layout_below="@id/tvDepartAirport"
             android:layout_alignParentStart="true"
             android:layout_marginStart="3dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="10dp"
-            android:layout_toStartOf="@+id/tvDate"
-            android:text="Airline"
+            android:layout_toStartOf="@id/tvDate"
+            android:text="@string/airline"
             android:textColor="#000000"
             android:textSize="16sp" />
 
@@ -78,11 +78,11 @@
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvArriveAirport"
+            android:layout_below="@id/tvArriveAirport"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
-            android:text="Date"
+            android:text="@string/date_ticket_placeholder"
             android:textColor="#000000" />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

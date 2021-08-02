@@ -1,4 +1,4 @@
-package com.codepath.travel;
+package com.codepath.travel.activities;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.codepath.asynchttpclient.RequestParams;
+import com.codepath.travel.EndlessRecyclerViewScrollListener;
+import com.codepath.travel.R;
 import com.codepath.travel.adapters.TouristActivitiesAdapter;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.FilterDialog;
@@ -29,7 +31,7 @@ import com.parse.ParseQuery;
 
 import java.util.ArrayList;
 
-import static com.codepath.travel.MainActivity.logout;
+import static com.codepath.travel.activities.MainActivity.logout;
 
 /**
  * This activity allows the user to find suggested tourist spots/activities near the chosen destination.

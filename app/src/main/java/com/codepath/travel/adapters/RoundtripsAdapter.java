@@ -10,7 +10,7 @@ import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.travel.R;
-import com.codepath.travel.RoundtripFlightsActivity;
+import com.codepath.travel.activities.RoundtripFlightsActivity;
 import com.codepath.travel.models.Flight;
 
 import org.jetbrains.annotations.NotNull;

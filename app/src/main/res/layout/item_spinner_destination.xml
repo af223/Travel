@@ -8,5 +8,4 @@
     android:textColor="@color/brown"
     android:textSize="16sp"
     android:textStyle="bold"
-    android:text="testing"
     android:gravity="center_vertical" />

@@ -33,7 +33,7 @@ import androidx.transition.TransitionInflater;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
-import com.codepath.travel.MainActivity;
+import com.codepath.travel.activities.MainActivity;
 import com.codepath.travel.R;
 import com.codepath.travel.models.Destination;
 import com.google.android.gms.common.api.Status;

@@ -1,4 +1,4 @@
-package com.codepath.travel;
+package com.codepath.travel.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.codepath.travel.R;
+import com.codepath.travel.activities.LoginActivity;
 import com.codepath.travel.fragments.CostsFragment;
 import com.codepath.travel.fragments.ItineraryFragment;
 import com.codepath.travel.fragments.LocationsFragment;
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new CostsFragment();
                         break;
                 }
-                fragmentManager.beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.anim, R.anim.slide_in, R.anim.slide_out)
+                fragmentManager.beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.slide_in, R.anim.slide_out)
                         .replace(R.id.flContainer, fragment).commit();
                 return true;
             }

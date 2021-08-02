@@ -19,7 +19,7 @@
         android:id="@+id/tvLocationName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvMapMessage"
+        android:layout_below="@id/tvMapMessage"
         android:layout_alignParentStart="true"
         android:layout_marginTop="5dp"
         android:gravity="center"

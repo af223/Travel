@@ -5,14 +5,14 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".WeeklyViewActivity">
+    tools:context=".activities.WeeklyViewActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/btnPreviousWeek"
@@ -31,7 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="July 2021"
+            android:text="@string/month_year_placeholder"
             android:transitionName="to_week_transition"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -50,8 +50,6 @@
             android:textSize="20sp"
             android:textStyle="bold"
             app:tint="@color/brown" />
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -63,7 +61,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="SUN"
+            android:text="@string/sun"
             android:textColor="@color/gray"
             android:textAlignment="center"
             android:textSize="16sp" />
@@ -72,7 +70,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="MON"
+            android:text="@string/mon"
             android:textColor="@color/gray"
             android:textAlignment="center"
             android:textSize="16sp" />
@@ -81,7 +79,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TUE"
+            android:text="@string/tue"
             android:textColor="@color/gray"
             android:textAlignment="center"
             android:textSize="16sp" />
@@ -90,7 +88,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="WED"
+            android:text="@string/wed"
             android:textColor="@color/gray"
             android:textAlignment="center"
             android:textSize="16sp" />
@@ -99,7 +97,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="THU"
+            android:text="@string/thu"
             android:textColor="@color/gray"
             android:textAlignment="center"
             android:textSize="16sp" />
@@ -108,7 +106,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="FRI"
+            android:text="@string/fri"
             android:textColor="@color/gray"
             android:textAlignment="center"
             android:textSize="16sp" />
@@ -117,7 +115,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="SAT"
+            android:text="@string/sat"
             android:textColor="@color/gray"
             android:textAlignment="center"
             android:textSize="16sp" />
@@ -140,10 +138,10 @@
         android:layout_weight="5" >
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvEventsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/rvEventsList"
-            android:paddingBottom="45dp"/>
+            android:paddingBottom="45dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabCreateEvent"
@@ -157,9 +155,5 @@
             android:src="@drawable/ic_baseline_add_24"
             android:transitionName="to_create_event_transition"
             app:rippleColor="@color/medium_green" />
-
-
     </RelativeLayout>
-
-
 </LinearLayout>

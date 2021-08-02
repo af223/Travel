@@ -1,23 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AirportSearchActivity">
+    tools:context=".activities.AirportSearchActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvChosenAirports"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:layout_below="@id/btnClearChosen"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp" />
 
     <EditText
         android:id="@+id/etSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rvChosenAirports"
+        android:layout_below="@id/rvChosenAirports"
         android:layout_alignParentStart="true"
         android:layout_marginStart="16dp"
         android:layout_marginTop="3dp"
-        android:layout_toStartOf="@+id/btnSearch"
+        android:layout_toStartOf="@id/btnSearch"
+        android:hint="@string/enter_airport"
         android:ems="10"
-        android:hint="Enter airport"
         android:inputType="textPersonName"
         tools:layout_editor_absoluteX="56dp" />
 
@@ -25,13 +32,13 @@
         android:id="@+id/btnSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rvChosenAirports"
+        android:layout_below="@id/rvChosenAirports"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="5dp"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="@color/pastel_green"
-        android:text="Search" />
+        android:text="@string/search" />
 
     <TextView
         android:id="@+id/tvTitle"
@@ -39,26 +46,17 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:text="Chosen airports"
-        android:textColor="#000000"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:text="@string/chosen_airports"
+        android:textColor="#000000"
         android:textSize="20sp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvChosenAirports"
-        android:layout_width="match_parent"
-        android:layout_height="170dp"
-        android:layout_below="@+id/btnClearChosen"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_alignParentStart="true" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFindAirport"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/etSearch"
+        android:layout_below="@id/etSearch"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
@@ -74,17 +72,17 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="@color/pastel_green"
-        android:text="Clear All" />
+        android:text="@string/clear_all" />
 
     <ProgressBar
         android:id="@+id/pbAirport"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/rvFindAirport"
-        android:layout_alignTop="@+id/rvFindAirport"
-        android:layout_alignEnd="@+id/rvFindAirport"
-        android:layout_alignBottom="@+id/rvFindAirport"
+        android:layout_alignStart="@id/rvFindAirport"
+        android:layout_alignTop="@id/rvFindAirport"
+        android:layout_alignEnd="@id/rvFindAirport"
+        android:layout_alignBottom="@id/rvFindAirport"
         android:layout_marginStart="165dp"
         android:layout_marginTop="133dp"
         android:layout_marginEnd="165dp"

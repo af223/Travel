@@ -1,4 +1,4 @@
-package com.codepath.travel;
+package com.codepath.travel.activities;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.asynchttpclient.RequestParams;
+import com.codepath.travel.EndlessRecyclerViewScrollListener;
+import com.codepath.travel.R;
 import com.codepath.travel.adapters.TransportationsAdapter;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.FilterDialog;
@@ -23,7 +25,7 @@ import com.codepath.travel.models.YelpData;
 
 import java.util.ArrayList;
 
-import static com.codepath.travel.MainActivity.logout;
+import static com.codepath.travel.activities.MainActivity.logout;
 
 /**
  * This activity allows the user to find modes of transportation at the chosen destination.

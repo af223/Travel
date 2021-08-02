@@ -1,4 +1,4 @@
-package com.codepath.travel;
+package com.codepath.travel.activities;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.codepath.travel.R;
 import com.codepath.travel.adapters.TouristActivitiesAdapter;
 import com.codepath.travel.fragments.ChosenTicketsFragment;
 import com.codepath.travel.models.Destination;
@@ -31,7 +32,7 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.codepath.travel.MainActivity.logout;
+import static com.codepath.travel.activities.MainActivity.logout;
 
 /**
  * This activity displays everything that the user has selected in their trip.
