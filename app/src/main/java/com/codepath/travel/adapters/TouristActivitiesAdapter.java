@@ -14,10 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.codepath.travel.R;
 import com.codepath.travel.models.Destination;
+import com.codepath.travel.models.TouristDestination;
 import com.codepath.travel.models.YelpData;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivitiesAdapter.ViewHolder> {
@@ -26,12 +28,14 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
     private final List<YelpData> touristSpots;
     private final Destination destination;
     private final Boolean isRestaurant;
+    private final ArrayList<TouristDestination> storedTouristSpots;
 
-    public TouristActivitiesAdapter(Context context, List<YelpData> touristSpots, Destination destination, Boolean isRestaurant) {
+    public TouristActivitiesAdapter(Context context, List<YelpData> touristSpots, Destination destination, Boolean isRestaurant, ArrayList<TouristDestination> storedTouristSpots) {
         this.context = context;
         this.touristSpots = touristSpots;
         this.destination = destination;
         this.isRestaurant = isRestaurant;
+        this.storedTouristSpots = storedTouristSpots;
     }
 
     @NonNull
@@ -83,8 +87,22 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
                 tvCommentCount.setVisibility(View.VISIBLE);
             }
             if (touristSpot.isChosen()) {
-                ibAddTouristDest.setClickable(false);
-                ibAddTouristDest.setImageResource(R.drawable.ic_baseline_check_24);
+                if (storedTouristSpots != null) {
+                    ibAddTouristDest.setImageResource(R.drawable.ic_baseline_delete_24);
+                    ibAddTouristDest.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            int position = getAdapterPosition();
+                            storedTouristSpots.get(position).deleteInBackground();
+                            storedTouristSpots.remove(position);
+                            touristSpots.remove(position);
+                            notifyItemRemoved(position);
+                        }
+                    });
+                } else {
+                    ibAddTouristDest.setClickable(false);
+                    ibAddTouristDest.setImageResource(R.drawable.ic_baseline_check_24);
+                }
             } else {
                 ibAddTouristDest.setClickable(true);
                 ibAddTouristDest.setImageResource(R.drawable.ic_baseline_add_24);

@@ -155,7 +155,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        adapter = new TouristActivitiesAdapter(TouristSpotsActivity.this, touristSpots, currDestination, isRestaurant);
+        adapter = new TouristActivitiesAdapter(TouristSpotsActivity.this, touristSpots, currDestination, isRestaurant, null);
         StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
         rvTouristActivities.setLayoutManager(gridLayoutManager);

@@ -59,6 +59,7 @@ public class AllPlansActivity extends AppCompatActivity {
     private RecyclerView rvChosenActivities;
     private TouristActivitiesAdapter activitiesAdapter;
     private ArrayList<YelpData> chosenActivities;
+    private ArrayList<TouristDestination> storedTouristSpots;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +74,11 @@ public class AllPlansActivity extends AppCompatActivity {
 
         // prevents E/RecyclerView: No adapter attached; skipping layout error
         chosenActivities = new ArrayList<>();
+        storedTouristSpots = new ArrayList<>();
         rvChosenActivities = findViewById(R.id.rvChosenActivities);
         StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
-        activitiesAdapter = new TouristActivitiesAdapter(AllPlansActivity.this, chosenActivities, null, false);
+        activitiesAdapter = new TouristActivitiesAdapter(AllPlansActivity.this, chosenActivities, null, false, null);
         rvChosenActivities.setLayoutManager(gridLayoutManager);
         rvChosenActivities.setAdapter(activitiesAdapter);
 
@@ -110,7 +112,7 @@ public class AllPlansActivity extends AppCompatActivity {
                 if (isDestroyed) {
                     return;
                 }
-                activitiesAdapter = new TouristActivitiesAdapter(AllPlansActivity.this, chosenActivities, destination, false);
+                activitiesAdapter = new TouristActivitiesAdapter(AllPlansActivity.this, chosenActivities, destination, false, storedTouristSpots);
                 rvChosenActivities.setAdapter(activitiesAdapter);
                 fetchChosenActivities(destination);
                 Fragment fragment = new ChosenTicketsFragment(destination);
@@ -140,6 +142,7 @@ public class AllPlansActivity extends AppCompatActivity {
                             touristDestination.getPlaceId(), numReviews);
                     activity.flipChosen();
                     chosenActivities.add(activity);
+                    storedTouristSpots.add(touristDestination);
                 }
                 activitiesAdapter.notifyDataSetChanged();
             }
