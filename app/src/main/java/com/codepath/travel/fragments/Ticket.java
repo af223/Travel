@@ -19,10 +19,8 @@ import com.codepath.travel.R;
 import com.codepath.travel.adapters.FlightsAdapter;
 import com.codepath.travel.adapters.RoundtripsAdapter;
 import com.codepath.travel.models.Flight;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -35,13 +33,13 @@ import okhttp3.Headers;
 public class Ticket {
 
     public static final String[] SORT_METHODS = {"", "Cost", "Departure Date", "Airline"};
-    public static final Comparator<Flight> compareCost = new Comparator<Flight>() {
+    public static final Comparator<Flight> COMPARE_COST = new Comparator<Flight>() {
         @Override
         public int compare(Flight o1, Flight o2) {
             return Integer.parseInt(o1.getFlightCost()) - Integer.parseInt(o2.getFlightCost());
         }
     };
-    public static final Comparator<Flight> compareDate = new Comparator<Flight>() {
+    public static final Comparator<Flight> COMPARE_DATE = new Comparator<Flight>() {
         @Override
         public int compare(Flight o1, Flight o2) {
             LocalDate date1 = CalendarUtils.getLocalDate(o1.getDate());
@@ -55,7 +53,7 @@ public class Ticket {
             }
         }
     };
-    public static final Comparator<Flight> compareAirline = new Comparator<Flight>() {
+    public static final Comparator<Flight> COMPARE_AIRLINE = new Comparator<Flight>() {
         @Override
         public int compare(Flight o1, Flight o2) {
             return o1.getCarrier().compareTo(o2.getCarrier());
@@ -72,6 +70,7 @@ public class Ticket {
     private final String TAG;
     private final Activity activity;
     private final ProgressBar pbFlights;
+    private final Gson gson;
 
     public Ticket(String TAG, Activity activity, ProgressBar pbFlights) {
         this.placesCode = new HashMap<>();
@@ -80,6 +79,8 @@ public class Ticket {
         this.TAG = TAG;
         this.activity = activity;
         this.pbFlights = pbFlights;
+        GsonBuilder builder = new GsonBuilder();
+        this.gson = builder.create();
     }
 
     public static void displayTicket(Flight flight, View ticket) {
@@ -97,6 +98,22 @@ public class Ticket {
         tvDate.setText(flight.getDate());
     }
 
+    public static void onSortTickets(FlightsAdapter adapter, RecyclerView rvFlights, ArrayList<Flight> flights, int position) {
+        switch (SORT_METHODS[position]) {
+            case "Cost":
+                Collections.sort(flights, COMPARE_COST);
+                break;
+            case "Departure Date":
+                Collections.sort(flights, COMPARE_DATE);
+                break;
+            case "Airline":
+                Collections.sort(flights, COMPARE_AIRLINE);
+                break;
+        }
+        adapter.notifyDataSetChanged();
+        rvFlights.smoothScrollToPosition(0);
+    }
+
     public void getFlights(String originCode, String destinationCode,
                            FlightsAdapter adapter, ArrayList<Flight> flights) {
         AsyncHttpClient client = new AsyncHttpClient();
@@ -108,17 +125,12 @@ public class Ticket {
                 headers, params, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
-                        try {
-                            processPlaces(json.jsonObject.getJSONArray("Places"));
-                            processCarriers(json.jsonObject.getJSONArray("Carriers"));
-                            processFlights(json.jsonObject.getJSONArray("Quotes"), flights);
-                            pbFlights.setVisibility(View.GONE);
-                            adapter.notifyDataSetChanged();
-
-                        } catch (JSONException e) {
-                            Log.e(TAG, "unable to parse response", e);
-                            e.printStackTrace();
-                        }
+                        FlightRoutes flightRoutes = gson.fromJson(String.valueOf(json.jsonObject), FlightRoutes.class);
+                        processPlaces(flightRoutes);
+                        processCarriers(flightRoutes);
+                        processFlights(flightRoutes, flights);
+                        pbFlights.setVisibility(View.GONE);
+                        adapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -140,17 +152,12 @@ public class Ticket {
                 headers, params, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
-                        try {
-                            processPlaces(json.jsonObject.getJSONArray("Places"));
-                            processCarriers(json.jsonObject.getJSONArray("Carriers"));
-                            processRoundtripFlights(json.jsonObject.getJSONArray("Quotes"), flights);
-                            pbFlights.setVisibility(View.GONE);
-                            adapter.notifyDataSetChanged();
-
-                        } catch (JSONException e) {
-                            Log.e(TAG, "unable to parse response", e);
-                            e.printStackTrace();
-                        }
+                        FlightRoutes flightRoutes = gson.fromJson(String.valueOf(json.jsonObject), FlightRoutes.class);
+                        processPlaces(flightRoutes);
+                        processCarriers(flightRoutes);
+                        processRoundtripFlights(flightRoutes, flights);
+                        pbFlights.setVisibility(View.GONE);
+                        adapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -161,91 +168,153 @@ public class Ticket {
                 });
     }
 
-    private void processPlaces(JSONArray jsonArray) {
-        try {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                if (jsonArray.getJSONObject(i).has("IataCode")) {
-                    placesCode.put(jsonArray.getJSONObject(i).getInt("PlaceId"), jsonArray.getJSONObject(i).getString("IataCode"));
-                } else {
-                    placesCode.put(jsonArray.getJSONObject(i).getInt("PlaceId"), jsonArray.getJSONObject(i).getString("SkyscannerCode"));
-                }
-                placesName.put(jsonArray.getJSONObject(i).getInt("PlaceId"), jsonArray.getJSONObject(i).getString("Name"));
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "Unable to process places", e);
-            e.printStackTrace();
+    private void processCarriers(FlightRoutes flightRoutes) {
+        ArrayList<CarrierCode> carrierCodes = flightRoutes.getCarriers();
+        for (CarrierCode carrier : carrierCodes) {
+            carriers.put(carrier.getCarrierId(), carrier.getName());
         }
     }
 
-    private void processCarriers(JSONArray jsonArray) {
-        try {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                carriers.put(jsonArray.getJSONObject(i).getInt("CarrierId"), jsonArray.getJSONObject(i).getString("Name"));
+    private void processPlaces(FlightRoutes flightRoutes) {
+        ArrayList<PlacesCode> places = flightRoutes.getPlaces();
+        for (PlacesCode place : places) {
+            if (place.getIataCode() != null) {
+                placesCode.put(place.getPlaceId(), place.getIataCode());
+            } else {
+                placesCode.put(place.getPlaceId(), place.getSkyscannerCode());
             }
-        } catch (JSONException e) {
-            Log.e(TAG, "Unable to process carriers", e);
-            e.printStackTrace();
+            placesName.put(place.getPlaceId(), place.getName());
         }
     }
 
-    private void processFlights(JSONArray jsonArray, ArrayList<Flight> flights) {
-        try {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject flightObject = jsonArray.getJSONObject(i);
-                String cost = String.valueOf(flightObject.getInt("MinPrice"));
-                Flight flight = proccessOneLegOfFlight(flightObject, "OutboundLeg", cost, false);
-                flights.add(flight);
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "Unable to processFlights", e);
-            e.printStackTrace();
+    private void processFlights(FlightRoutes flightRoutes, ArrayList<Flight> flights) {
+        ArrayList<Quote> quotes = flightRoutes.getQuotes();
+        for (Quote quote : quotes) {
+            String cost = String.valueOf(quote.getMinPrice());
+            flights.add(proccessLegOfFlight(quote.getOutboundLeg(), cost, false));
         }
     }
 
-    private void processRoundtripFlights(JSONArray jsonArray, ArrayList<Pair<Flight, Flight>> flights) {
-        try {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject flightObject = jsonArray.getJSONObject(i);
-                String cost = String.valueOf(flightObject.getInt("MinPrice"));
-                Flight outbound = proccessOneLegOfFlight(flightObject, "OutboundLeg", cost, true);
-                Flight inbound = proccessOneLegOfFlight(flightObject, "InboundLeg", cost, true);
-                Pair flightsPair = new Pair(outbound, inbound);
-                flights.add(flightsPair);
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "Unable to processFlights", e);
-            e.printStackTrace();
+    private void processRoundtripFlights(FlightRoutes flightRoutes, ArrayList<Pair<Flight, Flight>> flights) {
+        ArrayList<Quote> quotes = flightRoutes.getQuotes();
+        for (Quote quote : quotes) {
+            String cost = String.valueOf(quote.getMinPrice());
+            Flight outbound = proccessLegOfFlight(quote.getOutboundLeg(), cost, true);
+            Flight inbound = proccessLegOfFlight(quote.getInboundLeg(), cost, true);
+            Pair flightsPair = new Pair(outbound, inbound);
+            flights.add(flightsPair);
         }
     }
 
-    private Flight proccessOneLegOfFlight(JSONObject flightObject, String whichLeg, String cost, Boolean isRoundtrip) throws JSONException {
-        JSONArray carrierIds = flightObject.getJSONObject(whichLeg).getJSONArray("CarrierIds");
-        String carrier = carriers.get(carrierIds.get(0));
-        Integer originId = flightObject.getJSONObject(whichLeg).getInt("OriginId");
+    private Flight proccessLegOfFlight(FlightLeg flightLeg, String cost, Boolean isRoundtrip) {
+        String carrier = carriers.get(flightLeg.getCarrierIds().get(0));
+        Integer originId = flightLeg.getOriginId();
         String departAirportName = placesName.get(originId);
         String departAirportCode = placesCode.get(originId);
-        Integer destinationId = flightObject.getJSONObject(whichLeg).getInt("DestinationId");
+        Integer destinationId = flightLeg.getDestinationId();
         String arriveAirportName = placesName.get(destinationId);
         String arriveAirportCode = placesCode.get(destinationId);
-        String date = flightObject.getJSONObject(whichLeg).getString("DepartureDate").substring(0, 10);
+        String date = flightLeg.getDepartureDate().substring(0, 10);
         Flight flight = new Flight(departAirportCode, departAirportName, arriveAirportCode,
                 arriveAirportName, cost, carrier, date, isRoundtrip);
         return flight;
     }
 
-    public static void onSortTickets(FlightsAdapter adapter, RecyclerView rvFlights, ArrayList<Flight> flights, int position) {
-        switch (SORT_METHODS[position]) {
-            case "Cost":
-                Collections.sort(flights, compareCost);
-                break;
-            case "Departure Date":
-                Collections.sort(flights, compareDate);
-                break;
-            case "Airline":
-                Collections.sort(flights, compareAirline);
-                break;
+    class FlightRoutes {
+        private final ArrayList<Quote> Quotes = new ArrayList<Quote>();
+        private final ArrayList<CarrierCode> Carriers = new ArrayList<CarrierCode>();
+        private final ArrayList<PlacesCode> Places = new ArrayList<PlacesCode>();
+
+        public ArrayList<Quote> getQuotes() {
+            return Quotes;
         }
-        adapter.notifyDataSetChanged();
-        rvFlights.smoothScrollToPosition(0);
+
+        public ArrayList<CarrierCode> getCarriers() {
+            return Carriers;
+        }
+
+        public ArrayList<PlacesCode> getPlaces() {
+            return Places;
+        }
+    }
+
+    class Quote {
+        private Integer MinPrice;
+        private FlightLeg OutboundLeg;
+        private FlightLeg InboundLeg;
+
+        public Integer getMinPrice() {
+            return MinPrice;
+        }
+
+        public FlightLeg getOutboundLeg() {
+            return OutboundLeg;
+        }
+
+        public FlightLeg getInboundLeg() {
+            return InboundLeg;
+        }
+    }
+
+    class FlightLeg {
+        private Integer OriginId;
+        private Integer DestinationId;
+        private final ArrayList<Integer> CarrierIds = new ArrayList<Integer>();
+        private String DepartureDate;
+
+        public Integer getOriginId() {
+            return OriginId;
+        }
+
+        public Integer getDestinationId() {
+            return DestinationId;
+        }
+
+        public ArrayList<Integer> getCarrierIds() {
+            return CarrierIds;
+        }
+
+        public String getDepartureDate() {
+            return DepartureDate;
+        }
+    }
+
+    class CarrierCode {
+        private Integer CarrierId;
+        private String Name;
+
+        public Integer getCarrierId() {
+            return CarrierId;
+        }
+
+        public String getName() {
+            return Name;
+        }
+    }
+
+    class PlacesCode {
+        private String Name;
+        private Integer PlaceId;
+        private String IataCode;
+        private String SkyscannerCode;
+        private String CityName;
+        private String CityId;
+        private String CountryName;
+
+        public String getName() {
+            return Name;
+        }
+
+        public Integer getPlaceId() {
+            return PlaceId;
+        }
+
+        public String getIataCode() {
+            return IataCode;
+        }
+
+        public String getSkyscannerCode() {
+            return SkyscannerCode;
+        }
     }
 }
