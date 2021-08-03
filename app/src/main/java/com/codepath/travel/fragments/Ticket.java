@@ -297,9 +297,6 @@ public class Ticket {
         private Integer PlaceId;
         private String IataCode;
         private String SkyscannerCode;
-        private String CityName;
-        private String CityId;
-        private String CountryName;
 
         public String getName() {
             return Name;

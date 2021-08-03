@@ -21,10 +21,8 @@ import com.codepath.travel.adapters.ChosenAirportsAdapter;
 import com.codepath.travel.adapters.FindAirportsAdapter;
 import com.codepath.travel.models.Airport;
 import com.codepath.travel.models.Destination;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 
@@ -53,6 +51,7 @@ public class AirportSearchActivity extends AppCompatActivity {
     private ProgressBar pbAirport;
     private ArrayList<Airport> chosenAirportsList;
     private ArrayList<Airport> foundAirports;
+    private Gson gson;
     private Boolean loadingAirportSuggestions = false;
 
     public static void refreshChosenAirports() {
@@ -73,6 +72,9 @@ public class AirportSearchActivity extends AppCompatActivity {
         } else {
             chosenAirportsList = FlightsActivity.ARRIVAL_AIRPORTS;
         }
+
+        GsonBuilder builder = new GsonBuilder();
+        gson = builder.create();
 
         etSearch = findViewById(R.id.etSearch);
         btnSearch = findViewById(R.id.btnSearch);
@@ -132,7 +134,8 @@ public class AirportSearchActivity extends AppCompatActivity {
         client.get(URL, headers, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                displayAirports(json.jsonObject);
+                MatchedAirports airports = gson.fromJson(String.valueOf(json.jsonObject), MatchedAirports.class);
+                displayAirports(airports);
                 foundAdapter.notifyDataSetChanged();
                 pbAirport.setVisibility(View.GONE);
             }
@@ -145,6 +148,44 @@ public class AirportSearchActivity extends AppCompatActivity {
         });
     }
 
+    private void displayAirports(MatchedAirports airports) {
+        ArrayList<AirportInfo> airportInfos = airports.getAirports();
+        Boolean added;
+        for (AirportInfo place : airportInfos) {
+            added = false;
+            for (int j = 0; j < chosenAirportsList.size(); j++) {
+                if (chosenAirportsList.get(j).getIATACode().equals(place.getPlaceId())) {
+                    foundAirports.add(chosenAirportsList.get(j));
+                    added = true;
+                    break;
+                }
+            }
+            if (!added
+                    && (!loadingAirportSuggestions
+                    || place.getCountryName().equals(getIntent().getStringExtra(Destination.KEY_COUNTRY)))) {
+                Airport airport;
+                if (place.getCountryId().equals(place.getPlaceId())
+                        || place.getCityId().equals(place.getPlaceId())) {
+                    airport = new Airport(place.getPlaceName() + " Airport (General)",
+                            place.getPlaceId(), place.getCountryName());
+                } else {
+                    airport = new Airport(place.getPlaceName() + " Airport",
+                            place.getPlaceId(), place.getCountryName());
+                }
+                foundAirports.add(airport);
+            }
+        }
+        if (airportInfos.isEmpty()) {
+            if (loadingAirportSuggestions) {
+                loadingAirportSuggestions = false;
+                findMatchingAirports(getIntent().getStringExtra(Destination.KEY_COUNTRY));
+            } else {
+                Toast.makeText(AirportSearchActivity.this, "No airports found, try broader search", Toast.LENGTH_LONG).show();
+            }
+        }
+        loadingAirportSuggestions = false;
+    }
+
     private void loadSuggestedAirports() {
         if (getIntent().getStringExtra(Destination.KEY_ADMIN1) != null) {
             findMatchingAirports(getIntent().getStringExtra(Destination.KEY_ADMIN1));
@@ -154,48 +195,39 @@ public class AirportSearchActivity extends AppCompatActivity {
         }
     }
 
-    private void displayAirports(JSONObject jsonObject) {
-        try {
-            JSONArray matchingPlaces = jsonObject.getJSONArray("Places");
-            Boolean added;
-            for (int i = 0; i < matchingPlaces.length(); i++) {
-                added = false;
-                JSONObject place = matchingPlaces.getJSONObject(i);
-                for (int j = 0; j < chosenAirportsList.size(); j++) {
-                    if (chosenAirportsList.get(j).getIATACode().equals(place.getString("PlaceId"))) {
-                        foundAirports.add(chosenAirportsList.get(j));
-                        added = true;
-                        break;
-                    }
-                }
-                if (!added
-                        && (!loadingAirportSuggestions
-                        || place.getString("CountryName").equals(getIntent().getStringExtra(Destination.KEY_COUNTRY)))) {
-                    Airport airport;
-                    if (place.getString("CountryId").equals(place.getString("PlaceId"))
-                            || place.getString("CityId").equals(place.getString("PlaceId"))) {
-                        airport = new Airport(place.getString("PlaceName") + " Airport (General)",
-                                place.getString("PlaceId"), place.getString("CountryName"));
-                    } else {
-                        airport = new Airport(place.getString("PlaceName") + " Airport",
-                                place.getString("PlaceId"), place.getString("CountryName"));
-                    }
-                    foundAirports.add(airport);
-                }
-            }
-            if (matchingPlaces.length() == 0) {
-                if (loadingAirportSuggestions) {
-                    loadingAirportSuggestions = false;
-                    findMatchingAirports(getIntent().getStringExtra(Destination.KEY_COUNTRY));
-                } else {
-                    Toast.makeText(AirportSearchActivity.this, "No airports found, try broader search", Toast.LENGTH_LONG).show();
-                }
-            }
-            loadingAirportSuggestions = false;
-        } catch (JSONException e) {
-            Toast.makeText(AirportSearchActivity.this, "Unable to process airports", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Error parsing airports JSON: ", e);
-            e.printStackTrace();
+    class MatchedAirports {
+        private final ArrayList<AirportInfo> Places = new ArrayList<AirportInfo>();
+
+        public ArrayList<AirportInfo> getAirports() {
+            return Places;
+        }
+    }
+
+    class AirportInfo {
+        private String PlaceId;
+        private String PlaceName;
+        private String CountryId;
+        private String CityId;
+        private String CountryName;
+
+        public String getPlaceId() {
+            return PlaceId;
+        }
+
+        public String getPlaceName() {
+            return PlaceName;
+        }
+
+        public String getCountryId() {
+            return CountryId;
+        }
+
+        public String getCityId() {
+            return CityId;
+        }
+
+        public String getCountryName() {
+            return CountryName;
         }
     }
 }
