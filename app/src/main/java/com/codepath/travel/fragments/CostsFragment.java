@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.travel.R;
 import com.codepath.travel.adapters.ExpensesAdapter;
-import com.codepath.travel.adapters.RecyclerTouchListener;
+import com.codepath.travel.adapters.RecyclerTouched;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Expense;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -41,7 +41,7 @@ public class CostsFragment extends Fragment {
     private ArrayList<Expense> expenses;
     private RecyclerView rvExpenses;
     private ExpensesAdapter adapter;
-    private RecyclerTouchListener rvTouchListener;
+    private RecyclerTouched rvTouchListener;
     private Double totalCost = 0.0;
     private EditText etExpenseName;
     private EditText etExpenseCost;
@@ -81,8 +81,8 @@ public class CostsFragment extends Fragment {
         rvExpenses.setAdapter(adapter);
         loadExpenses();
 
-        rvTouchListener = new RecyclerTouchListener(getActivity(), rvExpenses);
-        rvTouchListener.setSwipeOptionViews(R.id.delete_task, R.id.edit_entry).setSwipeable(R.id.expenseForeground, R.id.swipeMenuLayout, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
+        rvTouchListener = new RecyclerTouched(getActivity(), rvExpenses);
+        rvTouchListener.setSwipeOptionViews(R.id.delete_task, R.id.edit_entry).setSwipeable(R.id.expenseForeground, R.id.swipeMenuLayout, new RecyclerTouched.OnSwipeOptionsClickListener() {
             @Override
             public void onSwipeOptionClicked(int viewID, int position) {
                 if (expenses.get(position).isProtected()) {

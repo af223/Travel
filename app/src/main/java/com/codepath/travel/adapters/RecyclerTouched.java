@@ -24,9 +24,22 @@ import java.util.Set;
 
 // Source: https://howtodoandroid.medium.com/android-recyclerview-with-swipe-menu-example-86259df97907
 
-public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, OnActivityTouchListener {
-    private static final String TAG = "RecyclerTouchListener";
+public class RecyclerTouched implements RecyclerView.OnItemTouchListener, OnActivityTouched {
+    private static final String TAG = "RecyclerTouched";
     final Handler handler = new Handler();
+    // Cached ViewConfiguration and system-wide constant values
+    private final int touchSlop;
+    private final int minFlingVel;
+    private final int maxFlingVel;
+    private final long ANIMATION_STANDARD = 300;
+    private final long ANIMATION_CLOSE = 150;
+    // Fixed properties
+    private final RecyclerView rView;
+    private final ArrayList<Integer> fadeViews;
+    // user choices
+    private final boolean clickable = false;
+    private final boolean longClickable = false;
+    private final int LONG_CLICK_DELAY = 800;
     Activity act;
     List<Integer> unSwipeableRows;
     /*
@@ -37,14 +50,6 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
     List<Integer> unClickableRows;
     List<Integer> optionViews;
     Set<Integer> ignoredViewTypes;
-    // Cached ViewConfiguration and system-wide constant values
-    private final int touchSlop;
-    private final int minFlingVel;
-    private final int maxFlingVel;
-    private final long ANIMATION_STANDARD = 300;
-    private final long ANIMATION_CLOSE = 150;
-    // Fixed properties
-    private final RecyclerView rView;
     private int bgWidth = 1; // 1 and not 0 to prevent dividing by zero
     private float touchedX;
     private float touchedY;
@@ -60,18 +65,6 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
     private boolean isRViewScrolling;
     private int heightOutsideRView, screenHeight;
     private boolean mLongClickPerformed;
-    private OnRowClickListener mRowClickListener;
-    // Foreground view (to be swiped), Background view (to show)
-    private View fgView;
-    private View bgView;
-    //view ID
-    private int fgViewID;
-    private int bgViewID;
-    private final ArrayList<Integer> fadeViews;
-    private OnSwipeOptionsClickListener mBgClickListener;
-    // user choices
-    private final boolean clickable = false;
-    private final boolean longClickable = false;
     Runnable mLongPressed = new Runnable() {
         public void run() {
             if (!longClickable)
@@ -80,10 +73,17 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
             mLongClickPerformed = true;
         }
     };
+    private OnRowClickListener mRowClickListener;
+    // Foreground view (to be swiped), Background view (to show)
+    private View fgView;
+    private View bgView;
+    //view ID
+    private int fgViewID;
+    private int bgViewID;
+    private OnSwipeOptionsClickListener mBgClickListener;
     private boolean swipeable = false;
-    private final int LONG_CLICK_DELAY = 800;
 
-    public RecyclerTouchListener(Activity a, RecyclerView recyclerView) {
+    public RecyclerTouched(Activity a, RecyclerView recyclerView) {
         this.act = a;
         ViewConfiguration vc = ViewConfiguration.get(recyclerView.getContext());
         touchSlop = vc.getScaledTouchSlop();
@@ -137,7 +137,7 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
         handleTouchEvent(motionEvent);
     }
 
-    public RecyclerTouchListener setSwipeable(int foregroundID, int backgroundID, OnSwipeOptionsClickListener listener) {
+    public RecyclerTouched setSwipeable(int foregroundID, int backgroundID, OnSwipeOptionsClickListener listener) {
         this.swipeable = true;
         if (fgViewID != 0 && foregroundID != fgViewID)
             throw new IllegalArgumentException("foregroundID does not match previously set ID");
@@ -155,12 +155,12 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
         return this;
     }
 
-    public RecyclerTouchListener setSwipeOptionViews(Integer... viewIds) {
+    public RecyclerTouched setSwipeOptionViews(Integer... viewIds) {
         this.optionViews = new ArrayList<>(Arrays.asList(viewIds));
         return this;
     }
 
-    public RecyclerTouchListener setUnSwipeableRows(Integer... rows) {
+    public RecyclerTouched setUnSwipeableRows(Integer... rows) {
         this.unSwipeableRows = new ArrayList<>(Arrays.asList(rows));
         return this;
     }
@@ -321,9 +321,9 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
             @Override
             public void onAnimationEnd(Animator animation) {
                 if (mSwipeCloseListener != null) {
-                    if (animateType == RecyclerTouchListener.Animation.OPEN)
+                    if (animateType == RecyclerTouched.Animation.OPEN)
                         mSwipeCloseListener.onSwipeOptionsOpened();
-                    else if (animateType == RecyclerTouchListener.Animation.CLOSE)
+                    else if (animateType == RecyclerTouched.Animation.CLOSE)
                         mSwipeCloseListener.onSwipeOptionsClosed();
                 }
                 translateAnimator.removeAllListeners();
@@ -754,7 +754,7 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
     }
 
     public interface RecyclerTouchListenerHelper {
-        void setOnActivityTouchListener(OnActivityTouchListener listener);
+        void setOnActivityTouchListener(OnActivityTouched listener);
     }
 
     public interface OnSwipeListener {

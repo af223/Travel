@@ -14,10 +14,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.codepath.travel.activities.MainActivity;
 import com.codepath.travel.R;
+import com.codepath.travel.activities.MainActivity;
 import com.codepath.travel.adapters.LocationsAdapter;
-import com.codepath.travel.adapters.RecyclerTouchListener;
+import com.codepath.travel.adapters.RecyclerTouched;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.TouristDestination;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -46,7 +46,7 @@ public class LocationsFragment extends Fragment {
     private RecyclerView rvLocations;
     private FloatingActionButton fabAddLocation;
     private ProgressBar pbLoadDestinations;
-    private RecyclerTouchListener rvTouchListener;
+    private RecyclerTouched rvTouchListener;
 
     public LocationsFragment() {
         // Required empty public constructor
@@ -87,8 +87,8 @@ public class LocationsFragment extends Fragment {
         rvLocations = view.findViewById(R.id.rvLocations);
         rvLocations.setLayoutManager(new LinearLayoutManager(getContext()));
         rvLocations.setAdapter(adapter);
-        rvTouchListener = new RecyclerTouchListener(getActivity(), rvLocations);
-        rvTouchListener.setSwipeOptionViews(R.id.delete_task, R.id.edit_entry).setSwipeable(R.id.cvLocation, R.id.swipeMenuLayout, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
+        rvTouchListener = new RecyclerTouched(getActivity(), rvLocations);
+        rvTouchListener.setSwipeOptionViews(R.id.delete_task, R.id.edit_entry).setSwipeable(R.id.cvLocation, R.id.swipeMenuLayout, new RecyclerTouched.OnSwipeOptionsClickListener() {
             @Override
             public void onSwipeOptionClicked(int viewID, int position) {
                 if (viewID == R.id.delete_task) {

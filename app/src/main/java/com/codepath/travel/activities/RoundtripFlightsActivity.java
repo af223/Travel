@@ -122,7 +122,7 @@ public class RoundtripFlightsActivity extends AppCompatActivity implements Adapt
                 Collections.sort(flights, new Comparator<Pair<Flight, Flight>>() {
                     @Override
                     public int compare(Pair<Flight, Flight> o1, Pair<Flight, Flight> o2) {
-                        return Ticket.compareCost.compare(o1.first, o2.first);
+                        return Ticket.COMPARE_COST.compare(o1.first, o2.first);
                     }
                 });
                 break;
@@ -130,7 +130,7 @@ public class RoundtripFlightsActivity extends AppCompatActivity implements Adapt
                 Collections.sort(flights, new Comparator<Pair<Flight, Flight>>() {
                     @Override
                     public int compare(Pair<Flight, Flight> o1, Pair<Flight, Flight> o2) {
-                        return Ticket.compareDate.compare(o1.first, o2.first);
+                        return Ticket.COMPARE_DATE.compare(o1.first, o2.first);
                     }
                 });
                 break;
@@ -138,7 +138,7 @@ public class RoundtripFlightsActivity extends AppCompatActivity implements Adapt
                 Collections.sort(flights, new Comparator<Pair<Flight, Flight>>() {
                     @Override
                     public int compare(Pair<Flight, Flight> o1, Pair<Flight, Flight> o2) {
-                        return Ticket.compareDate.compare(o1.second, o2.second);
+                        return Ticket.COMPARE_DATE.compare(o1.second, o2.second);
                     }
                 });
                 break;
@@ -146,7 +146,7 @@ public class RoundtripFlightsActivity extends AppCompatActivity implements Adapt
                 Collections.sort(flights, new Comparator<Pair<Flight, Flight>>() {
                     @Override
                     public int compare(Pair<Flight, Flight> o1, Pair<Flight, Flight> o2) {
-                        return Ticket.compareAirline.compare(o1.first, o2.first);
+                        return Ticket.COMPARE_AIRLINE.compare(o1.first, o2.first);
                     }
                 });
                 break;
@@ -154,7 +154,7 @@ public class RoundtripFlightsActivity extends AppCompatActivity implements Adapt
                 Collections.sort(flights, new Comparator<Pair<Flight, Flight>>() {
                     @Override
                     public int compare(Pair<Flight, Flight> o1, Pair<Flight, Flight> o2) {
-                        return Ticket.compareAirline.compare(o1.second, o2.second);
+                        return Ticket.COMPARE_AIRLINE.compare(o1.second, o2.second);
                     }
                 });
                 break;
