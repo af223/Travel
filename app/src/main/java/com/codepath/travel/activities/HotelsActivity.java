@@ -29,15 +29,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -83,6 +83,7 @@ public class HotelsActivity extends AppCompatActivity {
     private TextView tvDescription;
     private Toolbar toolbar;
     private RelativeLayout rlProgressBar;
+    private Gson gson;
 
     private final OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
@@ -115,6 +116,9 @@ public class HotelsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_hotels);
 
         requestAccessToken();
+
+        GsonBuilder builder = new GsonBuilder();
+        gson = builder.create();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -222,13 +226,9 @@ public class HotelsActivity extends AppCompatActivity {
         JsonHttpResponseHandler callback = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                try {
-                    processHotels(json.jsonObject.getJSONArray("data"));
-                    rlProgressBar.setVisibility(View.GONE);
-                } catch (JSONException e) {
-                    Log.e(TAG, "Unable to parse response");
-                    e.printStackTrace();
-                }
+                HotelResponse hotelResponse = gson.fromJson(String.valueOf(json.jsonObject), HotelResponse.class);
+                processHotels(hotelResponse);
+                rlProgressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -241,119 +241,74 @@ public class HotelsActivity extends AppCompatActivity {
         okHttpClient.newCall(request).enqueue(callback);
     }
 
-    private void processHotels(JSONArray hotelsList) {
-        try {
-            for (int i = 0; i < hotelsList.length(); i++) {
-                JSONObject hotelOfferObject = hotelsList.getJSONObject(i);
-                JSONObject hotelJson = hotelOfferObject.getJSONObject("hotel");
-                ArrayList<HotelOffer> offers = processHotelOffers(hotelOfferObject.getJSONArray("offers"));
-                String name = hotelJson.getString("name");
-                String latitude = String.valueOf(hotelJson.getDouble("latitude"));
-                String longitude = String.valueOf(hotelJson.getDouble("longitude"));
-                Integer rating = 0;
-                if (hotelJson.has("rating")) {
-                    rating = Integer.parseInt(hotelJson.getString("rating"));
-                }
-                String address = createAddress(hotelJson);
-                String phoneNumber = "N/A";
-                String email = "N/A";
-                if (hotelJson.has("contact")) {
-                    phoneNumber = safeAccessJson("phone", hotelJson.getJSONObject("contact"));
-                    email = safeAccessJson("email", hotelJson.getJSONObject("contact"));
-                }
-                String description;
-                try {
-                    description = hotelJson.getJSONObject("description").getString("text");
-                } catch (JSONException e) {
-                    description = "N/A";
-                }
-                Hotel newHotel = new Hotel(name, address, latitude, longitude, phoneNumber, rating, email, description, offers);
-                hotels.add(newHotel);
-                markHotelOnMap(newHotel);
+    private void processHotels(HotelResponse hotelResponse) {
+        ArrayList<HotelList> hotelsList = hotelResponse.getData();
+        for (HotelList listedOffer : hotelsList) {
+            HotelInfo hotel = listedOffer.getHotel();
+            String name = hotel.getName();
+            String latitude = String.valueOf(hotel.getLatitude());
+            String longitude = String.valueOf(hotel.getLongitude());
+            Integer rating = hotel.getRating() == null ? 0 : Integer.parseInt(hotel.getRating());
+            String address = hotel.getAddress() == null ? "N/A" : createAddress(hotel.getAddress());
+            String phoneNumber = "N/A";
+            String email = "N/A";
+            if (hotel.getContact() != null) {
+                phoneNumber = hotel.getContact().getPhone();
+                email = hotel.getContact().getEmail();
             }
-        } catch (JSONException e) {
-            Log.e(TAG, "Unable to parse hotels");
-            e.printStackTrace();
+            String description = "N/A";
+            if (hotel.getDescription() != null) {
+                description = hotel.getDescription().getText();
+            }
+            ArrayList<HotelOffer> offers = processHotelOffers(listedOffer.getOffers());
+            Hotel newHotel = new Hotel(name, address, latitude, longitude, phoneNumber, rating, email, description, offers);
+            hotels.add(newHotel);
+            markHotelOnMap(newHotel);
         }
     }
 
-    private String createAddress(JSONObject hotelJson) {
-        try {
-            if (hotelJson.has("address")) {
-                String address = "";
-                if (hotelJson.getJSONObject("address").has("lines")) {
-                    for (int j = 0; j < hotelJson.getJSONObject("address").getJSONArray("lines").length(); j++) {
-                        address += hotelJson.getJSONObject("address").getJSONArray("lines").get(j) + ", ";
+    private String createAddress(HotelAddress addressComponents) {
+        String address = "";
+        for (String line : addressComponents.getLines()) {
+            address += line + ", ";
+        }
+        address += addressComponents.getCityName() == null ? "" : addressComponents.getCityName() + ", ";
+        address += addressComponents.getCountryCode() == null ? "" : addressComponents.getCountryCode() + ", ";
+        address += addressComponents.getPostalCode() == null ? "" : addressComponents.getPostalCode() + ", ";
+        return address;
+    }
+
+    private ArrayList<HotelOffer> processHotelOffers(ArrayList<OfferInfo> hotelOffersList) {
+        ArrayList<HotelOffer> offersList = new ArrayList<>();
+        for (OfferInfo offer : hotelOffersList) {
+            String checkInDate = offer.getCheckInDate() == null ? "N/A" : offer.getCheckInDate();
+            String checkOutDate = offer.getCheckOutDate() == null ? "N/A" : offer.getCheckOutDate();
+            String roomType = "N/A";
+            Integer numBeds = 0;
+            String description = "N/A";
+            if (offer.getRoom() != null) {
+                if (offer.getRoom().getTypeEstimated() != null) {
+                    if (offer.getRoom().getTypeEstimated().getCategory() != null)
+                        roomType = offer.getRoom().getTypeEstimated().getCategory();
+                    if (offer.getRoom().getTypeEstimated().getBeds() != null) {
+                        numBeds = offer.getRoom().getTypeEstimated().getBeds();
                     }
                 }
-                if (hotelJson.getJSONObject("address").has("cityName")) {
-                    address += hotelJson.getJSONObject("address").getString("cityName") + ", ";
+                if (offer.getRoom().getDescription() != null) {
+                    description = offer.getRoom().getDescription().getText();
                 }
-                if (hotelJson.getJSONObject("address").has("countryCode")) {
-                    address += hotelJson.getJSONObject("address").getString("countryCode") + " ";
-                }
-                if (hotelJson.getJSONObject("address").has("postalCode")) {
-                    address += hotelJson.getJSONObject("address").getString("postalCode");
-                }
-                return address;
             }
-        } catch (JSONException e) {
-            Log.e(TAG, "Unable to parse address");
-            e.printStackTrace();
-        }
-        return "N/A";
-    }
-
-    private ArrayList<HotelOffer> processHotelOffers(JSONArray hotelOffersList) {
-        ArrayList<HotelOffer> offersList = new ArrayList<>();
-        try {
-            for (int i = 0; i < hotelOffersList.length(); i++) {
-                JSONObject offerJson = hotelOffersList.getJSONObject(i);
-                String checkInDate = safeAccessJson("checkInDate", offerJson);
-                String checkOutDate = safeAccessJson("checkOutDate", offerJson);
-                String roomType, description;
-                Integer numBeds;
-                try {
-                    roomType = offerJson.getJSONObject("room").getJSONObject("typeEstimated").getString("category");
-                } catch (JSONException e) {
-                    roomType = "N/A";
-                }
-                try {
-                    numBeds = offerJson.getJSONObject("room").getJSONObject("typeEstimated").getInt("beds");
-                } catch (JSONException e) {
-                    numBeds = 0;
-                }
-                try {
-                    description = offerJson.getJSONObject("room").getJSONObject("description").getString("text");
-                } catch (JSONException e) {
-                    description = "N/A";
-                }
-                Integer numAdults = 0;
-                if (offerJson.has("guests") && offerJson.getJSONObject("guests").has("adults")) {
-                    numAdults = offerJson.getJSONObject("guests").getInt("adults");
-                }
-                String cost = "N/A";
-                if (offerJson.has("price")) {
-                    cost = safeAccessJson("total", offerJson.getJSONObject("price"));
-                }
-                offersList.add(new HotelOffer(checkInDate, checkOutDate, roomType, numBeds, description, numAdults, cost));
+            Integer numAdults = 0;
+            if (offer.getGuest() != null && offer.getGuest().getAdults() != null) {
+                numAdults = offer.getGuest().getAdults();
             }
-        } catch (JSONException e) {
-            Log.e(TAG, "Unable to parse offers");
-            e.printStackTrace();
+            String cost = "N/A";
+            if (offer.getPrice() != null && offer.getPrice().getTotal() != null) {
+                cost = offer.getPrice().getTotal();
+            }
+            offersList.add(new HotelOffer(checkInDate, checkOutDate, roomType, numBeds, description, numAdults, cost));
         }
         return offersList;
-    }
-
-    private String safeAccessJson(String key, JSONObject jsonObject) {
-        try {
-            if (jsonObject.has(key)) {
-                return jsonObject.getString(key);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return "N/A";
     }
 
     private void markHotelOnMap(Hotel hotel) {
@@ -438,5 +393,178 @@ public class HotelsActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    class HotelResponse {
+        private final ArrayList<HotelList> data = new ArrayList<HotelList>();
+
+        public ArrayList<HotelList> getData() {
+            return data;
+        }
+    }
+
+    class HotelList {
+        private final ArrayList<OfferInfo> offers = new ArrayList<OfferInfo>();
+        private HotelInfo hotel;
+
+        public HotelInfo getHotel() {
+            return hotel;
+        }
+
+        public ArrayList<OfferInfo> getOffers() {
+            return offers;
+        }
+    }
+
+    class HotelInfo {
+        private String name;
+        private String rating;
+        private Double latitude;
+        private Double longitude;
+        private HotelAddress address;
+        private Contact contact;
+        private Description description;
+
+        public String getName() {
+            return name;
+        }
+
+        public String getRating() {
+            return rating;
+        }
+
+        public Double getLatitude() {
+            return latitude;
+        }
+
+        public Double getLongitude() {
+            return longitude;
+        }
+
+        public HotelAddress getAddress() {
+            return address;
+        }
+
+        public Contact getContact() {
+            return contact;
+        }
+
+        public Description getDescription() {
+            return description;
+        }
+    }
+
+    class HotelAddress {
+        private final ArrayList<String> lines = new ArrayList<String>();
+        private String postalCode;
+        private String cityName;
+        private String countryCode;
+
+        public ArrayList<String> getLines() {
+            return lines;
+        }
+
+        public String getPostalCode() {
+            return postalCode;
+        }
+
+        public String getCityName() {
+            return cityName;
+        }
+
+        public String getCountryCode() {
+            return countryCode;
+        }
+    }
+
+    class Contact {
+        private String phone;
+        private String email;
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+    }
+
+    class Description {
+        private String text;
+
+        public String getText() {
+            return text;
+        }
+    }
+
+    class OfferInfo {
+        private String checkInDate;
+        private String checkOutDate;
+        private Room room;
+        private Guest guest;
+        private OfferPrice price;
+
+        public String getCheckInDate() {
+            return checkInDate;
+        }
+
+        public String getCheckOutDate() {
+            return checkOutDate;
+        }
+
+        public Room getRoom() {
+            return room;
+        }
+
+        public Guest getGuest() {
+            return guest;
+        }
+
+        public OfferPrice getPrice() {
+            return price;
+        }
+    }
+
+    class Room {
+        private RoomType typeEstimated;
+        private Description description;
+
+        public RoomType getTypeEstimated() {
+            return typeEstimated;
+        }
+
+        public Description getDescription() {
+            return description;
+        }
+    }
+
+    class RoomType {
+        private String category;
+        private Integer beds;
+
+        public String getCategory() {
+            return category;
+        }
+
+        public Integer getBeds() {
+            return beds;
+        }
+    }
+
+    class Guest {
+        private Integer adults;
+
+        public Integer getAdults() {
+            return adults;
+        }
+    }
+
+    class OfferPrice {
+        private String total;
+
+        public String getTotal() {
+            return total;
+        }
     }
 }

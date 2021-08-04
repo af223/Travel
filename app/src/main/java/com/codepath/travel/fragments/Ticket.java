@@ -191,7 +191,7 @@ public class Ticket {
         ArrayList<Quote> quotes = flightRoutes.getQuotes();
         for (Quote quote : quotes) {
             String cost = String.valueOf(quote.getMinPrice());
-            flights.add(proccessLegOfFlight(quote.getOutboundLeg(), cost, false));
+            flights.add(processLegOfFlight(quote.getOutboundLeg(), cost, false));
         }
     }
 
@@ -199,14 +199,14 @@ public class Ticket {
         ArrayList<Quote> quotes = flightRoutes.getQuotes();
         for (Quote quote : quotes) {
             String cost = String.valueOf(quote.getMinPrice());
-            Flight outbound = proccessLegOfFlight(quote.getOutboundLeg(), cost, true);
-            Flight inbound = proccessLegOfFlight(quote.getInboundLeg(), cost, true);
+            Flight outbound = processLegOfFlight(quote.getOutboundLeg(), cost, true);
+            Flight inbound = processLegOfFlight(quote.getInboundLeg(), cost, true);
             Pair flightsPair = new Pair(outbound, inbound);
             flights.add(flightsPair);
         }
     }
 
-    private Flight proccessLegOfFlight(FlightLeg flightLeg, String cost, Boolean isRoundtrip) {
+    private Flight processLegOfFlight(FlightLeg flightLeg, String cost, Boolean isRoundtrip) {
         String carrier = carriers.get(flightLeg.getCarrierIds().get(0));
         Integer originId = flightLeg.getOriginId();
         String departAirportName = placesName.get(originId);
