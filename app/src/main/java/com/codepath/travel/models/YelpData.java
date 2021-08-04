@@ -3,7 +3,6 @@ package com.codepath.travel.models;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
 import android.widget.ImageButton;
@@ -16,10 +15,10 @@ import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.R;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.parse.ParseUser;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -102,48 +101,38 @@ public class YelpData {
         });
     }
 
-    public static void processYelpResults(ArrayList<YelpData> data, JSONObject jsonObject, Context context) {
-        try {
-            JSONArray businesses = jsonObject.getJSONArray("businesses");
-            for (int i = 0; i < businesses.length(); i++) {
-                JSONObject business = businesses.getJSONObject(i);
-                String name = business.getString("name");
-                String rating = String.valueOf(business.getDouble("rating"));
-                String imageURL = "";
-                if (business.has("image_url")) {
-                    imageURL = business.getString("image_url");
-                }
-                String yelpURL = business.getString("url");
-                String phone = business.getString("phone");
-                String address = formatBusinessAddress(business.getJSONObject("location"));
-                String placeId = business.getString("id");
-                Integer reviewCount = business.getInt("review_count");
-                data.add(new YelpData(name, rating, imageURL, yelpURL, phone, address, placeId, reviewCount));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(context, "Unable to process Yelp results", Toast.LENGTH_SHORT).show();
+    public static void processYelpResults(ArrayList<YelpData> data, JSONObject jsonObject) {
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        YelpResponse yelpResponse = gson.fromJson(String.valueOf(jsonObject), YelpResponse.class);
+        ArrayList<Business> businesses = yelpResponse.getBusinesses();
+        for (Business business : businesses) {
+            String name = business.getName();
+            String rating = String.valueOf(business.getRating());
+            String imageURL = business.getImage_url() == null ? "" : business.getImage_url();
+            String yelpURL = business.getUrl();
+            String phone = business.getPhone();
+            String address = formatBusinessAddress(business.getLocation());
+            String placeId = business.getId();
+            Integer reviewCount = business.getReview_count();
+            data.add(new YelpData(name, rating, imageURL, yelpURL, phone, address, placeId, reviewCount));
         }
     }
 
-    private static String formatBusinessAddress(JSONObject location) {
+    private static String formatBusinessAddress(BusinessAddress location) {
         String address = "";
-        try {
-            if (!location.getString("address1").isEmpty() && !location.getString("address1").equals("null"))
-                address += location.getString("address1") + ", ";
-            if (!location.getString("address2").isEmpty() && !location.getString("address2").equals("null"))
-                address += location.getString("address2") + ", ";
-            if (!location.getString("address3").isEmpty() && !location.getString("address3").equals("null"))
-                address += location.getString("address3") + ", ";
-            if (!location.getString("state").isEmpty() && !location.getString("state").equals("null"))
-                address += location.getString("state") + ", ";
-            if (!location.getString("city").isEmpty() && !location.getString("city").equals("null"))
-                address += location.getString("city") + ", ";
-            address += location.getString("country");
-            address += " " + location.getString("zip_code");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        if (location.getAddress1() != null && !location.getAddress1().isEmpty())
+            address += location.getAddress1() + ", ";
+        if (location.getAddress2() != null && !location.getAddress2().isEmpty())
+            address += location.getAddress2() + ", ";
+        if (location.getAddress3() != null && !location.getAddress3().isEmpty())
+            address += location.getAddress3() + ", ";
+        if (location.getState() != null && !location.getState().isEmpty())
+            address += location.getState() + ", ";
+        if (location.getCity() != null && !location.getCity().isEmpty())
+            address += location.getAddress1() + ", ";
+        address += location.getCountry();
+        address += " " + location.getZip_code();
         return address;
     }
 
@@ -184,7 +173,7 @@ public class YelpData {
         client.get(YELP_BUSINESS_SEARCH_URL, headers, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                YelpData.processYelpResults(transportations, json.jsonObject, activity);
+                YelpData.processYelpResults(transportations, json.jsonObject);
                 activity.runOnUiThread(transportRunnable);
             }
 
@@ -237,5 +226,94 @@ public class YelpData {
 
     public void flipChosen() {
         isChosen = !isChosen;
+    }
+
+    class YelpResponse {
+        private final ArrayList<Business> businesses = new ArrayList<Business>();
+
+        public ArrayList<Business> getBusinesses() {
+            return businesses;
+        }
+    }
+
+    class Business {
+        private String name;
+        private Double rating;
+        private String image_url;
+        private String url;
+        private String phone;
+        private BusinessAddress location;
+        private String id;
+        private Integer review_count;
+
+        public String getName() {
+            return name;
+        }
+
+        public Double getRating() {
+            return rating;
+        }
+
+        public String getImage_url() {
+            return image_url;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public BusinessAddress getLocation() {
+            return location;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public Integer getReview_count() {
+            return review_count;
+        }
+    }
+
+    class BusinessAddress {
+        private String city;
+        private String country;
+        private String address1;
+        private String address2;
+        private String address3;
+        private String state;
+        private String zip_code;
+
+        public String getCity() {
+            return city;
+        }
+
+        public String getCountry() {
+            return country;
+        }
+
+        public String getAddress1() {
+            return address1;
+        }
+
+        public String getAddress2() {
+            return address2;
+        }
+
+        public String getAddress3() {
+            return address3;
+        }
+
+        public String getState() {
+            return state;
+        }
+
+        public String getZip_code() {
+            return zip_code;
+        }
     }
 }
