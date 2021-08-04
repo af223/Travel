@@ -9,6 +9,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.util.Pair;
 
 import com.codepath.travel.R;
 import com.parse.LogInCallback;
@@ -61,7 +63,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(LoginActivity.this, SignupActivity.class);
-                startActivity(i);
+                Pair<View, String> p1 = Pair.create(findViewById(R.id.ivIcon), "icon");
+                Pair<View, String> p2 = Pair.create(findViewById(R.id.tvLogo), "name");
+                Pair<View, String> p3 = Pair.create(findViewById(R.id.btnSignup), "signup_button");
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(LoginActivity.this, p1, p2, p3);
+                startActivity(i, options.toBundle());
             }
         });
     }

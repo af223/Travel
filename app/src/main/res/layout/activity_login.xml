@@ -1,17 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="16dp"
+    android:background="@drawable/background"
+    android:gravity="center_vertical"
     tools:context=".activities.LoginActivity">
+
+    <ImageView
+        android:id="@+id/ivIcon"
+        android:layout_width="253dp"
+        android:layout_height="132dp"
+        android:layout_marginStart="16dp"
+        android:transitionName="icon"
+        android:src="@drawable/no_background_travel"
+        app:tint="@color/brown" />
+
+    <TextView
+        android:id="@+id/tvLogo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="16dp"
+        android:layout_below="@id/ivIcon"
+        android:layout_marginTop="-70dp"
+        android:transitionName="name"
+        android:textStyle="bold"
+        android:text="@string/travel"
+        android:textSize="50sp"
+        android:textColor="@color/brown"
+        android:fontFamily="cursive"
+        android:gravity="center" />
 
     <EditText
         android:id="@+id/etName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_below="@id/tvLogo"
         android:ems="10"
         android:hint="@string/login_username"
         android:inputType="textPersonName" />
@@ -23,6 +54,8 @@
         android:layout_below="@id/etName"
         android:layout_alignParentStart="true"
         android:layout_marginTop="5dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:ems="10"
         android:inputType="textPassword"
         android:hint="@string/login_password"/>
@@ -34,6 +67,8 @@
         android:layout_below="@id/etPassword"
         android:layout_alignParentStart="true"
         android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/login" />
 
     <Button
@@ -41,7 +76,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/btnLogin"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="false"
+        android:transitionName="signup_button"
         android:text="@string/signup" />
 </RelativeLayout>

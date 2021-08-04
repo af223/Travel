@@ -120,4 +120,9 @@
     <string name="edit_expense">Edit expense</string>
     <string name="delete_expense">Delete expense</string>
     <string name="delete_location">Delete location</string>
+    <string name="travel">Travel</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">Email</string>
+    <string name="empty_phone_number">(xxx) - xxx - xxxx</string>
 </resources>
