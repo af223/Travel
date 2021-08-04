@@ -155,7 +155,7 @@ public class CostsFragment extends Fragment {
 
     private void deleteExpense(int position) {
         totalCost -= Double.parseDouble(expenses.get(position).getCost());
-        tvTotalCost.setText(String.format("%.2f", totalCost));
+        tvTotalCost.setText("$" + String.format("%.2f", totalCost));
         Expense deleteExpense = expenses.get(position);
         expenses.remove(position);
         adapter.notifyItemRemoved(position);
@@ -182,7 +182,7 @@ public class CostsFragment extends Fragment {
         expense.setName(etExpenseName.getText().toString());
         expense.setCost(etExpenseCost.getText().toString());
         totalCost += Double.parseDouble(expense.getCost());
-        tvTotalCost.setText(String.format("%.2f", totalCost));
+        tvTotalCost.setText("$" + String.format("%.2f", totalCost));
         expense.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -243,7 +243,7 @@ public class CostsFragment extends Fragment {
                 for (int i = 0; i < queryExpenses.size(); i++) {
                     totalCost += Double.parseDouble(queryExpenses.get(i).getCost());
                 }
-                tvTotalCost.setText(String.format("%.2f", totalCost));
+                tvTotalCost.setText("$" + String.format("%.2f", totalCost));
             }
         });
     }
@@ -281,7 +281,7 @@ public class CostsFragment extends Fragment {
         expense.setIsProtected();
         expenses.add(expense);
         totalCost += Double.parseDouble(cost);
-        tvTotalCost.setText(String.format("%.2f", totalCost));
+        tvTotalCost.setText("$" + String.format("%.2f", totalCost));
         adapter.notifyItemInserted(expenses.size() - 1);
         return expense;
     }

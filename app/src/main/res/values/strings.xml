@@ -105,4 +105,19 @@
     <string name="event_name">Event Name:</string>
     <string name="delete">Delete</string>
     <string name="edit_event_intent">editing event</string>
+    <string name="add_location">Add location</string>
+    <string name="jump_to_today">Jump to today</string>
+    <string name="previous_month">previous month</string>
+    <string name="next_month">next month</string>
+    <string name="sunday">Sunday</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="create_event">Create Event</string>
+    <string name="edit_expense">Edit expense</string>
+    <string name="delete_expense">Delete expense</string>
+    <string name="delete_location">Delete location</string>
 </resources>

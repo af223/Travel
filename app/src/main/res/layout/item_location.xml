@@ -42,6 +42,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
+                    android:contentDescription="@string/delete_location"
                     android:src="@drawable/ic_baseline_delete_24"
                     app:tint="@android:color/white" />
             </LinearLayout>
