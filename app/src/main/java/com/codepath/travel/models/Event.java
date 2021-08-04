@@ -12,11 +12,15 @@ public class Event {
     private LocalDate date;
     private LocalTime time;
     private LocalTime endTime;
-    public Event(String name, LocalDate date, LocalTime time, LocalTime endTime) {
+    private final Boolean isCustom;
+    private String touristDestinationId;
+
+    public Event(String name, LocalDate date, LocalTime time, LocalTime endTime, Boolean isCustom) {
         this.name = name;
         this.date = date;
         this.time = time;
         this.endTime = endTime;
+        this.isCustom = isCustom;
     }
 
     public static ArrayList<Event> eventsForDate(LocalDate date) {
@@ -71,5 +75,17 @@ public class Event {
 
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
+    }
+
+    public Boolean isCustom() {
+        return isCustom;
+    }
+
+    public String getTouristDestinationId() {
+        return touristDestinationId;
+    }
+
+    public void setTouristDestinationId(String touristDestinationId) {
+        this.touristDestinationId = touristDestinationId;
     }
 }

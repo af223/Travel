@@ -25,10 +25,14 @@ import com.codepath.travel.fragments.ItineraryFragment;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.Event;
 import com.codepath.travel.models.TouristDestination;
+import com.parse.DeleteCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -66,36 +70,73 @@ public class CreateEventActivity extends AppCompatActivity implements AdapterVie
     private CheckBox cbDestination;
     private Destination associatedDestination;
     private String eventName;
+    private Button btnDeleteEvent;
+    private Event currentEvent = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
-        setTimesToToday();
-        createPickerDialogs();
-
-        etEventName = findViewById(R.id.etEventName);
         cbDestination = findViewById(R.id.cbDestination);
-        cbDestination.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    destinationSpinner.setVisibility(View.VISIBLE);
-                } else {
-                    destinationSpinner.setVisibility(View.GONE);
-                    associatedDestination = null;
-                }
-            }
-        });
+        btnDeleteEvent = findViewById(R.id.btnDeleteEvent);
+        etEventName = findViewById(R.id.etEventName);
         destinationSpinner = findViewById(R.id.destination_spinner);
-        ArrayList<String> destinationNames = new ArrayList<>();
-        for (Destination destination : ItineraryFragment.allDestinations) {
-            destinationNames.add(destination.getFormattedLocationName());
+        btnCreateEvent = findViewById(R.id.btnCreateEvent);
+
+        if (getIntent().getIntExtra(getResources().getString(R.string.edit_event_intent), 0) == 1) {
+            cbDestination.setVisibility(View.GONE);
+            currentEvent = Event.eventsList.get(getIntent().getIntExtra(getResources().getString(R.string.event), 0));
+            etEventName.setText(currentEvent.getName());
+            setTimes(currentEvent.getTime(), currentEvent.getEndTime());
+            btnCreateEvent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (hasInvalidFields())
+                        return;
+                    editEvent();
+                }
+            });
+            btnDeleteEvent.setVisibility(View.VISIBLE);
+            btnDeleteEvent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteEvent();
+                }
+            });
+        } else {
+            setTimes(LocalTime.now(), LocalTime.now().plusHours(2));
+            cbDestination.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        destinationSpinner.setVisibility(View.VISIBLE);
+                    } else {
+                        destinationSpinner.setVisibility(View.GONE);
+                        associatedDestination = null;
+                    }
+                }
+            });
+            ArrayList<String> destinationNames = new ArrayList<>();
+            for (Destination destination : ItineraryFragment.allDestinations) {
+                destinationNames.add(destination.getFormattedLocationName());
+            }
+            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, R.layout.item_spinner_destination, destinationNames);
+            destinationSpinner.setAdapter(spinnerAdapter);
+            destinationSpinner.setOnItemSelectedListener(this);
+            btnCreateEvent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (hasInvalidFields())
+                        return;
+                    eventName = etEventName.getText().toString();
+                    Event newEvent = new Event(eventName, chosenEventDate, time, endTime, true);
+                    Event.eventsList.add(newEvent);
+                    saveCreatedEvent(newEvent);
+                }
+            });
         }
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, R.layout.item_spinner_destination, destinationNames);
-        destinationSpinner.setAdapter(spinnerAdapter);
-        destinationSpinner.setOnItemSelectedListener(this);
+        createPickerDialogs();
 
         btnSelectDate = findViewById(R.id.btnSelectDate);
         btnSelectDate.setText(formatDateString(month, day, year));
@@ -114,37 +155,91 @@ public class CreateEventActivity extends AppCompatActivity implements AdapterVie
             }
         });
         btnSelectEndTime = findViewById(R.id.btnSelectEndTime);
-        btnSelectEndTime.setText(CalendarUtils.formatTime(time.plusHours(2)));
+        btnSelectEndTime.setText(CalendarUtils.formatTime(endTime));
         btnSelectEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 timePickerDialogEnd.show();
             }
         });
-        btnCreateEvent = findViewById(R.id.btnCreateEvent);
-        btnCreateEvent.setOnClickListener(new View.OnClickListener() {
+    }
+
+    private void deleteEvent() {
+        ParseQuery<TouristDestination> query = ParseQuery.getQuery(TouristDestination.class);
+        query.getInBackground(currentEvent.getTouristDestinationId(), new GetCallback<TouristDestination>() {
             @Override
-            public void onClick(View v) {
-                if (etEventName.getText().toString().isEmpty()) {
-                    Toast.makeText(CreateEventActivity.this, "Must name event", Toast.LENGTH_SHORT).show();
+            public void done(TouristDestination object, ParseException e) {
+                if (e != null) {
+                    Toast.makeText(CreateEventActivity.this, "Unable to delete event", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (endTime.isBefore(time)) {
-                    Toast.makeText(CreateEventActivity.this, "End time must be after start time", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                eventName = etEventName.getText().toString();
-                Event newEvent = new Event(eventName, chosenEventDate, time, endTime);
-                Event.eventsList.add(newEvent);
-                saveCreatedEvent();
+                object.deleteInBackground(new DeleteCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e != null) {
+                            Toast.makeText(CreateEventActivity.this, "Unable to delete event", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        Event.eventsList.remove(getIntent().getIntExtra(getResources().getString(R.string.event), 0));
+                        finish();
+                    }
+                });
             }
         });
     }
 
-    private void setTimesToToday() {
+    private void editEvent() {
+        eventName = etEventName.getText().toString();
+        if (!eventName.equals(currentEvent.getName())
+                || !time.equals(currentEvent.getTime())
+                || !endTime.equals(currentEvent.getEndTime())
+                || !chosenEventDate.equals(currentEvent.getDate())) {
+            ParseQuery<TouristDestination> query = ParseQuery.getQuery(TouristDestination.class);
+            query.getInBackground(currentEvent.getTouristDestinationId(), new GetCallback<TouristDestination>() {
+                @Override
+                public void done(TouristDestination touristDestination, ParseException e) {
+                    if (e != null) {
+                        Toast.makeText(CreateEventActivity.this, "Unable to save event", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    updateFields(touristDestination);
+                    currentEvent.setName(eventName);
+                    currentEvent.setTime(time);
+                    currentEvent.setEndTime(endTime);
+                    currentEvent.setDate(chosenEventDate);
+                    touristDestination.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e != null) {
+                                Toast.makeText(CreateEventActivity.this, "Unable to save event", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            Toast.makeText(CreateEventActivity.this, "Event updated!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    private Boolean hasInvalidFields() {
+        if (etEventName.getText().toString().isEmpty()) {
+            Toast.makeText(CreateEventActivity.this, "Must name event", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if (endTime.isBefore(time)) {
+            Toast.makeText(CreateEventActivity.this, "End time must be after start time", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
+    }
+
+    private void setTimes(LocalTime startTime, LocalTime eventEndTime) {
         chosenEventDate = selectedDate;
-        time = LocalTime.now();
-        endTime = time.plusHours(2);
+        time = startTime;
+        endTime = eventEndTime;
+        calendar.setTime(Date.valueOf(selectedDate.toString()));
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -195,17 +290,14 @@ public class CreateEventActivity extends AppCompatActivity implements AdapterVie
         return formatter.format(calendar.getTime());
     }
 
-    private void saveCreatedEvent() {
+    private void saveCreatedEvent(Event newEvent) {
         TouristDestination createdEvent = new TouristDestination();
         createdEvent.setUser(ParseUser.getCurrentUser());
         if (associatedDestination != null) {
             createdEvent.setDestination(associatedDestination);
         }
         createdEvent.setPlaceId("N/A");
-        createdEvent.setName(eventName);
-        createdEvent.setDateVisited(chosenEventDate.toString());
-        createdEvent.setTimeVisited(formatStoredTime(time));
-        createdEvent.setVisitEnd(formatStoredTime(endTime));
+        updateFields(createdEvent);
         createdEvent.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -215,9 +307,17 @@ public class CreateEventActivity extends AppCompatActivity implements AdapterVie
                     return;
                 }
                 Toast.makeText(CreateEventActivity.this, "Event saved!", Toast.LENGTH_SHORT).show();
+                newEvent.setTouristDestinationId(createdEvent.getObjectId());
                 finish();
             }
         });
+    }
+
+    private void updateFields(TouristDestination touristDestination) {
+        touristDestination.setName(eventName);
+        touristDestination.setDateVisited(chosenEventDate.toString());
+        touristDestination.setTimeVisited(formatStoredTime(time));
+        touristDestination.setVisitEnd(formatStoredTime(endTime));
     }
 
     @Override

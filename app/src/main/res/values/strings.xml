@@ -102,4 +102,7 @@
     <string name="location_placeholder">[location]</string>
     <string name="event_date_placeholder">Jul 25 2021</string>
     <string name="expense_name">Expense Name:</string>
+    <string name="event_name">Event Name:</string>
+    <string name="delete">Delete</string>
+    <string name="edit_event_intent">editing event</string>
 </resources>

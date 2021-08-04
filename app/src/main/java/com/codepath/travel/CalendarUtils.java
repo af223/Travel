@@ -303,7 +303,13 @@ public class CalendarUtils {
         } else {
             eventName = restaurantEventName(timeOfVisit, eventName);
         }
-        Event event = new Event(eventName, dateOfVisit, timeOfVisit, endOfVisit);
+        Event event;
+        if (!touristDestination.getPlaceId().equals("N/A")) {
+            event = new Event(eventName, dateOfVisit, timeOfVisit, endOfVisit, false);
+        } else {
+            event = new Event(eventName, dateOfVisit, timeOfVisit, endOfVisit, true);
+            event.setTouristDestinationId(touristDestination.getObjectId());
+        }
         eventsList.add(event);
     }
 
