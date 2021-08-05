@@ -27,11 +27,10 @@
         android:layout_below="@id/ivIcon"
         android:layout_marginTop="-70dp"
         android:transitionName="name"
-        android:textStyle="bold"
         android:text="@string/travel"
-        android:textSize="50sp"
+        android:textSize="60sp"
         android:textColor="@color/brown"
-        android:fontFamily="cursive"
+        android:fontFamily="@font/covered_by_your_grace"
         android:gravity="center" />
 
     <LinearLayout

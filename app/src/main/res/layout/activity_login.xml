@@ -21,18 +21,17 @@
         android:id="@+id/tvLogo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/ivIcon"
         android:layout_alignParentStart="true"
         android:layout_marginStart="64dp"
-        android:layout_marginEnd="16dp"
-        android:layout_below="@id/ivIcon"
         android:layout_marginTop="-70dp"
-        android:transitionName="name"
-        android:textStyle="bold"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/covered_by_your_grace"
+        android:gravity="center"
         android:text="@string/travel"
-        android:textSize="50sp"
         android:textColor="@color/brown"
-        android:fontFamily="cursive"
-        android:gravity="center" />
+        android:textSize="60sp"
+        android:transitionName="name" />
 
     <EditText
         android:id="@+id/etName"

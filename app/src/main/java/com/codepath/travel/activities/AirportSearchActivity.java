@@ -175,7 +175,7 @@ public class AirportSearchActivity extends AppCompatActivity {
                 foundAirports.add(airport);
             }
         }
-        if (airportInfos.isEmpty()) {
+        if (foundAirports.isEmpty()) {
             if (loadingAirportSuggestions) {
                 loadingAirportSuggestions = false;
                 findMatchingAirports(getIntent().getStringExtra(Destination.KEY_COUNTRY));

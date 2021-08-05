@@ -265,7 +265,7 @@ public class CostsFragment extends Fragment {
                             createExpense("Flight to " + destination.getArriveAirportName(), destination.getCost());
                         }
                         if (destination.getInboundCost() != null) {
-                            createExpense("Return flight from" + destination.getFormattedLocationName(), destination.getInboundCost());
+                            createExpense("Return flight from " + destination.getFormattedLocationName(), destination.getInboundCost());
                         }
                     }
                 }

@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -67,8 +66,6 @@ public class TouristSpotsActivity extends AppCompatActivity {
     private String latitude;
     private String longitude;
     private EndlessRecyclerViewScrollListener scrollListener;
-    private EditText etQueryActivity;
-    private Button btnQueryActivity;
     private FilterDialog filterDialog;
     private final Runnable touristSpotRunnable = new Runnable() {
         @Override
@@ -79,6 +76,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
         }
     };
     private Boolean isRestaurant;
+    private SearchView svTouristSpot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +88,7 @@ public class TouristSpotsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         tvActivityType = findViewById(R.id.tvActivityType);
+        svTouristSpot = findViewById(R.id.svTouristSpot);
         if (isRestaurant) {
             getSupportActionBar().setTitle("Find Restaurants");
             tvActivityType.setVisibility(View.GONE);
@@ -102,8 +101,6 @@ public class TouristSpotsActivity extends AppCompatActivity {
 
         rvTouristActivities = findViewById(R.id.rvTouristActivities);
         pbTouristLoad = findViewById(R.id.pbTouristLoad);
-        etQueryActivity = findViewById(R.id.etQueryActivity);
-        btnQueryActivity = findViewById(R.id.btnQueryActivity);
 
         touristSpots = new ArrayList<>();
         latitude = getIntent().getStringExtra(Destination.KEY_LAT);
@@ -124,21 +121,26 @@ public class TouristSpotsActivity extends AppCompatActivity {
                 if (isRestaurant) {
                     loadSearchResults();
                 }
-                btnQueryActivity.setOnClickListener(new View.OnClickListener() {
+                svTouristSpot.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
-                    public void onClick(View v) {
-                        if (etQueryActivity.getText().toString().isEmpty()) {
+                    public boolean onQueryTextSubmit(String query) {
+                        if (query.isEmpty()) {
                             Toast.makeText(TouristSpotsActivity.this, "No keywords entered", Toast.LENGTH_SHORT).show();
-                            return;
+                            return false;
                         }
                         setUpToLoadResults();
                         if (!isRestaurant) {
                             filterDialog.resetCategoryFilter();
                             tvActivityType.setText(keywordQuery);
                         }
-                        keywordQuery = etQueryActivity.getText().toString();
-                        etQueryActivity.setText("");
+                        keywordQuery = query;
                         loadSearchResults();
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        return false;
                     }
                 });
 

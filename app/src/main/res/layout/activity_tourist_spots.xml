@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activities.TouristSpotsActivity">
 
     <include
@@ -31,9 +32,9 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
-        android:layout_below="@id/etQueryActivity"
+        android:layout_below="@id/svTouristSpot"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="10dp" />
 
     <ProgressBar
         android:id="@+id/pbTouristLoad"
@@ -48,31 +49,14 @@
         android:layout_marginEnd="160dp"
         android:visibility="gone" />
 
-    <EditText
-        android:id="@+id/etQueryActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/svTouristSpot"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
         android:layout_below="@id/tvActivityType"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="3dp"
-        android:layout_toStartOf="@id/btnQueryActivity"
-        android:ems="10"
-        android:hint="@string/search_by_keyword"
-        android:inputType="text"
-        android:maxLines="1"
-        android:textSize="14sp" />
-
-    <Button
-        android:id="@+id/btnQueryActivity"
-        android:layout_width="86dp"
-        android:layout_height="40dp"
-        android:layout_below="@id/tvActivityType"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="3dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/search"
-        android:textSize="12sp" />
-
+        android:layout_marginTop="10dp"
+        android:theme="@style/AppSearchView"
+        app:queryHint="@string/search_by_keyword"
+        app:iconifiedByDefault="false" />
 </RelativeLayout>
