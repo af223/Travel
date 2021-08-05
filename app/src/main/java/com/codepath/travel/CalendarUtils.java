@@ -108,7 +108,7 @@ public class CalendarUtils {
      * @return current if current is a Sunday, otherwise it returns the LocalDate that is the closest
      * Sunday prior to current
      */
-    private static LocalDate sundayForDate(LocalDate current) {
+    static LocalDate sundayForDate(LocalDate current) {
         LocalDate oneWeekAgo = current.minusWeeks(1);
 
         while (current.isAfter(oneWeekAgo)) {
