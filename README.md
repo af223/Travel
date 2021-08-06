@@ -24,6 +24,23 @@ This app makes planning trips easy, allowing users to find all necessary informa
 - **Habit:** Users would use this app when they are planning a trip, or while on the trip. Users can also upload their photos from the trips so that they can see photo clusters while in map view.
 - **Scope:** This app will start out with just a map view that leads to images of the location when clicked. Then it will continue to incorporate resources like plane ticket costs, hotels, restaurants, and car rentals. With sufficient resources, the app can expand to help plan trips with multiple destinations that minimizes costs.
 
+## Walkthroughs
+
+Login screen:
+<img src='WalkthroughLogin.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+See & Add destinations, select flights & hotels:
+<img src='Walkthrough1.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+Find & select tourist spots and popular modes of transportation:
+<img src='Walkthrough2_1.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+Find & select restaurants, see all plans:
+<img src='Walkthrough2_2.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+See & edit itinerary, see & edit costs breakdown
+<img src='Walkthrough3.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
 ## Product Spec
 
 ### 1. User Stories (Required and Optional)
@@ -47,9 +64,9 @@ This app makes planning trips easy, allowing users to find all necessary informa
 - [x] User can find popular tourist spots at destination
 - [x] User can sort and filter results for tickets, tourist spots, and rentals
 - [x] User can manually create and add plans in calendar
-- [ ] Scheduling algorithm considers mealtimes
+- [x] Scheduling algorithm considers mealtimes
 - [ ] Scheduling algorithm considers time on road between events
-- [ ] User can find restaurants at destination
+- [x] User can find restaurants at destination
 - [x] User can see ratings for resources (hotel, airline, etc.)
 - [ ] User can see reviews for resources 
 - [ ] User can view schedule showing when events overlap
