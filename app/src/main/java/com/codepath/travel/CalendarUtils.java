@@ -34,7 +34,7 @@ public class CalendarUtils {
     private static final LocalTime DINNER_END = LocalTime.of(19, 0, 0);
     private static final LocalTime DAY_START_TIME = BREAKFAST_END.plusMinutes(30);
     private static final HashMap<Destination, Integer> DESTINATION_COLOR_CODE = new HashMap<>();
-    private static final HashMap<String, ArrayList<Pair<LocalTime, LocalTime>>> BUSY_TIME_SLOTS = new HashMap<>();
+    static final HashMap<String, ArrayList<Pair<LocalTime, LocalTime>>> BUSY_TIME_SLOTS = new HashMap<>();
     private static final HashMap<String, Pair<LocalDate, Integer>> NEXT_AVAILABLE_DATE = new HashMap<>();
     public static LocalDate selectedDate;
     public static ArrayList<LocalDate> days;

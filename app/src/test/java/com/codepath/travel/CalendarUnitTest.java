@@ -1,8 +1,11 @@
 package com.codepath.travel;
 
+import com.codepath.travel.models.TouristDestination;
+
 import org.junit.Test;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -48,9 +51,37 @@ public class CalendarUnitTest {
 
     @Test
     public void sundayForDay_isCorrect() {
-        CalendarUtils.days = new ArrayList<>();
-        LocalDate date1 = LocalDate.of(2021, 8, 5);
-        LocalDate result = CalendarUtils.sundayForDate(date1);
+        LocalDate date = LocalDate.of(2021, 8, 5);
+        LocalDate result = CalendarUtils.sundayForDate(date);
         assertEquals(LocalDate.of(2021, 8, 1), result);
+
+        date = LocalDate.of(2021, 7, 2);
+        result = CalendarUtils.sundayForDate(date);
+        assertEquals(LocalDate.of(2021, 6, 27), result);
+
+        date = LocalDate.of(2021, 6, 30);
+        result = CalendarUtils.sundayForDate(date);
+        assertEquals(LocalDate.of(2021, 6, 27), result);
+    }
+
+    @Test
+    public void getDaysInWeek_isCorrect() {
+        CalendarUtils.days = new ArrayList<>();
+
+        CalendarUtils.selectedDate = LocalDate.of(2021, 8, 6);
+        CalendarUtils.getDaysInWeek();
+        assertEquals(LocalDate.of(2021, 8,1), CalendarUtils.days.get(0));
+
+        CalendarUtils.selectedDate = LocalDate.of(2021, 7, 1);
+        CalendarUtils.getDaysInWeek();
+        assertEquals(LocalDate.of(2021, 6, 27), CalendarUtils.days.get(0));
+
+        CalendarUtils.selectedDate = LocalDate.of(2021, 6, 30);
+        CalendarUtils.getDaysInWeek();
+        assertEquals(LocalDate.of(2021, 6, 27), CalendarUtils.days.get(0));
+
+        CalendarUtils.selectedDate = LocalDate.of(2022, 1, 1);
+        CalendarUtils.getDaysInWeek();
+        assertEquals(LocalDate.of(2021, 12, 26), CalendarUtils.days.get(0));
     }
 }
