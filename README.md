@@ -27,18 +27,23 @@ This app makes planning trips easy, allowing users to find all necessary informa
 ## Walkthroughs
 
 Login screen:
+
 <img src='WalkthroughLogin.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 See & Add destinations, select flights & hotels:
+
 <img src='Walkthrough1.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 Find & select tourist spots and popular modes of transportation:
+
 <img src='Walkthrough2_1.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 Find & select restaurants, see all plans:
+
 <img src='Walkthrough2_2.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
-See & edit itinerary, see & edit costs breakdown
+See & edit itinerary, see & edit costs breakdown:
+
 <img src='Walkthrough3.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 ## Product Spec
