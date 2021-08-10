@@ -1,14 +1,19 @@
-package com.codepath.travel.activities;
+package com.codepath.travel.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,45 +22,48 @@ import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.travel.R;
-import com.codepath.travel.adapters.ChosenAirportsAdapter;
+import com.codepath.travel.activities.ChooseAirportsActivity;
 import com.codepath.travel.adapters.FindAirportsAdapter;
 import com.codepath.travel.models.Airport;
 import com.codepath.travel.models.Destination;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 import okhttp3.Headers;
 
 /**
- * This activity allows the user to search for and select the possible arrival and departure airports
- * that they want to see plane tickets for. For arrival airports (at the selected travel location), suggested
- * airports are automatically loaded. Users can see choose airports marked (General) to see plane tickets from
- * any airport in that area.
- * <p>
- * This activity appears when the user clicks the "select [arrival/departure] airport" buttons from FlightsActivity.java.
+ * A simple {@link Fragment} subclass.
+ * This fragment is displayed by AirportPagerAdapter in the ChooseAirportsActivity.
+ * It allows user to see and edit their list of chosen airports.
  */
+public class AirportSearchFragment extends Fragment {
 
-public class AirportSearchActivity extends AppCompatActivity {
-
-    private static final String TAG = "AirportSearchActivity";
+    private static final String TAG = "AirportSearchFragment";
     private static final String FIND_QUERY_URL = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/autosuggest/v1.0/%1$s/%2$s/%3$s/?query=%4$s";
     private static FindAirportsAdapter foundAdapter;
-    private static ChosenAirportsAdapter chosenAdapter;
     private EditText etSearch;
     private Button btnSearch;
-    private RecyclerView rvChosenAirports;
     private RecyclerView rvFindAirport;
-    private Button btnClearChosen;
     private ProgressBar pbAirport;
-    private ArrayList<Airport> chosenAirportsList;
     private ArrayList<Airport> foundAirports;
     private Gson gson;
     private Boolean loadingAirportSuggestions = false;
+    private Boolean isFromDeparture;
+    private String admin1;
+    private String country;
 
-    public static void refreshChosenAirports() {
-        chosenAdapter.notifyDataSetChanged();
+    public AirportSearchFragment() {
+        // Required empty public constructor
+    }
+
+    public AirportSearchFragment(Intent intent, Boolean isFromDeparture) {
+        this.isFromDeparture = isFromDeparture;
+        this.admin1 = intent.getStringExtra(Destination.KEY_ADMIN1);
+        this.country = intent.getStringExtra(Destination.KEY_COUNTRY);
     }
 
     public static void refreshFoundAirports() {
@@ -63,23 +71,22 @@ public class AirportSearchActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_airport_search);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_airport_search, container, false);
+    }
 
-        if (getIntent().getBooleanExtra(getResources().getString(R.string.from_departure), true)) {
-            chosenAirportsList = FlightsActivity.DEPARTURE_AIRPORTS;
-        } else {
-            chosenAirportsList = FlightsActivity.ARRIVAL_AIRPORTS;
-        }
+    @Override
+    public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         GsonBuilder builder = new GsonBuilder();
         gson = builder.create();
 
-        etSearch = findViewById(R.id.etSearch);
-        btnSearch = findViewById(R.id.btnSearch);
-        pbAirport = findViewById(R.id.pbAirport);
-        btnClearChosen = findViewById(R.id.btnClearChosen);
+        etSearch = view.findViewById(R.id.etSearch);
+        btnSearch = view.findViewById(R.id.btnSearch);
+        pbAirport = view.findViewById(R.id.pbAirport);
+
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,37 +94,21 @@ public class AirportSearchActivity extends AppCompatActivity {
                 String findAirport = etSearch.getText().toString();
                 etSearch.setText("");
                 if (findAirport.length() < 2) {
-                    Toast.makeText(AirportSearchActivity.this, "Try searching with more letters", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Try searching with more letters", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 pbAirport.setVisibility(View.VISIBLE);
                 findMatchingAirports(findAirport);
             }
         });
-        btnClearChosen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (Airport airport : chosenAirportsList) {
-                    airport.flipChosen();
-                }
-                chosenAirportsList.clear();
-                refreshChosenAirports();
-                refreshFoundAirports();
-            }
-        });
 
         foundAirports = new ArrayList<>();
-        foundAdapter = new FindAirportsAdapter(this, foundAirports, chosenAirportsList);
-        rvFindAirport = findViewById(R.id.rvFindAirport);
-        rvFindAirport.setLayoutManager(new LinearLayoutManager(this));
+        foundAdapter = new FindAirportsAdapter(getContext(), foundAirports, ChooseAirportsActivity.chosenAirportsList);
+        rvFindAirport = view.findViewById(R.id.rvFindAirport);
+        rvFindAirport.setLayoutManager(new LinearLayoutManager(getContext()));
         rvFindAirport.setAdapter(foundAdapter);
 
-        chosenAdapter = new ChosenAirportsAdapter(this, chosenAirportsList);
-        rvChosenAirports = findViewById(R.id.rvChosenAirports);
-        rvChosenAirports.setLayoutManager(new LinearLayoutManager(this));
-        rvChosenAirports.setAdapter(chosenAdapter);
-
-        if (!getIntent().getBooleanExtra(getResources().getString(R.string.from_departure), true)) {
+        if (!isFromDeparture) {
             pbAirport.setVisibility(View.VISIBLE);
             loadSuggestedAirports();
             loadingAirportSuggestions = true;
@@ -143,7 +134,7 @@ public class AirportSearchActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e(TAG, "failed to get airports: ", throwable);
-                Toast.makeText(AirportSearchActivity.this, "Unable to find airports", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Unable to find airports", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -153,16 +144,16 @@ public class AirportSearchActivity extends AppCompatActivity {
         Boolean added;
         for (AirportInfo place : airportInfos) {
             added = false;
-            for (int j = 0; j < chosenAirportsList.size(); j++) {
-                if (chosenAirportsList.get(j).getIATACode().equals(place.getPlaceId())) {
-                    foundAirports.add(chosenAirportsList.get(j));
+            for (int j = 0; j < ChooseAirportsActivity.chosenAirportsList.size(); j++) {
+                if (ChooseAirportsActivity.chosenAirportsList.get(j).getIATACode().equals(place.getPlaceId())) {
+                    foundAirports.add(ChooseAirportsActivity.chosenAirportsList.get(j));
                     added = true;
                     break;
                 }
             }
             if (!added
                     && (!loadingAirportSuggestions
-                    || place.getCountryName().equals(getIntent().getStringExtra(Destination.KEY_COUNTRY)))) {
+                    || place.getCountryName().equals(country))) {
                 Airport airport;
                 if (place.getCountryId().equals(place.getPlaceId())
                         || place.getCityId().equals(place.getPlaceId())) {
@@ -178,20 +169,20 @@ public class AirportSearchActivity extends AppCompatActivity {
         if (foundAirports.isEmpty()) {
             if (loadingAirportSuggestions) {
                 loadingAirportSuggestions = false;
-                findMatchingAirports(getIntent().getStringExtra(Destination.KEY_COUNTRY));
+                findMatchingAirports(country);
             } else {
-                Toast.makeText(AirportSearchActivity.this, "No airports found, try broader search", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "No airports found, try broader search", Toast.LENGTH_LONG).show();
             }
         }
         loadingAirportSuggestions = false;
     }
 
     private void loadSuggestedAirports() {
-        if (getIntent().getStringExtra(Destination.KEY_ADMIN1) != null) {
-            findMatchingAirports(getIntent().getStringExtra(Destination.KEY_ADMIN1));
+        if (admin1 != null) {
+            findMatchingAirports(admin1);
         } else {
             loadingAirportSuggestions = false;
-            findMatchingAirports(getIntent().getStringExtra(Destination.KEY_COUNTRY));
+            findMatchingAirports(country);
         }
     }
 

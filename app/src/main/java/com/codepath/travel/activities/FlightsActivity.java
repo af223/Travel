@@ -143,7 +143,7 @@ public class FlightsActivity extends AppCompatActivity {
                 btnDepart.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(FlightsActivity.this, AirportSearchActivity.class);
+                        Intent i = new Intent(FlightsActivity.this, ChooseAirportsActivity.class);
                         i.putExtra(getResources().getString(R.string.from_departure), true);
                         startActivity(i);
                     }
@@ -151,7 +151,7 @@ public class FlightsActivity extends AppCompatActivity {
                 btnArrive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(FlightsActivity.this, AirportSearchActivity.class);
+                        Intent i = new Intent(FlightsActivity.this, ChooseAirportsActivity.class);
                         i.putExtra(getResources().getString(R.string.from_departure), false);
                         i.putExtra(Destination.KEY_LOCAL, destination.getLocality());
                         i.putExtra(Destination.KEY_ADMIN1, destination.getAdminArea1());

@@ -21,6 +21,7 @@
         android:roundIcon="@mipmap/ic_travel_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Travel">
+        <activity android:name=".activities.ChooseAirportsActivity"></activity>
         <activity android:name=".activities.AllPlansActivity" />
         <activity android:name=".activities.TransportationActivity" />
         <activity android:name=".activities.RoundtripFlightsActivity" />

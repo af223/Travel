@@ -10,8 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.codepath.travel.activities.AirportSearchActivity;
 import com.codepath.travel.R;
+import com.codepath.travel.fragments.AirportChosenFragment;
+import com.codepath.travel.fragments.AirportSearchFragment;
 import com.codepath.travel.models.Airport;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * This adapter is for the RecylerView in AirportSearchActivity that displays the airports the user has chosen
+ * This adapter is for the RecylerView in AirportChosenFragment that displays the airports the user has chosen
  * from the search results list. If a user clicks the "remove" button next to an airport, the airport is
  * removed from the list, and immediately appears as addable in the search results list.
  */
@@ -76,8 +77,8 @@ public class ChosenAirportsAdapter extends RecyclerView.Adapter<ChosenAirportsAd
                 public void onClick(View v) {
                     airports.remove(airport);
                     airport.flipChosen();
-                    AirportSearchActivity.refreshChosenAirports();
-                    AirportSearchActivity.refreshFoundAirports();
+                    AirportChosenFragment.refreshChosenAirports();
+                    AirportSearchFragment.refreshFoundAirports();
                 }
             });
         }

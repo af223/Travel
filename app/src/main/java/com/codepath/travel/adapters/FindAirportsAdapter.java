@@ -10,8 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.codepath.travel.activities.AirportSearchActivity;
 import com.codepath.travel.R;
+import com.codepath.travel.fragments.AirportChosenFragment;
 import com.codepath.travel.models.Airport;
 
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This adapter is for the RecylerView in AirportSearchActivity that displays the search results of airports
+ * This adapter is for the RecylerView in AirportSearchFragment that displays the search results of airports
  * based on the user's query (or the automatically loaded suggested arrival airports).
  * If a user clicks the "add" button next to an airport, the airport appears in the chosen airports list,
  * and the "add" button is no longer clickable, displaying "added".
@@ -89,7 +89,7 @@ public class FindAirportsAdapter extends RecyclerView.Adapter<FindAirportsAdapte
                         btnAddAirport.setText("Added");
                         btnAddAirport.setBackgroundColor(context.getResources().getColor(R.color.quantum_grey));
                         airport.flipChosen();
-                        AirportSearchActivity.refreshChosenAirports();
+                        AirportChosenFragment.refreshChosenAirports();
                         btnAddAirport.setClickable(false);
                     }
                 });
