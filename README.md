@@ -30,6 +30,10 @@ This app makes planning trips easy, allowing users to find all necessary informa
 <img src='WalkthroughLogin.gif' title='Video Walkthrough' width='250dp' alt='Video Walkthrough' /> <img src='Walkthrough1.gif' title='Video Walkthrough' width='250dp' alt='Video Walkthrough' /> <img src='Walkthrough2_1.gif' title='Video Walkthrough' width='250dp' alt='Video Walkthrough' /> 
 <img src='Walkthrough2_2.gif' title='Video Walkthrough' width='250dp' alt='Video Walkthrough' /> <img src='Walkthrough3.gif' title='Video Walkthrough' width='250dp' alt='Video Walkthrough' />
 
+Walkthroughs of updated/additional screens:
+
+<img src='UpdatedFlightsWalkthrough.gif' title='Video Walkthrough' width='250dp' alt='Video Walkthrough' /> <img src='UpdatedDetailsWalkthrough1.gif' title='Video Walkthrough' width='250dp' alt='Video Walkthrough' /> <img src='UpdatedDetailsWalkthrough2.gif' title='Video Walkthrough' width='250dp' alt='Video Walkthrough' />
+
 ## Product Spec
 
 ### 1. User Stories (Required and Optional)
@@ -57,7 +61,7 @@ This app makes planning trips easy, allowing users to find all necessary informa
 - [ ] Scheduling algorithm considers time on road between events
 - [x] User can find restaurants at destination
 - [x] User can see ratings for resources (hotel, airline, etc.)
-- [ ] User can see reviews for resources 
+- [x] User can see reviews for resources 
 - [ ] User can view schedule showing when events overlap
 
 ### 2. Screen Archetypes
