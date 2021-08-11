@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.YelpDetailsActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="48dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_scrollFlags="scroll|enterAlways" />
+
+            <ImageView
+                android:id="@+id/ivBackdrop"
+                android:src="@drawable/no_photo_placeholder"
+                app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_collapseMode="parallax"
+                android:scaleType="centerCrop"
+                android:minHeight="100dp" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/svYelpData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvYelpName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_toStartOf="@id/ivYelpLogo"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:textColor="@color/black"
+                android:text="@string/name_placeholder"/>
+
+            <ImageView
+                android:id="@+id/ivYelpLogo"
+                android:layout_width="70dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                app:srcCompat="@drawable/logo_rgb" />
+
+
+            <ImageView
+                android:id="@+id/ivYelpRatingBar"
+                android:layout_width="100dp"
+                android:layout_height="20dp"
+                android:layout_below="@id/tvYelpName"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="5dp"
+                app:srcCompat="@drawable/stars_extra_large_0" />
+
+            <TextView
+                android:id="@+id/tvYelpNumRatings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvYelpName"
+                android:layout_toEndOf="@id/ivYelpRatingBar"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/num_review_placeholder" />
+
+            <TextView
+                android:id="@+id/tvCurrentlyOpen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/tvYelpName"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="5dp"
+                android:text="Open"/>
+
+            <TextView
+                android:id="@+id/tvYelpPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ivYelpRatingBar"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="5dp"
+                android:autoLink="phone"
+                android:textColorLink="@color/darkest_green"
+                android:text="@string/n_a" />
+
+            <TextView
+                android:id="@+id/tvYelpPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvYelpPrice"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="5dp"
+                android:autoLink="phone"
+                android:textColorLink="@color/darkest_green"
+                android:text="@string/n_a" />
+
+            <TextView
+                android:id="@+id/tvYelpAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvYelpPhone"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/n_a"/>
+
+            <include layout="@layout/item_review"
+                android:id="@+id/reviewOne"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvYelpAddress"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"/>
+
+            <include layout="@layout/item_review"
+                android:id="@+id/reviewTwo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/reviewOne"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"/>
+
+            <include layout="@layout/item_review"
+                android:id="@+id/reviewThree"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/reviewTwo"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:id="@+id/tvBusinessHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/reviewThree"
+                android:layout_marginStart="16dp"
+                android:layout_centerHorizontal="true"
+                android:text="@string/business_hours"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/tvMon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvBusinessHours"
+                android:layout_alignStart="@id/tvBusinessHours"
+                android:layout_marginTop="5dp"
+                android:text="@string/monday_hours"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/tvMondayHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/tvTues"
+                android:layout_alignTop="@id/tvMon"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/tvTues"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvMon"
+                android:layout_alignStart="@id/tvBusinessHours"
+                android:layout_marginTop="3dp"
+                android:text="@string/tuesday_hours"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/tvTuesdayHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/tvTues"
+                android:layout_alignTop="@id/tvTues"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/tvWed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvTues"
+                android:layout_alignStart="@id/tvBusinessHours"
+                android:layout_marginTop="3dp"
+                android:text="@string/wednesday_hours"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/tvWednesdayHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/tvTues"
+                android:layout_alignTop="@id/tvWed"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/tvThurs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvWed"
+                android:layout_alignStart="@id/tvBusinessHours"
+                android:layout_marginTop="3dp"
+                android:text="@string/thursday_hours"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/tvThursdayHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/tvTues"
+                android:layout_alignTop="@id/tvThurs"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/tvFri"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvThurs"
+                android:layout_alignStart="@id/tvBusinessHours"
+                android:layout_marginTop="3dp"
+                android:text="@string/friday_hours"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/tvFridayHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/tvTues"
+                android:layout_alignTop="@id/tvFri"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/tvSat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvFri"
+                android:layout_alignStart="@id/tvBusinessHours"
+                android:layout_marginTop="3dp"
+                android:text="@string/saturday_hours"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/tvSaturdayHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/tvTues"
+                android:layout_alignTop="@id/tvSat"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/tvSun"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvSat"
+                android:layout_alignStart="@id/tvBusinessHours"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/sunday_hours"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/tvSundayHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/tvTues"
+                android:layout_alignTop="@id/tvSun"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/black" />
+
+        </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

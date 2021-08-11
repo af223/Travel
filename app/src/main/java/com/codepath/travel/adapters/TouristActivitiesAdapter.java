@@ -1,6 +1,7 @@
 package com.codepath.travel.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.travel.R;
+import com.codepath.travel.activities.YelpDetailsActivity;
 import com.codepath.travel.models.Destination;
 import com.codepath.travel.models.TouristDestination;
 import com.codepath.travel.models.YelpData;
@@ -57,7 +59,7 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
         return touristSpots.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final ImageView ivBusinessPicture;
         private final TextView tvBusinessName;
@@ -65,6 +67,7 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
         private final ImageButton ibAddTouristDest;
         private final ImageButton ibYelpPage;
         private final TextView tvCommentCount;
+        private YelpData chosen;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
@@ -75,9 +78,11 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
             ibAddTouristDest = itemView.findViewById(R.id.ibAddTouristDest);
             ibYelpPage = itemView.findViewById(R.id.ibYelpPage);
             tvCommentCount = itemView.findViewById(R.id.tvReviewCount);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(YelpData touristSpot) {
+            chosen = touristSpot;
             tvBusinessName.setText(touristSpot.getBusinessName());
             if (touristSpot.getReviewCount() < 0) {
                 tvCommentCount.setVisibility(View.GONE);
@@ -129,6 +134,13 @@ public class TouristActivitiesAdapter extends RecyclerView.Adapter<TouristActivi
                 ivYelpRating.setVisibility(View.VISIBLE);
                 YelpData.displayRatingBar(ivYelpRating, touristSpot.getRating(), context);
             }
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent i = new Intent(context, YelpDetailsActivity.class);
+            i.putExtra(context.getResources().getString(R.string.place_id), chosen.getBusinessID());
+            context.startActivity(i);
         }
     }
 }

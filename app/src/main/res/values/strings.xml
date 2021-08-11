@@ -125,4 +125,16 @@
     <string name="last_name">Last Name</string>
     <string name="email">Email</string>
     <string name="empty_phone_number">(xxx) - xxx - xxxx</string>
+    <string name="review">Review</string>
+    <string name="place_id">PlaceID</string>
+    <string name="business_hours">Business Hours</string>
+    <string name="monday_hours">Mon:</string>
+    <string name="tuesday_hours">Tues:</string>
+    <string name="wednesday_hours">Wed:</string>
+    <string name="thursday_hours">Thu:</string>
+    <string name="friday_hours">Fri:</string>
+    <string name="saturday_hours">Sat:</string>
+    <string name="sunday_hours">Sun:</string>
+    <string name="open">Open</string>
+    <string name="closed">Closed</string>
 </resources>

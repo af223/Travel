@@ -1,6 +1,7 @@
 package com.codepath.travel.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.travel.R;
+import com.codepath.travel.activities.YelpDetailsActivity;
 import com.codepath.travel.models.YelpData;
 
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +55,7 @@ public class TransportationsAdapter extends RecyclerView.Adapter<Transportations
         return transportations.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final ImageView ivTransport;
         private final TextView tvTransportName;
@@ -62,6 +64,7 @@ public class TransportationsAdapter extends RecyclerView.Adapter<Transportations
         private final ImageButton ibYelpPage;
         private final TextView tvTransportAddress;
         private final ImageView ivPhone;
+        private YelpData chosen;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
@@ -73,9 +76,11 @@ public class TransportationsAdapter extends RecyclerView.Adapter<Transportations
             ibYelpPage = itemView.findViewById(R.id.ibToYelp);
             tvTransportAddress = itemView.findViewById(R.id.tvTransportAddress);
             ivPhone = itemView.findViewById(R.id.ivPhone);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(YelpData transport) {
+            chosen = transport;
             tvTransportName.setText(transport.getBusinessName());
             if (transport.getPhone().isEmpty()) {
                 tvTransportPhone.setVisibility(View.GONE);
@@ -90,6 +95,13 @@ public class TransportationsAdapter extends RecyclerView.Adapter<Transportations
             Glide.with(context).load(transport.getImageURL()).placeholder(R.drawable.no_photo_placeholder)
                     .error(R.drawable.no_photo_placeholder).into(ivTransport);
             YelpData.linkToYelp(transport.getYelpURL(), ibYelpPage, context);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent i = new Intent(context, YelpDetailsActivity.class);
+            i.putExtra(context.getResources().getString(R.string.place_id), chosen.getBusinessID());
+            context.startActivity(i);
         }
     }
 }
