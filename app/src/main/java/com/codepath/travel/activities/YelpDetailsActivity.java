@@ -91,7 +91,10 @@ public class YelpDetailsActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 BusinessDetails businessDetails = gson.fromJson(String.valueOf(json.jsonObject), BusinessDetails.class);
                 displayDetails(businessDetails);
-                displayBusinessHours(businessDetails.getHours().get(0).getOpen());
+                if (businessDetails.getHours() != null)
+                    displayBusinessHours(businessDetails.getHours().get(0).getOpen());
+                else
+                    hideBusinessHours();
             }
 
             @Override
@@ -231,6 +234,24 @@ public class YelpDetailsActivity extends AppCompatActivity {
         }
         todayDay.setTypeface(null, Typeface.BOLD);
         todayHours.setTypeface(null, Typeface.BOLD);
+    }
+
+    private void hideBusinessHours() {
+        findViewById(R.id.tvBusinessHours).setVisibility(View.GONE);
+        findViewById(R.id.tvMon).setVisibility(View.GONE);
+        findViewById(R.id.tvMondayHours).setVisibility(View.GONE);
+        findViewById(R.id.tvTues).setVisibility(View.GONE);
+        findViewById(R.id.tvTuesdayHours).setVisibility(View.GONE);
+        findViewById(R.id.tvWed).setVisibility(View.GONE);
+        findViewById(R.id.tvWednesdayHours).setVisibility(View.GONE);
+        findViewById(R.id.tvThurs).setVisibility(View.GONE);
+        findViewById(R.id.tvThursdayHours).setVisibility(View.GONE);
+        findViewById(R.id.tvFri).setVisibility(View.GONE);
+        findViewById(R.id.tvFridayHours).setVisibility(View.GONE);
+        findViewById(R.id.tvSat).setVisibility(View.GONE);
+        findViewById(R.id.tvSaturdayHours).setVisibility(View.GONE);
+        findViewById(R.id.tvSun).setVisibility(View.GONE);
+        findViewById(R.id.tvSundayHours).setVisibility(View.GONE);
     }
 
     private void displayReviews(BusinessReviews businessReviews) {
